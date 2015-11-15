@@ -1,6 +1,6 @@
 Jugadores = new Meteor.Collection("Jugadores");
-
-var NumeroJugadores= 3
+Caracteristicas = new Meteor.Collection("Caracteristicas");
+//var mongoose = require('mongoose'),Schema = mongoose.Schema;
 
 var TiposCartas = {
     Camino1: { Izquierda: "No", Derecha: "No", Arriba: "Si", Abajo: "Si"},
@@ -68,7 +68,7 @@ var CartasAccion = ['Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarMina','Ar
                     'ArreglaMina_Herr','QuitaCamino','QuitaCamino','QuitaCamino',
 ];
 
-var Pila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','Camino2','Camino2','Camino2','Camino3',
+var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','Camino2','Camino2','Camino2','Camino3',
             'Camino3','Camino3','Camino3','Camino3','Camino4','Camino4','Camino4','Camino4','Camino5','Camino5',
             'Camino5','Camino5','Camino5','Camino6','Camino6','Camino6','Camino6','Camino6','Camino7','Camino7',
             'Camino7','SinCamino1','SinCamino2','SinCamino3','SinCamino4','SinCamino5','SinCamino6',
@@ -119,8 +119,8 @@ BarajaCartasPepitas = function(CartasPepitas){
     var Total = CartasPepitas.length; 
     for (i=0; i<Total; i++) { 
         aleatorio = Math.floor(Math.random()*(Total));
-        nuevo= CartasPepitas[aleatorio]
-        BarajadasPepitas[i] = nuevo
+        nuevo= CartasPepitas[aleatorio];
+        BarajadasPepitas[i] = nuevo;
         CartasPepitas.splice(aleatorio, 1);
     }
 };
@@ -131,8 +131,8 @@ BarajaCartasEnano = function(){
     var Total = CartasEnano.length; 
     for (i=0; i<Total; i++) { 
         aleatorio = Math.floor(Math.random()*(Total));
-        nuevo= CartasEnano[aleatorio]
-        BarajadasEnanos[i] = nuevo
+        nuevo= CartasEnano[aleatorio];
+        BarajadasEnanos[i] = nuevo;
         CartasEnano.splice(aleatorio, 1);
     }
 };
@@ -143,8 +143,8 @@ BarajaPila = function(Pila){
     var Total = CartasPila.length; 
     for (i=0; i<Total; i++) { 
         aleatorio = Math.floor(Math.random()*(Total));
-        nuevo= CartasPila[aleatorio]
-        BarajadasPila[i] = nuevo
+        nuevo= CartasPila[aleatorio];
+        BarajadasPila[i] = nuevo;
         CartasPila.splice(aleatorio, 1);
     }
 };
@@ -154,10 +154,77 @@ BarajaCartasDestino = function(CartasDestino){
     var Total = CartasDestino.length; 
     for (i=0; i<Total; i++) { 
         aleatorio = Math.floor(Math.random()*(Total));
-        nuevo= CartasDestino[aleatorio]
-        BarajadasDestino[i] = nuevo
+        nuevo= CartasDestino[aleatorio];
+        BarajadasDestino[i] = nuevo;
         CartasDestino.splice(aleatorio, 1);
     }
+};
+
+ComprobarNum = function(){
+    var NumeroJugadores;
+    if(Jugadores.find().count() < 3){
+        NumeroJugadores = 3
+    }
+    if(Jugadores.find().count() > 2){
+        NumeroJugadores = Jugadores.find().count();
+    }
+    return NumeroJugadores;
+}
+
+RepartirCartasPila = function(){
+    NumeroJugadores = ComprobarNum();
+    if ((NumeroJugadores === 3)||(NumeroJugadores === 4)||(NumeroJugadores === 5)) {
+        var Cartas = [];
+        var Enano;
+        for (i=0; i<NumeroJugadores; i++) {
+            for(Contador = 1; Contador < 7; contador++){
+                Cartas[Contador] = BarajadasPila[BarajadasPila.length];
+                BarajadasPila.splice(BarajadasPila.length, 1);
+            }
+            Enano = BarajadasEnanos[BarajadasEnanos.length];
+            BarajadasEnanos.splice(BarajadasEnanos.length, 1);
+            Caracteristicas.insert({Jugador: i,
+                                    Puntuacion: 0,
+                                    Mano: Cartas,
+                                    NumCartas:0,
+                                    Rol: Enano,});
+        }
+    }
+    if ((NumeroJugadores === 6) || (NumeroJugadores === 7)) {
+        var Cartas = [];
+        var Enano;
+        for (i=0; i<NumeroJugadores; i++) {
+            for(Contador = 1; Contador < 6; contador++){
+                Cartas[Contador] = BarajadasPila[BarajadasPila.length];
+                BarajadasPila.splice(BarajadasPila.length, 1);
+            }
+            Enano = BarajadasEnanos[BarajadasEnanos.length];
+            BarajadasEnanos.splice(BarajadasEnanos.length, 1);
+            Caracteristicas.insert({Jugador: i,
+                                    Puntuacion: 0,
+                                    Mano: Cartas,
+                                    NumCartas:0,
+                                    Rol: Enano,});
+        }
+    }
+    if ((NumeroJugadores === 8) || (NumeroJugadores === 9) || (NumeroJugadores === 10)) {
+        var Cartas = [];
+        var Enano;
+        for (i=0; i<NumeroJugadores; i++) {
+            for(Contador = 1; Contador < 4; contador++){
+                Cartas[Contador] = BarajadasPila[BarajadasPila.length];
+                BarajadasPila.splice(BarajadasPila.length, 1);
+            }
+            Enano = BarajadasEnanos[BarajadasEnanos.length];
+            BarajadasEnanos.splice(BarajadasEnanos.length, 1);
+            Caracteristicas.insert({Jugador: i,
+                                    Puntuacion: 0,
+                                    Mano: Cartas,
+                                    NumCartas:0,
+                                    Rol: Enano,});
+        }
+    }
+
 };
 
 
@@ -180,6 +247,7 @@ if (Meteor.isClient) {
     }
   });
 }
+
 
 if (Meteor.isServer) {
   Meteor.startup(function () {
