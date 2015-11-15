@@ -10,4 +10,8 @@ Paginas Útiles:
 
 [Plataforma de juego ](http://es.boardgamearena.com/#!gamepanel?game=saboteur)
 
+SPRITES:
+
+  - Las Cartas son de 90(width)x110(height) pixeles. 
+
 
