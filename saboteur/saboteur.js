@@ -80,6 +80,11 @@ var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','C
 
 ];
 
+var BarajadasDestino = [];
+var BarajadasPila = [];
+var BarajadasEnanos = [];
+var BarajadasPepitas = [];
+
 GuardarEnanos = function(){
     if (NumeroJugadores === 3){
         var CartasEnano = ['saboteador','buscador','buscador'];   
@@ -115,7 +120,6 @@ GuardarEnanos = function(){
 };
 
 BarajaCartasPepitas = function(CartasPepitas){
-    var BarajadasPepitas = []
     var Total = CartasPepitas.length; 
     for (i=0; i<Total; i++) { 
         aleatorio = Math.floor(Math.random()*(Total));
@@ -127,7 +131,6 @@ BarajaCartasPepitas = function(CartasPepitas){
 
 BarajaCartasEnano = function(){
     CartasEnano = GuardarEnanos();
-    var BarajadasEnanos = []
     var Total = CartasEnano.length; 
     for (i=0; i<Total; i++) { 
         aleatorio = Math.floor(Math.random()*(Total));
@@ -139,7 +142,6 @@ BarajaCartasEnano = function(){
 
 BarajaPila = function(Pila){
     //CartasAccion = CartasAccion.sort(function() {return Math.random() - 0.5});
-    var BarajadasPila = []
     var Total = CartasPila.length; 
     for (i=0; i<Total; i++) { 
         aleatorio = Math.floor(Math.random()*(Total));
@@ -150,7 +152,6 @@ BarajaPila = function(Pila){
 };
 
 BarajaCartasDestino = function(CartasDestino){
-    var BarajadasDestino = []
     var Total = CartasDestino.length; 
     for (i=0; i<Total; i++) { 
         aleatorio = Math.floor(Math.random()*(Total));
