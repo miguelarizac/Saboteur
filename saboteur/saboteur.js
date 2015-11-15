@@ -3,10 +3,22 @@ Jugadores = new Meteor.Collection("Jugadores");
 var NumeroJugadores= 3
 
 var TiposCartas = {
-    Camino1: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "Si"},
+    Camino1: { Izquierda: "No", Derecha: "No", Arriba: "Si", Abajo: "Si"},
     Camino2: { Izquierda: "No", Derecha: "Si", Arriba: "Si", Abajo: "Si"},
-    Camino3: { Izquierda: "Si", Derecha: "No", Arriba: "Si", Abajo: "Si"},
-    Camino4: { Izquierda: "No", Derecha: "No", Arriba: "Si", Abajo: "Si"},
+    Camino3: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "Si"},
+    Camino4: { Izquierda: "No", Derecha: "Si", Arriba: "No", Abajo: "Si"},
+    Camino5: { Izquierda: "Si", Derecha: "No", Arriba: "No", Abajo: "Si"},
+    Camino6: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "No"},
+    Camino7: { Izquierda: "Si", Derecha: "Si", Arriba: "No", Abajo: "No"}, 
+    SinCamino1: { Izquierda: "No", Derecha: "No", Arriba: "No", Abajo: "Si"},
+    SinCamino2: { Izquierda: "Si", Derecha: "No", Arriba: "Si", Abajo: "Si"},
+    SinCamino3: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "Si"},
+    SinCamino4: { Izquierda: "No", Derecha: "Si", Arriba: "No", Abajo: "Si"},
+    SinCamino5: { Izquierda: "Si", Derecha: "No", Arriba: "No", Abajo: "Si"},
+    SinCamino6: { Izquierda: "Si", Derecha: "No", Arriba: "No", Abajo: "No"},
+    SinCamino7: { Izquierda: "No", Derecha: "No", Arriba: "Si", Abajo: "Si"},
+    SinCamino8: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "No"},
+    SinCamino9: { Izquierda: "Si", Derecha: "Si", Arriba: "No", Abajo: "No"},
     ComienzoEscalera: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "Si"},
     DestinoPiedra1: { Izquierda: "Si", Derecha: "No", Arriba: "No", Abajo: "Si"},
     DestinoPiedra2: { Izquierda: "Si", Derecha: "No", Arriba: "Si", Abajo: "No"}, 
@@ -30,10 +42,11 @@ var TiposCartas = {
 };
 
 
-var CartasTunel = ['Camino1','Camino1','Camino1','Camino1','Camino1','Camino1','Camino1','Camino1','Camino1','Camino1',
-                   'Camino2','Camino2','Camino2','Camino2','Camino2','Camino2','Camino2','Camino2','Camino2','Camino2',
-                   'Camino3','Camino3','Camino3','Camino3','Camino3','Camino3','Camino3','Camino3','Camino3','Camino3',
-                   'Camino4','Camino4','Camino4','Camino4','Camino4','Camino4','Camino4','Camino4','Camino4','Camino4',
+var CartasTunel = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','Camino2','Camino2','Camino2','Camino3',
+                   'Camino3','Camino3','Camino3','Camino3','Camino4','Camino4','Camino4','Camino4','Camino5','Camino5',
+                   'Camino5','Camino5','Camino5','Camino6','Camino6','Camino6','Camino6','Camino6','Camino7','Camino7',
+                   'Camino7','SinCamino1','SinCamino2','SinCamino3','SinCamino4','SinCamino5','SinCamino6',
+                   'SinCamino7','SinCamino8','SinCamino9',
 ];
 
 var CartasDestino = [
@@ -53,6 +66,18 @@ var CartasAccion = ['Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarMina','Ar
                     'ArreglarAlumbrado','ArreglarAlumbrado','MinaRota','MinaRota','MinaRota','AlumbradoRoto','AlumbradoRoto',
                     'AlumbradoRoto','HerramientaRota','HerramientaRota','HerramientaRota', 'ArreglaAlum_Herr','ArreglaAlum_Mina',
                     'ArreglaMina_Herr','QuitaCamino','QuitaCamino','QuitaCamino',
+];
+
+var Pila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','Camino2','Camino2','Camino2','Camino3',
+            'Camino3','Camino3','Camino3','Camino3','Camino4','Camino4','Camino4','Camino4','Camino5','Camino5',
+            'Camino5','Camino5','Camino5','Camino6','Camino6','Camino6','Camino6','Camino6','Camino7','Camino7',
+            'Camino7','SinCamino1','SinCamino2','SinCamino3','SinCamino4','SinCamino5','SinCamino6',
+            'SinCamino7','SinCamino8','SinCamino9',
+            'Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarMina','ArreglarMina','ArreglarHerr','ArreglarHerr',
+            'ArreglarAlumbrado','ArreglarAlumbrado','MinaRota','MinaRota','MinaRota','AlumbradoRoto','AlumbradoRoto',
+            'AlumbradoRoto','HerramientaRota','HerramientaRota','HerramientaRota', 'ArreglaAlum_Herr','ArreglaAlum_Mina',
+            'ArreglaMina_Herr','QuitaCamino','QuitaCamino','QuitaCamino', 
+
 ];
 
 GuardarEnanos = function(){
@@ -89,15 +114,14 @@ GuardarEnanos = function(){
     return CartasEnano;
 };
 
-BarajaCartasAccion = function(CartasAccion){
-    //CartasAccion = CartasAccion.sort(function() {return Math.random() - 0.5});
-    var BarajadasAccion = []
-    var Total = CartasAccion.length; 
+BarajaCartasPepitas = function(CartasPepitas){
+    var BarajadasPepitas = []
+    var Total = CartasPepitas.length; 
     for (i=0; i<Total; i++) { 
         aleatorio = Math.floor(Math.random()*(Total));
-        nuevo= CartasAccion[aleatorio]
-        BarajadasAccion[i] = nuevo
-        CartasAccion.splice(aleatorio, 1);
+        nuevo= CartasPepitas[aleatorio]
+        BarajadasPepitas[i] = nuevo
+        CartasPepitas.splice(aleatorio, 1);
     }
 };
 
@@ -113,14 +137,15 @@ BarajaCartasEnano = function(){
     }
 };
 
-BarajaCartasTunel = function(CartasTunel){
-    var BarajadasTunel = []
-    var Total = CartasTunel.length; 
+BarajaPila = function(Pila){
+    //CartasAccion = CartasAccion.sort(function() {return Math.random() - 0.5});
+    var BarajadasPila = []
+    var Total = CartasPila.length; 
     for (i=0; i<Total; i++) { 
         aleatorio = Math.floor(Math.random()*(Total));
-        nuevo= CartasTunel[aleatorio]
-        BarajadasTunel[i] = nuevo
-        CartasTunel.splice(aleatorio, 1);
+        nuevo= CartasPila[aleatorio]
+        BarajadasPila[i] = nuevo
+        CartasPila.splice(aleatorio, 1);
     }
 };
 
@@ -134,10 +159,6 @@ BarajaCartasDestino = function(CartasDestino){
         CartasDestino.splice(aleatorio, 1);
     }
 };
-
-
-
-
 
 
 
