@@ -179,7 +179,7 @@ RepartirCartasPila = function(){
         var Enano;
         var numero = 7;
         for (i=0; i<NumeroJugadores; i++) {
-            for(Contador = 1; Contador < 7; contador++){
+            for(Contador = 1; Contador < numero; contador++){
                 Cartas[Contador] = BarajadasPila[BarajadasPila.length];
                 BarajadasPila.splice(BarajadasPila.length, 1);
             }
@@ -197,7 +197,7 @@ RepartirCartasPila = function(){
         var Enano;
         var numero = 6;
         for (i=0; i<NumeroJugadores; i++) {
-            for(Contador = 1; Contador < 6; contador++){
+            for(Contador = 1; Contador < numero; contador++){
                 Cartas[Contador] = BarajadasPila[BarajadasPila.length];
                 BarajadasPila.splice(BarajadasPila.length, 1);
             }
@@ -215,7 +215,7 @@ RepartirCartasPila = function(){
         var Enano;
         var numero = 4;
         for (i=0; i<NumeroJugadores; i++) {
-            for(Contador = 1; Contador < 4; contador++){
+            for(Contador = 1; Contador < numero; contador++){
                 Cartas[Contador] = BarajadasPila[BarajadasPila.length];
                 BarajadasPila.splice(BarajadasPila.length, 1);
             }
