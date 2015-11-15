@@ -177,6 +177,7 @@ RepartirCartasPila = function(){
     if ((NumeroJugadores === 3)||(NumeroJugadores === 4)||(NumeroJugadores === 5)) {
         var Cartas = [];
         var Enano;
+        var numero = 7;
         for (i=0; i<NumeroJugadores; i++) {
             for(Contador = 1; Contador < 7; contador++){
                 Cartas[Contador] = BarajadasPila[BarajadasPila.length];
@@ -187,13 +188,14 @@ RepartirCartasPila = function(){
             Caracteristicas.insert({Jugador: i,
                                     Puntuacion: 0,
                                     Mano: Cartas,
-                                    NumCartas:0,
+                                    NumCartas: numero,
                                     Rol: Enano,});
         }
     }
     if ((NumeroJugadores === 6) || (NumeroJugadores === 7)) {
         var Cartas = [];
         var Enano;
+        var numero = 6;
         for (i=0; i<NumeroJugadores; i++) {
             for(Contador = 1; Contador < 6; contador++){
                 Cartas[Contador] = BarajadasPila[BarajadasPila.length];
@@ -204,13 +206,14 @@ RepartirCartasPila = function(){
             Caracteristicas.insert({Jugador: i,
                                     Puntuacion: 0,
                                     Mano: Cartas,
-                                    NumCartas:0,
+                                    NumCartas: numero,
                                     Rol: Enano,});
         }
     }
     if ((NumeroJugadores === 8) || (NumeroJugadores === 9) || (NumeroJugadores === 10)) {
         var Cartas = [];
         var Enano;
+        var numero = 4;
         for (i=0; i<NumeroJugadores; i++) {
             for(Contador = 1; Contador < 4; contador++){
                 Cartas[Contador] = BarajadasPila[BarajadasPila.length];
@@ -221,7 +224,7 @@ RepartirCartasPila = function(){
             Caracteristicas.insert({Jugador: i,
                                     Puntuacion: 0,
                                     Mano: Cartas,
-                                    NumCartas:0,
+                                    NumCartas: numero,
                                     Rol: Enano,});
         }
     }
