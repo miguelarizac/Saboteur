@@ -40,9 +40,9 @@ var TiposCartas = {
     ArreglarVagoneta: {Funcion: "ArreglarVagoneta"},
     ArreglarFarolillo: {Funcion: "ArreglarFarolillo"},
     ArreglarPico: {Funcion: "ArreglarPico"},
-    ArreglarFaro_Pico: {Funcion1: "Alumbrado", Funcion2: "Herramienta"},
-    ArreglarFaro_Vagon: {Funcion1: "Alumbrado", Funcion2: "Mina"},
-    ArreglarVagon_Pico: {Funcion1: "Mina", Funcion2: "Herramienta"},
+    ArreglarFaro_Pico: {Funcion1: "ArreglarFarolillo", Funcion2: "ArreglarPico"},
+    ArreglarFaro_Vagon: {Funcion1: "ArreglarFarolillo", Funcion2: "ArreglarVagoneta"},
+    ArreglarVagon_Pico: {Funcion1: "ArreglarVagoneta", Funcion2: "ArreglarPico"},
     Mapa: {Funcion: "DestapaCartaDestino"},
     Derrumbamiento: {Funcion: "Derrumbamiento"}
 };
@@ -147,7 +147,7 @@ BarajarMazo_Roll = function(){
     }
 };
 
-BarajarMazo_General = function(Pila){
+BarajarMazo_General = function(CartasPila){
     //CartasAccion = CartasAccion.sort(function() {return Math.random() - 0.5});
     var Total = CartasPila.length; 
     for (i=0; i<Total; i++) { 
