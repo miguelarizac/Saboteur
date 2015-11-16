@@ -3,42 +3,48 @@ Caracteristicas = new Meteor.Collection("Caracteristicas");
 //var mongoose = require('mongoose'),Schema = mongoose.Schema;
 
 var TiposCartas = {
-    Camino1: { Izquierda: "No", Derecha: "No", Arriba: "Si", Abajo: "Si"},
-    Camino2: { Izquierda: "No", Derecha: "Si", Arriba: "Si", Abajo: "Si"},
-    Camino3: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "Si"},
-    Camino4: { Izquierda: "No", Derecha: "Si", Arriba: "No", Abajo: "Si"},
-    Camino5: { Izquierda: "Si", Derecha: "No", Arriba: "No", Abajo: "Si"},
-    Camino6: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "No"},
-    Camino7: { Izquierda: "Si", Derecha: "Si", Arriba: "No", Abajo: "No"}, 
-    SinCamino1: { Izquierda: "No", Derecha: "No", Arriba: "No", Abajo: "Si"},
-    SinCamino2: { Izquierda: "Si", Derecha: "No", Arriba: "Si", Abajo: "Si"},
-    SinCamino3: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "Si"},
-    SinCamino4: { Izquierda: "No", Derecha: "Si", Arriba: "No", Abajo: "Si"},
-    SinCamino5: { Izquierda: "Si", Derecha: "No", Arriba: "No", Abajo: "Si"},
-    SinCamino6: { Izquierda: "Si", Derecha: "No", Arriba: "No", Abajo: "No"},
-    SinCamino7: { Izquierda: "No", Derecha: "No", Arriba: "Si", Abajo: "Si"},
-    SinCamino8: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "No"},
-    SinCamino9: { Izquierda: "Si", Derecha: "Si", Arriba: "No", Abajo: "No"},
-    ComienzoEscalera: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "Si"},
-    DestinoPiedra1: { Izquierda: "Si", Derecha: "No", Arriba: "No", Abajo: "Si"},
-    DestinoPiedra2: { Izquierda: "Si", Derecha: "No", Arriba: "Si", Abajo: "No"}, 
-    DestinoPepita: { Izquierda: "Si", Derecha: "Si", Arriba: "Si", Abajo: "Si"},
-    saboteador: {Funcion: "sabotear"},
-    buscador: {Funcion: "construir"},
-    Pepitas1: {numero: "1"},
-    Pepitas2: {numero: "2"},
-    Pepitas3: {numero: "3"},
-    MinaRota: {Funcion: "RomperMina"},
-    AlumbradoRoto: {Funcion: "RomperAlumbrado"},
-    HerramientaRota: {Funcion: "RomperHerr"},
-    ArreglarMina: {Funcion: "ArreglarMina"},
-    ArreglarAlumbrado: {Funcion: "ArreglarAlumbrado"},
-    ArreglarHerr: {Funcion: "ArreglarHerr"},
-    ArreglaAlum_Herr: {Funcion1: "Alumbrado", Funcion2: "Herramienta"},
-    ArreglaAlum_Mina: {Funcion1: "Alumbrado", Funcion2: "Mina"},
-    ArreglaMina_Herr: {Funcion1: "Mina", Funcion2: "Herramienta"},
+    //Tipo tunel
+    Camino1: { Izquierda: 0, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 0},
+    Camino2: { Izquierda: 0, Derecha: 1, Arriba: 1, Abajo: 1, Bloqueante: 0},
+    Camino3: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 1, Bloqueante: 0},
+    Camino4: { Izquierda: 0, Derecha: 1, Arriba: 0, Abajo: 1, Bloqueante: 0},
+    Camino5: { Izquierda: 1, Derecha: 0, Arriba: 0, Abajo: 1, Bloqueante: 0},
+    Camino6: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 0, Bloqueante: 0},
+    Camino7: { Izquierda: 1, Derecha: 1, Arriba: 0, Abajo: 0, Bloqueante: 0}, 
+    SinCamino1: { Izquierda: 0, Derecha: 0, Arriba: 0, Abajo: 1, Bloqueante: 1},
+    SinCamino2: { Izquierda: 1, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 1},
+    SinCamino3: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 1, Bloqueante: 1},
+    SinCamino4: { Izquierda: 0, Derecha: 1, Arriba: 0, Abajo: 1, Bloqueante: 1},
+    SinCamino5: { Izquierda: 1, Derecha: 0, Arriba: 0, Abajo: 1, Bloqueante: 1},
+    SinCamino6: { Izquierda: 1, Derecha: 0, Arriba: 0, Abajo: 0, Bloqueante: 1},
+    SinCamino7: { Izquierda: 0, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 1},
+    SinCamino8: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 0, Bloqueante: 1},
+    SinCamino9: { Izquierda: 1, Derecha: 1, Arriba: 0, Abajo: 0, Bloqueante: 1},
+    //Tipo Inicio
+    ComienzoEscalera: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 1, Bloqueante: 0},
+    //Tipo Destino
+    DestinoNada1: { Izquierda: 1, Derecha: 0, Arriba: 0, Abajo: 1, Bloqueante: 0},
+    DestinoNada2: { Izquierda: 1, Derecha: 0, Arriba: 1, Abajo: 0, Bloqueante: 0}, 
+    DestinoPepita: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 1, Bloqueante: 0},
+    //Tipo Roll
+    Saboteador: {Roll: "Sabotear"},
+    Buscador: {Roll: "Buscar"},
+    //Tipo Pepitas
+    Pepitas1: {nPepitas: 1},
+    Pepitas2: {nPepitas: 2},
+    Pepitas3: {nPepitas: 3},
+    //Tipo Accion
+    RomperVagoneta: {Funcion: "RomperVagoneta"},
+    RomperFarolillo: {Funcion: "RomperFarolillo"},
+    RomperPico: {Funcion: "RomperPico"},
+    ArreglarVagoneta: {Funcion: "ArreglarVagoneta"},
+    ArreglarFarolillo: {Funcion: "ArreglarFarolillo"},
+    ArreglarPico: {Funcion: "ArreglarPico"},
+    ArreglarFaro_Pico: {Funcion1: "Alumbrado", Funcion2: "Herramienta"},
+    ArreglarFaro_Vagon: {Funcion1: "Alumbrado", Funcion2: "Mina"},
+    ArreglarVagon_Pico: {Funcion1: "Mina", Funcion2: "Herramienta"},
     Mapa: {Funcion: "DestapaCartaDestino"},
-    QuitaCamino: {Funcion: "QuitarCamino"}
+    Derrumbamiento: {Funcion: "Derrumbamiento"}
 };
 
 
@@ -49,10 +55,13 @@ var CartasTunel = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','
                    'SinCamino7','SinCamino8','SinCamino9',
 ];
 
-var CartasDestino = [
+var CartaInicio = [
     'ComienzoEscalera',
-    'DestinoPiedra1', 
-    'DestinoPiedra2', 
+];
+
+var CartasDestino = [
+    'DestinoNada1', 
+    'DestinoNada2', 
     'DestinoPepita',
 ];
 
@@ -62,10 +71,10 @@ var CartasPepitas = ['Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pep
                      'Pepitas3',
 ];
 
-var CartasAccion = ['Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarMina','ArreglarMina','ArreglarHerr','ArreglarHerr',
-                    'ArreglarAlumbrado','ArreglarAlumbrado','MinaRota','MinaRota','MinaRota','AlumbradoRoto','AlumbradoRoto',
-                    'AlumbradoRoto','HerramientaRota','HerramientaRota','HerramientaRota', 'ArreglaAlum_Herr','ArreglaAlum_Mina',
-                    'ArreglaMina_Herr','QuitaCamino','QuitaCamino','QuitaCamino',
+var CartasAccion = ['Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarVagoneta','ArreglarVagoneta','ArreglarPico','ArreglarPico',
+                    'ArreglarFarolillo','ArreglarFarolillo','RomperVagoneta','RomperVagoneta','RomperVagoneta','RomperFarolillo','RomperFarolillo',
+                    'RomperFarolillo','RomperPico','RomperPico','RomperPico', 'ArreglarFaro_Pico','ArreglarFaro_Vagon',
+                    'ArreglarVagon_Pico','Derrumbamiento','Derrumbamiento','Derrumbamiento',
 ];
 
 var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','Camino2','Camino2','Camino2','Camino3',
@@ -73,90 +82,86 @@ var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','C
             'Camino5','Camino5','Camino5','Camino6','Camino6','Camino6','Camino6','Camino6','Camino7','Camino7',
             'Camino7','SinCamino1','SinCamino2','SinCamino3','SinCamino4','SinCamino5','SinCamino6',
             'SinCamino7','SinCamino8','SinCamino9',
-            'Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarMina','ArreglarMina','ArreglarHerr','ArreglarHerr',
-            'ArreglarAlumbrado','ArreglarAlumbrado','MinaRota','MinaRota','MinaRota','AlumbradoRoto','AlumbradoRoto',
-            'AlumbradoRoto','HerramientaRota','HerramientaRota','HerramientaRota', 'ArreglaAlum_Herr','ArreglaAlum_Mina',
-            'ArreglaMina_Herr','QuitaCamino','QuitaCamino','QuitaCamino', 
+            'Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarVagoneta','ArreglarVagoneta','ArreglarPico','ArreglarPico',
+            'ArreglarFarolillo','ArreglarFarolillo','RomperVagoneta','RomperVagoneta','RomperVagoneta','RomperFarolillo','RomperFarolillo',
+            'RomperFarolillo','RomperPico','RomperPico','RomperPico', 'ArreglarFaro_Pico','ArreglarFaro_Vagon',
+            'ArreglarVagon_Pico','Derrumbamiento','Derrumbamiento','Derrumbamiento', 
 
 ];
 
-var BarajadasDestino = [];
-var BarajadasPila = [];
-var BarajadasEnanos = [];
-var BarajadasPepitas = [];
+var MAZO_DESTINO = [];
+var MAZO_GENERAL = [];
+var MAZO_ROLL = [];
+var MAZO_PEPITAS = [];
 
-GuardarEnanos = function(){
+PrepararRolles = function(){
     if (NumeroJugadores === 3){
-        var CartasEnano = ['saboteador','buscador','buscador'];   
+        var CartasRoll = ['Saboteador','Buscador','Buscador'];   
     }
     else if (NumeroJugadores === 4){
-        var CartasEnano = ['saboteador','buscador','buscador','buscador'];   
+        var CartasRoll = ['Saboteador','Buscador','Buscador','Buscador'];   
     }
     else if (NumeroJugadores === 5){
-        var CartasEnano = ['saboteador','saboteador','buscador','buscador','buscador'];   
+        var CartasRoll = ['Saboteador','Saboteador','Buscador','Buscador','Buscador'];   
     }
     else if (NumeroJugadores === 6){
-        var CartasEnano = ['saboteador','saboteador','buscador','buscador','buscador',
-                           'buscador'];   
+        var CartasRoll = ['Saboteador','Saboteador','Buscador','Buscador','Buscador',
+                           'Buscador'];   
     }
     else if (NumeroJugadores === 7){
-        var CartasEnano = ['saboteador','saboteador','saboteador','buscador','buscador',
-                           'buscador','buscador'];   
+        var CartasRoll = ['Saboteador','Saboteador','Saboteador','Buscador','Buscador',
+                           'Buscador','Buscador'];   
     }
     else if (NumeroJugadores === 8){
-        var CartasEnano = ['saboteador','saboteador','saboteador','buscador','buscador',
-                           'buscador','buscador','buscador'];   
+        var CartasRoll = ['Saboteador','Saboteador','Saboteador','Buscador','Buscador',
+                           'Buscador','Buscador','Buscador'];   
     }
     else if (NumeroJugadores === 9){
-        var CartasEnano = ['saboteador','saboteador','saboteador','buscador','buscador',
-                           'buscador','buscador','buscador','buscador'];   
+        var CartasRoll = ['Saboteador','Saboteador','Saboteador','Buscador','Buscador',
+                           'Buscador','Buscador','Buscador','Buscador'];   
     }
     else if (NumeroJugadores === 10){
-        var CartasEnano = ['saboteador','saboteador','saboteador','saboteador','buscador','buscador',
-                           'buscador','buscador','buscador','buscador','buscador'];   
+        var CartasRoll = ['Saboteador','Saboteador','Saboteador','Saboteador','Buscador','Buscador',
+                           'Buscador','Buscador','Buscador','Buscador','Buscador'];   
     }
 
-    return CartasEnano;
+    return CartasRoll;
 };
 
-BarajaCartasPepitas = function(CartasPepitas){
+BarajarMazo_Pepitas = function(CartasPepitas){
     var Total = CartasPepitas.length; 
     for (i=0; i<Total; i++) { 
-        aleatorio = Math.floor(Math.random()*(Total));
-        nuevo= CartasPepitas[aleatorio];
-        BarajadasPepitas[i] = nuevo;
+        aleatorio = Math.floor(Math.random()*(CartasPepitas.length));
+        MAZO_PEPITAS[i] = CartasPepitas[aleatorio];
         CartasPepitas.splice(aleatorio, 1);
     }
 };
 
-BarajaCartasEnano = function(){
-    CartasEnano = GuardarEnanos();
-    var Total = CartasEnano.length; 
+BarajarMazo_Roll = function(){
+    CartasRoll = PrepararRolles();
+    var Total = CartasRoll.length; 
     for (i=0; i<Total; i++) { 
-        aleatorio = Math.floor(Math.random()*(Total));
-        nuevo= CartasEnano[aleatorio];
-        BarajadasEnanos[i] = nuevo;
-        CartasEnano.splice(aleatorio, 1);
+        aleatorio = Math.floor(Math.random()*(CartasRoll.length));
+        MAZO_ROLL[i] = CartasRoll[aleatorio];
+        CartasRoll.splice(aleatorio, 1);
     }
 };
 
-BarajaPila = function(Pila){
+BarajarMazo_General = function(Pila){
     //CartasAccion = CartasAccion.sort(function() {return Math.random() - 0.5});
     var Total = CartasPila.length; 
     for (i=0; i<Total; i++) { 
-        aleatorio = Math.floor(Math.random()*(Total));
-        nuevo= CartasPila[aleatorio];
-        BarajadasPila[i] = nuevo;
+        aleatorio = Math.floor(Math.random()*(CartasPila.length));
+        MAZO_GENERAL[i] = CartasPila[aleatorio];
         CartasPila.splice(aleatorio, 1);
     }
 };
 
-BarajaCartasDestino = function(CartasDestino){
+BarajaMazo_Destino = function(CartasDestino){
     var Total = CartasDestino.length; 
     for (i=0; i<Total; i++) { 
-        aleatorio = Math.floor(Math.random()*(Total));
-        nuevo= CartasDestino[aleatorio];
-        BarajadasDestino[i] = nuevo;
+        aleatorio = Math.floor(Math.random()*(CartasDestino.length));
+        MAZO_DESTINO[i] = CartasDestino[aleatorio];
         CartasDestino.splice(aleatorio, 1);
     }
 };
@@ -172,66 +177,37 @@ ComprobarNum = function(){
     return NumeroJugadores;
 }
 
-RepartirCartasPila = function(){
+RepartirCartasIniciales = function(){
     NumeroJugadores = ComprobarNum();
-    if ((NumeroJugadores === 3)||(NumeroJugadores === 4)||(NumeroJugadores === 5)) {
-        var Cartas = [];
-        var Enano;
-        var numero = 7;
-        for (i=0; i<NumeroJugadores; i++) {
-            for(Contador = 1; Contador < numero; contador++){
-                Cartas[Contador] = BarajadasPila[BarajadasPila.length];
-                BarajadasPila.splice(BarajadasPila.length, 1);
-            }
-            Enano = BarajadasEnanos[BarajadasEnanos.length];
-            BarajadasEnanos.splice(BarajadasEnanos.length, 1);
-            Caracteristicas.insert({Jugador: i,
-                                    Puntuacion: 0,
-                                    Mano: Cartas,
-                                    NumCartas: numero,
-                                    Rol: Enano,});
-        }
+    var Cartas = [];
+    var Roll;
+    if ((NumeroJugadores >= 3)&&(NumeroJugadores <= 5)) {
+        var MaxCartas = 7;
     }
     if ((NumeroJugadores === 6) || (NumeroJugadores === 7)) {
-        var Cartas = [];
-        var Enano;
-        var numero = 6;
-        for (i=0; i<NumeroJugadores; i++) {
-            for(Contador = 1; Contador < numero; contador++){
-                Cartas[Contador] = BarajadasPila[BarajadasPila.length];
-                BarajadasPila.splice(BarajadasPila.length, 1);
-            }
-            Enano = BarajadasEnanos[BarajadasEnanos.length];
-            BarajadasEnanos.splice(BarajadasEnanos.length, 1);
-            Caracteristicas.insert({Jugador: i,
-                                    Puntuacion: 0,
-                                    Mano: Cartas,
-                                    NumCartas: numero,
-                                    Rol: Enano,});
-        }
+        var MaxCartas = 6;
     }
-    if ((NumeroJugadores === 8) || (NumeroJugadores === 9) || (NumeroJugadores === 10)) {
-        var Cartas = [];
-        var Enano;
-        var numero = 4;
-        for (i=0; i<NumeroJugadores; i++) {
-            for(Contador = 1; Contador < numero; contador++){
-                Cartas[Contador] = BarajadasPila[BarajadasPila.length];
-                BarajadasPila.splice(BarajadasPila.length, 1);
-            }
-            Enano = BarajadasEnanos[BarajadasEnanos.length];
-            BarajadasEnanos.splice(BarajadasEnanos.length, 1);
-            Caracteristicas.insert({Jugador: i,
-                                    Puntuacion: 0,
-                                    Mano: Cartas,
-                                    NumCartas: numero,
-                                    Rol: Enano,});
+    if ((NumeroJugadores >= 8) && (NumeroJugadores <= 10)) {
+        var MaxCartas = 4;
+    }
+    for (i=0; i<NumeroJugadores; i++) {
+        for(j = 1; j < MaxCartas; contador++){
+            Cartas[j] = MAZO_GENERAL[MAZO_GENERAL.length];
+            MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
         }
+        Roll = MAZO_ROLL[MAZO_ROLL.length];
+        MAZO_ROLL.splice(MAZO_ROLL.length, 1);
+        Caracteristicas.insert({
+            Nombre: i,
+            Puntuacion: 0,
+            Roll: Roll,
+            Mano: Cartas,
+            Pico: "arreglado",
+            Vagoneta: "arreglado",
+            Farolillo: "arreglado",});
     }
 
 };
-
-
 
 
 if (Meteor.isClient) {
