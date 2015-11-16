@@ -1,0 +1,148 @@
+{
+    "cartasCamino": [
+        {
+            "camino1": {
+                "derecha": true,
+                "izquierda": true,
+                "arriba": true,
+                "abajo": true,
+                "bloqueante": false
+            }
+        },
+        {
+            "camino2": {
+                "derecha": true,
+                "izquierda": true,
+                "arriba": false,
+                "abajo": false,
+                "bloqueante": false
+            }
+        },
+        {
+            "camino3": {
+                "derecha": true,
+                "izquierda": true,
+                "arriba": false,
+                "abajo": true,
+                "bloqueante": false
+            }
+        },
+        {
+            "camino4": {
+                "derecha": true,
+                "izquierda": false,
+                "arriba": false,
+                "abajo": true,
+                "bloqueante": false
+            }
+        },
+        {
+            "camino5": {
+                "derecha": false,
+                "izquierda": true,
+                "arriba": false,
+                "abajo": true,
+                "bloqueante": false
+            }
+        },
+        {
+            "camino6": {
+                "derecha": false,
+                "izquierda": false,
+                "arriba": true,
+                "abajo": true,
+                "bloqueante": false
+            }
+        },
+        {
+            "camino7": {
+                "derecha": false,
+                "izquierda": true,
+                "arriba": true,
+                "abajo": true,
+                "bloqueante": false
+            }
+        },
+        {
+            "SinCamino1": {
+                "derecha": true,
+                "izquierda": false,
+                "arriba": false,
+                "abajo": true,
+                "bloqueante": true
+            }
+        },
+        {
+            "SinCamino2": {
+                "derecha": false,
+                "izquierda": true,
+                "arriba": false,
+                "abajo": true,
+                "bloqueante": true
+            }
+        },
+        {
+            "SinCamino3": {
+                "derecha": false,
+                "izquierda": false,
+                "arriba": true,
+                "abajo": true,
+                "bloqueante": true
+            }
+        },
+        {
+            "SinCamino4": {
+                "derecha": true,
+                "izquierda": false,
+                "arriba": false,
+                "abajo": false,
+                "bloqueante": true
+            }
+        },
+        {
+            "SinCamino5": {
+                "derecha": false,
+                "izquierda": false,
+                "arriba": true,
+                "abajo": false,
+                "bloqueante": true
+            }
+        },
+        {
+            "SinCamino6": {
+                "derecha": true,
+                "izquierda": false,
+                "arriba": true,
+                "abajo": true,
+                "bloqueante": true
+            }
+        },
+        {
+            "SinCamino7": {
+                "derecha": true,
+                "izquierda": true,
+                "arriba": true,
+                "abajo": true,
+                "bloqueante": true
+            }
+        },
+        {
+            "SinCamino8": {
+                "derecha": true,
+                "izquierda": true,
+                "arriba": false,
+                "abajo": false,
+                "bloqueante": true
+            }
+        },
+        {
+            "SinCamino9": {
+                "derecha": true,
+                "izquierda": true,
+                "arriba": true,
+                "abajo": false,
+                "bloqueante": true
+            }
+        }
+    ]
+}
