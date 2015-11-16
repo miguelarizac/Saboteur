@@ -199,7 +199,7 @@ RepartirCartasIniciales = function(){
         Roll = MAZO_ROLL[MAZO_ROLL.length];
         MAZO_ROLL.splice(MAZO_ROLL.length, 1);
         Caracteristicas.insert({
-            Nombre: i,
+            Turno: i,
             Puntuacion: 0,
             Roll: Roll,
             Mano: Cartas,
@@ -211,7 +211,10 @@ RepartirCartasIniciales = function(){
 };
 
 
-RobarCartas = function(){
+
+
+
+RobarCartas = function(NumeroTurno){
     NumeroJugadores = ComprobarNum();
     if ((NumeroJugadores >= 3) && (NumeroJugadores <= 5)) {
         var MaxCartas = 7;
@@ -225,9 +228,44 @@ RobarCartas = function(){
     if(MAZO_GENERAL.length > 0){
         Cartas[MaxCartas] = MAZO_GENERAL[MAZO_GENERAL.length];
         MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
+        if(Caracteristicas.find({"Turno":NumeroTurno}) === true ){        
+            Caracteristicas.update({
+                Mano: Cartas});
+        }
+    }
+};
+
+RepartirPuntos = function(Buscadores,Saboteadores){
+    NumeroJugadores = ComprobarNum();
+    var Puntos;
+    if(Buscadores){
+        for (i=0; i<NumeroJugadores; i++) {
+            if(Caracteristicas.find({"Roll":Buscador}) === true){
+            //Repartir puntos   
+            }
+        }       
+    }
+    if(Saboteadores){
+        //Como sé el número de jugadores,mirando la función PrepararRoles se puede saber el numero de sabotadores que hay.
+        if((NumeroJugadores === 3) || (NumeroJugadores === 4)){ //Para 1 saboteador
+            Puntos = 4;
+        }
+        if ((NumeroJugadores >= 5) && (NumeroJugadores <= 9)) { //Para 2 o 3 saboteadores.
+            Puntos = 3;
+        }
+        if (NumeroJugadores === 10) { // Para 4 saboteadores
+            Puntos = 2;
+        }
+        for (i=0; i<NumeroJugadores; i++) {
+            if(Caracteristicas.find({"Roll":Saboteador}) === true){
+            //Repartir puntos
+                Caracteristicas.update({
+                    Puntuacion: Puntos});      
+            }
+        }    
     }
 
-};
+}
 
 var Celda = function(){
     this.carta = null;
@@ -293,6 +331,8 @@ var Tablero = function(destinos){
 var NumRondas = 3;
 
 Partida = function(){
+    var Saboteadores = false;
+    var Buscadores = false;
     NumeroJugadores = ComprobarNum();
     var Cartas = [];
     var PepitaEncontrada = false;   
@@ -311,11 +351,20 @@ Partida = function(){
                     //Aquí llamar a la función Jugar una Carta.
 
                     //Aquí llamar a la función Robar una Carta.
+                    RobarCartas(i);
                 //}
             }
         }
         //FIN DE LA RONDA.
+            if(PepitaEncontrada){
+                Buscadores = true;             
+            }else {
+                Saboteadores = true;
+            }
             //Aquí llamar a la función Repartir Puntuacion.
+            RepartirPuntos(Buscadores,Saboteadores);
+            Saboteadores = false;
+            Buscadores = false;    
     
     }
 
