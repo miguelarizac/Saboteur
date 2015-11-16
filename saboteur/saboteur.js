@@ -229,6 +229,66 @@ RobarCartas = function(){
 
 };
 
+var Celda = function(){
+    this.carta = null;
+    this.ocupada = false;
+    this.posible = false;
+
+    this.comprobarCelda = function(carta) {
+        if (!this.ocupada) {
+            this.posible = true;
+        }
+    };
+};
+
+
+var Tablero = function(destinos){
+    this.list = {};
+    this.arrayOcupadas = [];
+
+    for (i = 0; i < 21; i++) {
+        for (j = 0; j < 30; j++) {
+            this.list[i.toString() + "," + j.toString()] = new Celda(); 
+        };
+    };
+    this.list["11,6"].carta = 'ComienzoEscalera';
+    this.list["11,6"].ocupada = true;
+    this.arrayOcupadas.push("11,6");
+
+    this.list["9,14"].carta = destinos[0];
+    this.list["9,14"].ocupada = true;
+    this.arrayOcupadas.push("9,14");
+
+    this.list["11,14"].carta = destinos[1];
+    this.list["11,14"].ocupada = true;
+    this.arrayOcupadas.push("11,14");
+
+    this.list["13,14"].carta = destinos[2];
+    this.list["13,14"].ocupada = true;
+    this.arrayOcupadas.push("13,14");
+
+    this.posiblesCeldas = function(carta){
+        for (i = 0; i < this.arrayOcupadas.length; i++) {
+            var fila = this.arrayOcupadas[i].split(",")[0];
+            var columna = this.arrayOcupadas[i].split(",")[1];
+            this.list[(fila+1).toString() + "," + columna.toString()].comprobarCelda(carta);
+            this.list[(fila-1).toString() + "," + columna.toString()].comprobarCelda(carta);
+            this.list[fila.toString() + "," + (columna+1).toString()].comprobarCelda(carta);
+            this.list[fila.toString() + "," + (columna-1).toString()].comprobarCelda(carta);
+        };
+    }; 
+
+
+    this.actualizarCelda = function(carta,fila, columna) {
+        this.list[fila.toString() + "," + columna.toString()].carta = carta;
+        this.list[fila.toString() + "," + columna.toString()].ocupada = true;
+        this.list[fila.toString() + "," + columna.toString()].posible = false;
+        this.arrayOcupadas.push(fila.toString() + "," + columna.toString());
+    };
+
+};
+
+
 
 var NumRondas = 3;
 
