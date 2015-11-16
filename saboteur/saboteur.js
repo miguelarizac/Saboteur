@@ -180,6 +180,7 @@ ComprobarNum = function(){
 
 RepartirCartasIniciales = function(){
     NumeroJugadores = ComprobarNum();
+    var Puntos = 0;
     var Cartas = [];
     var Roll;
     if ((NumeroJugadores >= 3) && (NumeroJugadores <= 5)) {
@@ -192,7 +193,7 @@ RepartirCartasIniciales = function(){
         var MaxCartas = 4;
     }
     for (i=0; i<NumeroJugadores; i++) {
-        for(j = 1; j < MaxCartas; contador++){
+        for(j = 1; j < MaxCartas; j++){
             Cartas[j] = MAZO_GENERAL[MAZO_GENERAL.length];
             MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
         }
@@ -200,7 +201,7 @@ RepartirCartasIniciales = function(){
         MAZO_ROLL.splice(MAZO_ROLL.length, 1);
         Caracteristicas.insert({
             Turno: i,
-            Puntuacion: 0,
+            Puntuacion: Puntos,
             Roll: Roll,
             Mano: Cartas,
             Pico: "arreglado",
@@ -228,7 +229,7 @@ RobarCartas = function(NumeroTurno){
     if(MAZO_GENERAL.length > 0){
         Cartas[MaxCartas] = MAZO_GENERAL[MAZO_GENERAL.length];
         MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
-        if(Caracteristicas.find({"Turno":NumeroTurno}) === true ){        
+        if(Caracteristicas.find({"Turno":NumeroTurno}) === NumeroTurno ){        
             Caracteristicas.update({
                 Mano: Cartas});
         }
@@ -239,9 +240,17 @@ RepartirPuntos = function(Buscadores,Saboteadores){
     NumeroJugadores = ComprobarNum();
     var Puntos;
     if(Buscadores){
-        for (i=0; i<NumeroJugadores; i++) {
-            if(Caracteristicas.find({"Roll":Buscador}) === true){
-            //Repartir puntos   
+        Puntos = 4;
+        for (i=1; i<=NumeroJugadores; i++) {
+            var x;
+            //Actualizar puntos.
+            x = Caracteristicas.find({"Puntuacion":i});
+            x = x + Puntos;
+            Puntos = x;
+            if(Caracteristicas.find({"Roll":i}) === 'Buscador'){
+            //Repartir puntos 
+                Caracteristicas.update({
+                    Puntuacion: Puntos});      
             }
         }       
     }
@@ -256,8 +265,13 @@ RepartirPuntos = function(Buscadores,Saboteadores){
         if (NumeroJugadores === 10) { // Para 4 saboteadores
             Puntos = 2;
         }
-        for (i=0; i<NumeroJugadores; i++) {
-            if(Caracteristicas.find({"Roll":Saboteador}) === true){
+        for (i=1; i<=NumeroJugadores; i++) {
+            var x;
+            //Actualizar puntos.
+            x = Caracteristicas.find({"Puntuacion":i});
+            x = x + Puntos;
+            Puntos = x;
+            if(Caracteristicas.find({"Roll":i}) === 'Saboteador'){
             //Repartir puntos
                 Caracteristicas.update({
                     Puntuacion: Puntos});      
