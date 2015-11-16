@@ -211,6 +211,36 @@ RepartirCartasIniciales = function(){
 };
 
 
+var NumRondas = 3;
+
+Partida = function(){
+   
+    for(i=0; i<NumRondas; i++){
+        //Aquí preparación del tablero
+
+        
+        //Aquí reparto de Cartas iniciales
+        RepartirCartasIniciales();
+
+        //Aquí TURNOS dentro de una ronda,while(hasta que se acaben las cartas o se llegue a la pepita.)
+
+            //Aquí llamar a la función Jugar una Carta.
+
+            //Aquí llamar a la función Robar una Carta.
+
+        //FIN DE LA RONDA.
+            //Aquí llamar a la función Repartir Puntuacion.
+    
+    }
+
+    //Aquí Comprabación de puntos de Jugadores, y decir el Ganador.
+    //FIN PARTIDA. 
+    
+
+};
+
+
+
 if (Meteor.isClient) {
   // counter starts at 0
   Session.setDefault('counter', 0);
