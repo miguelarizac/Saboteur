@@ -234,7 +234,7 @@ Partida = function(){
         //Aquí TURNOS dentro de una ronda,while(mientras que un jugador no llegue a la pepita.)
         while((PepitaEncontrada === false)){
             
-            //Si un jugador no tiene mas cartas en su mano, ni jugará Carta ni Robará {
+            //Si un jugador tiene cartas en su mano,jugará Carta y Robará {
                 //Aquí llamar a la función Jugar una Carta.
 
                 //Aquí llamar a la función Robar una Carta.
