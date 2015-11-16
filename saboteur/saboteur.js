@@ -212,9 +212,19 @@ RepartirCartasIniciales = function(){
 
 
 RobarCartas = function(){
-    TurnosRonda = ComprobarNum();
+    NumeroJugadores = ComprobarNum();
+    if ((NumeroJugadores >= 3) && (NumeroJugadores <= 5)) {
+        var MaxCartas = 7;
+    }
+    if ((NumeroJugadores === 6) || (NumeroJugadores === 7)) {
+        var MaxCartas = 6;
+    }
+    if ((NumeroJugadores >= 8) && (NumeroJugadores <= 10)) {
+        var MaxCartas = 4;
+    }
     if(MAZO_GENERAL.length > 0){
-        
+        Cartas[MaxCartas] = MAZO_GENERAL[MAZO_GENERAL.length];
+        MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
     }
 
 };
@@ -223,6 +233,8 @@ RobarCartas = function(){
 var NumRondas = 3;
 
 Partida = function(){
+    NumeroJugadores = ComprobarNum();
+    var Cartas = [];
     var PepitaEncontrada = false;   
     for(i=0; i<NumRondas; i++){
         //Aquí preparación del tablero
@@ -234,11 +246,13 @@ Partida = function(){
         //Aquí TURNOS dentro de una ronda,while(mientras que un jugador no llegue a la pepita.)
         while((PepitaEncontrada === false)){
             
-            //Si un jugador tiene cartas en su mano,jugará Carta y Robará {
-                //Aquí llamar a la función Jugar una Carta.
+            for (i=0; i<NumeroJugadores; i++) {             
+                //Si un jugador tiene cartas en su mano,jugará Carta y Robará {
+                    //Aquí llamar a la función Jugar una Carta.
 
-                //Aquí llamar a la función Robar una Carta.
-            //}
+                    //Aquí llamar a la función Robar una Carta.
+                //}
+            }
         }
         //FIN DE LA RONDA.
             //Aquí llamar a la función Repartir Puntuacion.
