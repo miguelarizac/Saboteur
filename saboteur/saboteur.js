@@ -231,14 +231,14 @@ Partida = function(){
         //Aquí reparto de Cartas iniciales
         RepartirCartasIniciales();
 
-        //Aquí TURNOS dentro de una ronda,while(hasta que se acaben las cartas o se llegue a la pepita.)
+        //Aquí TURNOS dentro de una ronda,while(mientras que un jugador no llegue a la pepita.)
         while((PepitaEncontrada === false)){
-        
-        
+            
+            //Si un jugador no tiene mas cartas en su mano, ni jugará Carta ni Robará {
+                //Aquí llamar a la función Jugar una Carta.
 
-            //Aquí llamar a la función Jugar una Carta.
-
-            //Aquí llamar a la función Robar una Carta.
+                //Aquí llamar a la función Robar una Carta.
+            //}
         }
         //FIN DE LA RONDA.
             //Aquí llamar a la función Repartir Puntuacion.
