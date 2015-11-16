@@ -10,6 +10,8 @@ Paginas Útiles:
 
 [Plataforma de juego ](http://es.boardgamearena.com/#!gamepanel?game=saboteur)
 
+[JSON] (http://codebeautify.org/jsonviewer/f1581c)
+
 SPRITES:
 
   - Las Cartas son de 90(width)x110(height) pixeles. 
