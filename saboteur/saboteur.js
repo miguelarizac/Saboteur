@@ -232,7 +232,7 @@ Partida = function(){
         RepartirCartasIniciales();
 
         //Aquí TURNOS dentro de una ronda,while(hasta que se acaben las cartas o se llegue a la pepita.)
-        while((MAZO_GENERAL.length > 0) || (PepitaEncontrada)){
+        while((PepitaEncontrada === false)){
         
         
 
