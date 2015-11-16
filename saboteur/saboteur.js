@@ -52,40 +52,41 @@ var CartasTunel = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','
                    'Camino3','Camino3','Camino3','Camino3','Camino4','Camino4','Camino4','Camino4','Camino5','Camino5',
                    'Camino5','Camino5','Camino5','Camino6','Camino6','Camino6','Camino6','Camino6','Camino7','Camino7',
                    'Camino7','SinCamino1','SinCamino2','SinCamino3','SinCamino4','SinCamino5','SinCamino6',
-                   'SinCamino7','SinCamino8','SinCamino9',
+                   'SinCamino7','SinCamino8','SinCamino9'
 ];
 
 var CartaInicio = [
-    'ComienzoEscalera',
+    'ComienzoEscalera'
 ];
 
 var CartasDestino = [
     'DestinoNada1', 
     'DestinoNada2', 
-    'DestinoPepita',
+    'DestinoPepita'
 ];
 
 var CartasPepitas = ['Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1',
                      'Pepitas1','Pepitas2','Pepitas2','Pepitas2','Pepitas2','Pepitas2','Pepitas2','Pepitas2','Pepitas2',
                      'Pepitas2','Pepitas3','Pepitas3','Pepitas3','Pepitas3','Pepitas3','Pepitas3','Pepitas3','Pepitas3',
-                     'Pepitas3',
+                     'Pepitas3'
 ];
 
-var CartasAccion = ['Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarVagoneta','ArreglarVagoneta','ArreglarPico','ArreglarPico',
-                    'ArreglarFarolillo','ArreglarFarolillo','RomperVagoneta','RomperVagoneta','RomperVagoneta','RomperFarolillo','RomperFarolillo',
-                    'RomperFarolillo','RomperPico','RomperPico','RomperPico', 'ArreglarFaro_Pico','ArreglarFaro_Vagon',
-                    'ArreglarVagon_Pico','Derrumbamiento','Derrumbamiento','Derrumbamiento',
+var CartasAccion = ['Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarVagoneta','ArreglarVagoneta','ArreglarPico',
+                    'ArreglarPico','ArreglarFarolillo','ArreglarFarolillo','RomperVagoneta','RomperVagoneta','RomperVagoneta',
+                    'RomperFarolillo','RomperFarolillo','RomperFarolillo','RomperPico','RomperPico','RomperPico',
+                    'ArreglarFaro_Pico','ArreglarFaro_Vagon','ArreglarVagon_Pico','Derrumbamiento','Derrumbamiento',
+                    'Derrumbamiento'
 ];
 
 var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','Camino2','Camino2','Camino2','Camino3',
-            'Camino3','Camino3','Camino3','Camino3','Camino4','Camino4','Camino4','Camino4','Camino5','Camino5',
-            'Camino5','Camino5','Camino5','Camino6','Camino6','Camino6','Camino6','Camino6','Camino7','Camino7',
-            'Camino7','SinCamino1','SinCamino2','SinCamino3','SinCamino4','SinCamino5','SinCamino6',
-            'SinCamino7','SinCamino8','SinCamino9',
-            'Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarVagoneta','ArreglarVagoneta','ArreglarPico','ArreglarPico',
-            'ArreglarFarolillo','ArreglarFarolillo','RomperVagoneta','RomperVagoneta','RomperVagoneta','RomperFarolillo','RomperFarolillo',
-            'RomperFarolillo','RomperPico','RomperPico','RomperPico', 'ArreglarFaro_Pico','ArreglarFaro_Vagon',
-            'ArreglarVagon_Pico','Derrumbamiento','Derrumbamiento','Derrumbamiento', 
+                  'Camino3','Camino3','Camino3','Camino3','Camino4','Camino4','Camino4','Camino4','Camino5','Camino5',
+                  'Camino5','Camino5','Camino5','Camino6','Camino6','Camino6','Camino6','Camino6','Camino7','Camino7',
+                  'Camino7','SinCamino1','SinCamino2','SinCamino3','SinCamino4','SinCamino5','SinCamino6',
+                  'SinCamino7','SinCamino8','SinCamino9','Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarVagoneta',
+                  'ArreglarVagoneta','ArreglarPico','ArreglarPico','ArreglarFarolillo','ArreglarFarolillo',
+                  'RomperVagoneta','RomperVagoneta','RomperVagoneta','RomperFarolillo','RomperFarolillo',
+                  'RomperFarolillo','RomperPico','RomperPico','RomperPico', 'ArreglarFaro_Pico','ArreglarFaro_Vagon',
+                  'ArreglarVagon_Pico','Derrumbamiento','Derrumbamiento','Derrumbamiento'
 
 ];
 
@@ -181,7 +182,7 @@ RepartirCartasIniciales = function(){
     NumeroJugadores = ComprobarNum();
     var Cartas = [];
     var Roll;
-    if ((NumeroJugadores >= 3)&&(NumeroJugadores <= 5)) {
+    if ((NumeroJugadores >= 3) && (NumeroJugadores <= 5)) {
         var MaxCartas = 7;
     }
     if ((NumeroJugadores === 6) || (NumeroJugadores === 7)) {
@@ -204,7 +205,7 @@ RepartirCartasIniciales = function(){
             Mano: Cartas,
             Pico: "arreglado",
             Vagoneta: "arreglado",
-            Farolillo: "arreglado",});
+            Farolillo: "arreglado"});
     }
 
 };
