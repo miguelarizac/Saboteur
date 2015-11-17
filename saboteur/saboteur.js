@@ -425,9 +425,6 @@ CaracteristicasService = {
   caracteristicasInsert: function(){
     PartidaId = PartidaService.getPartida("partida1");
     Lista = PartidaService.getList();
-    /*var Rolls = ["Saboteador",
-                 "Buscador",
-                  "Buscador"];*/
     CartasRoll = PrepararRolles(3);
     var estado = "arreglado";
     for (var i = 0; i < 3; i++) {
