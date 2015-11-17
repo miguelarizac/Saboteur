@@ -219,7 +219,7 @@ RepartirCartasIniciales = function(PartidaId){
 
 
 
-RobarCartas = function(){
+RobarCartas = function(PartidaId,JugadorId){
     if(MAZO_GENERAL.length > 0){
         Cartas.push(MAZO_GENERAL[MAZO_GENERAL.length]);
         MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
