@@ -348,7 +348,7 @@ var Tablero = function(destinos){
 
 var NumRondas = 3;
 
-Partida = function(){
+Partida = function(PartidaId){
     var Saboteadores = false;
     var Buscadores = false;
     NumeroJugadores = ComprobarNum();
@@ -359,7 +359,7 @@ Partida = function(){
 
 
         //Aquí reparto de Cartas iniciales
-        RepartirCartasIniciales();
+        RepartirCartasIniciales(PartidaId);
 
         //Aquí TURNOS dentro de una ronda,while(mientras que un jugador no llegue a la pepita.)
         while((PepitaEncontrada === false)){
@@ -396,37 +396,70 @@ Partida = function(){
 
 if (Meteor.isClient) {
   // counter starts at 0
-  Session.setDefault('counter', 0);
-  Template.hello.helpers({
-    counter: function () {
-      return Session.get('counter');
-    }
-  });
-
-  Template.hello.events({
-    'click button': function () {
-      // increment the counter when button is clicked
-      Session.set('counter', Session.get('counter') + 1);
-    }
-  });
+  Meteor.call("testJuego","");
 }
 
 
 if (Meteor.isServer) {
     Meteor.startup(function () {
-      // code to run on server at startup
-      'empezarPartida': function(PartidaId) {
-        Partida(PartidaId);
-
-        //
-      }
-
-
-
-
-
-
-
-
+      Meteor.methods({
+        'empezarPartida': function(PartidaId) {
+          Partida(PartidaId);
+          //
+        },
+        'NuevaPartida': function(userId) {
+          Partidas.insert({
+            status: "stop",
+            listaJugadores: [userId],
+          });
+        },
+      });
+      Jugadores.insert({
+        name: "Alex",
+      });
+      Jugadores.insert({
+        name: "Pazo",
+      });
+      Jugadores.insert({
+        name: "Jona",
+      });
+      AlexId = Jugadores.findOne({name: "Alex"})._id;
+      JonaId = Jugadores.findOne({name: "Jona"})._id;
+      PazoId = Jugadores.findOne({name: "Pazo"})._id;
+      Partidas.insert({
+        status: "stop",
+        listaJugadores: [AlexId,JonaId,PazoId],
+      });
+      PartidaId = Partidas.findOne({status:"stop"})._id;
+      Caracteristicas.insert({
+          JugadorId: AlexId,
+          PartidaId: PartidaId,
+          Puntuacion: 0,
+          Roll: "Saboteador",
+          Mano: null,
+          Pico: "arreglado",
+          Vagoneta: "arreglado",
+          Farolillo: "arreglado"
+      });
+      Caracteristicas.insert({
+          JugadorId: JonaId,
+          PartidaId: PartidaId,
+          Puntuacion: 10,
+          Roll: "Buscador",
+          Mano: null,
+          Pico: "arreglado",
+          Vagoneta: "arreglado",
+          Farolillo: "arreglado"
+      });
+      Caracteristicas.insert({
+          JugadorId: PazoId,
+          PartidaId: PartidaId,
+          Puntuacion: 20,
+          Roll: "Buscador",
+          Mano: null,
+          Pico: "arreglado",
+          Vagoneta: "arreglado",
+          Farolillo: "arreglado"
+      });
   });
 }
