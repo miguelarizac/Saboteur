@@ -392,11 +392,74 @@ Partida = function(PartidaId){
 
 };
 
+JugadoresService = {
+  generateRandomPlayers: function () {
+    var names = ["Jona",
+                 "Alex",
+                  "Pazo"];
+    for (var i = 0; i < names.length; i++) {
+      Jugadores.insert({name: names[i]);
+    }
+  },
+  playersExist: function () {
+    return Jugadores.find().count() > 0;
+  },
+  getPlayerList: function () {
+    return Jugadores.find({}, {sort: { name: 1}});
+  },
+  getPlayer: function (name) {
+    return Jugadores.findOne({name: name})._id);
+  },
+};
 
+PartidaService = {
+  generarPartida:function(){
+    AlexId = JugadoresService.getPlayer("Alex");
+    JonaId = JugadoresService.getPlayer("Jona");
+    PazoId = JugadoresService.getPlayer("Pazo");
+
+    Partidas.insert({
+      status: "stop",
+      listaJugadores: [AlexId,JonaId,PazoId],
+    });
+  },
+  getList: function () {
+    return Jugadores.find({});
+  },
+  getPartida: function (status) {
+    return Partida.findOne({status:status})._id);
+  },
+};
+
+CaracteristicasService = {
+  caracteristicasInsert: function(){
+    PartidaId = PartidaService.getPartida("stop");
+    Lista = PartidaService.getList();
+    var Rolls = ["Saboteador",
+                 "Buscador",
+                  "Buscador"];
+    var estado = "arreglado";
+    for (var i = 0; i < 3; i++) {
+      Caracteristicas.insert({
+          JugadorId: Lista[i],
+          PartidaId: PartidaId,
+          Puntuacion: 0,
+          Roll: Rolls[i], // distintos roles
+          Mano: null,
+          Pico: estado,
+          Vagoneta: estado,
+          Farolillo: estado
+      });
+  }
+};
 
 if (Meteor.isClient) {
   // counter starts at 0
   Meteor.call("testJuego","");
+/*  Template.hello.helpers({
+    players: function () {
+      return PlayersService.getPlayerList();
+    },*/
 }
 
 
@@ -414,52 +477,12 @@ if (Meteor.isServer) {
           });
         },
       });
-      Jugadores.insert({
-        name: "Alex",
-      });
-      Jugadores.insert({
-        name: "Pazo",
-      });
-      Jugadores.insert({
-        name: "Jona",
-      });
-      AlexId = Jugadores.findOne({name: "Alex"})._id;
-      JonaId = Jugadores.findOne({name: "Jona"})._id;
-      PazoId = Jugadores.findOne({name: "Pazo"})._id;
-      Partidas.insert({
-        status: "stop",
-        listaJugadores: [AlexId,JonaId,PazoId],
-      });
-      PartidaId = Partidas.findOne({status:"stop"})._id;
-      Caracteristicas.insert({
-          JugadorId: AlexId,
-          PartidaId: PartidaId,
-          Puntuacion: 0,
-          Roll: "Saboteador",
-          Mano: null,
-          Pico: "arreglado",
-          Vagoneta: "arreglado",
-          Farolillo: "arreglado"
-      });
-      Caracteristicas.insert({
-          JugadorId: JonaId,
-          PartidaId: PartidaId,
-          Puntuacion: 10,
-          Roll: "Buscador",
-          Mano: null,
-          Pico: "arreglado",
-          Vagoneta: "arreglado",
-          Farolillo: "arreglado"
-      });
-      Caracteristicas.insert({
-          JugadorId: PazoId,
-          PartidaId: PartidaId,
-          Puntuacion: 20,
-          Roll: "Buscador",
-          Mano: null,
-          Pico: "arreglado",
-          Vagoneta: "arreglado",
-          Farolillo: "arreglado"
-      });
+
+    if (!JugadoresService.playersExist()) {
+      JugadoresService.generateRandomPlayers();
+    }
+
+      PartidaService.generarPartida();
+      CaracteristicasService.caracteristicasInsert();
   });
 }
