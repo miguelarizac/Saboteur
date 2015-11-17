@@ -14,6 +14,12 @@ Paginas Útiles:
 
 SPRITES:
 
-  - Las Cartas son de 90(width)x110(height) pixeles. 
+  - Las Cartas son de 60(width)x90(height) pixeles. 
+
+Colaboradores:
+Alejandro Malagón
+Alberto Del Pozo Cabañero 
+Miguel Ariza Colmenares
+Jonatan Santana Pero
 
 
