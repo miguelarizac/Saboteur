@@ -17,9 +17,13 @@ SPRITES:
   - Las Cartas son de 60(width)x90(height) pixeles. 
 
 Colaboradores:
+
 Alejandro Malagón
+
 Alberto Del Pozo Cabañero 
+
 Miguel Ariza Colmenares
+
 Jonatan Santana Pero
 
 
