@@ -398,7 +398,7 @@ JugadoresService = {
                  "Alex",
                   "Pazo"];
     for (var i = 0; i < names.length; i++) {
-      Jugadores.insert({name: names[i]);
+      Jugadores.insert({name: names[i]});
     }
   },
   playersExist: function () {
@@ -408,7 +408,7 @@ JugadoresService = {
     return Jugadores.find({}, {sort: { name: 1}});
   },
   getPlayer: function (name) {
-    return Jugadores.findOne({name: name})._id);
+    return Jugadores.findOne({name: name})._id;
   },
 };
 
@@ -424,10 +424,10 @@ PartidaService = {
     });
   },
   getList: function () {
-    return Jugadores.find({});
+    return Jugadores.find().fetch();
   },
   getPartida: function (status) {
-    return Partida.findOne({status:status})._id);
+    return Partidas.findOne({status:status})._id;
   },
 };
 
@@ -441,7 +441,7 @@ CaracteristicasService = {
     var estado = "arreglado";
     for (var i = 0; i < 3; i++) {
       Caracteristicas.insert({
-          JugadorId: Lista[i],
+          JugadorId: Lista[i]._id,
           PartidaId: PartidaId,
           Puntuacion: 0,
           Roll: Rolls[i], // distintos roles
@@ -450,12 +450,13 @@ CaracteristicasService = {
           Vagoneta: estado,
           Farolillo: estado
       });
+    }
   }
 };
 
 if (Meteor.isClient) {
   // counter starts at 0
-  Meteor.call("testJuego","");
+
 /*  Template.hello.helpers({
     players: function () {
       return PlayersService.getPlayerList();
