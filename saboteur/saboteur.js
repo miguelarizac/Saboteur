@@ -6,7 +6,7 @@ Caracteristicas = new Meteor.Collection("Caracteristicas");
 var TiposCartas = {
     //Tipo tunel
     Camino1: { Izquierda: 0, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 0},
-    Camino2: { Izquierda: 0, Derecha: 1, Arriba: 1, Abajo: 1, Bloqueante: 0},
+    Camino2: { Izquierda: 1, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 0},
     Camino3: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 1, Bloqueante: 0},
     Camino4: { Izquierda: 0, Derecha: 1, Arriba: 0, Abajo: 1, Bloqueante: 0},
     Camino5: { Izquierda: 1, Derecha: 0, Arriba: 0, Abajo: 1, Bloqueante: 0},
@@ -96,7 +96,7 @@ var MAZO_GENERAL = [];
 var MAZO_ROLL = [];
 var MAZO_PEPITAS = [];
 
-PrepararRolles = function(){
+PrepararRolles = function(NumeroJugadores){
     if (NumeroJugadores === 3){
         var CartasRoll = ['Saboteador','Buscador','Buscador'];
     }
@@ -219,19 +219,9 @@ RepartirCartasIniciales = function(PartidaId){
 
 
 
-RobarCartas = function(NumeroTurno){
-    NumeroJugadores = ComprobarNum();
-    if ((NumeroJugadores >= 3) && (NumeroJugadores <= 5)) {
-        var MaxCartas = 7;
-    }
-    if ((NumeroJugadores === 6) || (NumeroJugadores === 7)) {
-        var MaxCartas = 6;
-    }
-    if ((NumeroJugadores >= 8) && (NumeroJugadores <= 10)) {
-        var MaxCartas = 4;
-    }
+RobarCartas = function(){
     if(MAZO_GENERAL.length > 0){
-        Cartas[MaxCartas] = MAZO_GENERAL[MAZO_GENERAL.length];
+        Cartas.push(MAZO_GENERAL[MAZO_GENERAL.length]);
         MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
         if(Caracteristicas.find({"Turno":NumeroTurno}) === NumeroTurno ){
             Caracteristicas.update({
