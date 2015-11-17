@@ -386,7 +386,7 @@ JugadoresService = {
   generateRandomPlayers: function () {
     var names = ["Jona",
                  "Alex",
-                  "Pazo"];
+                 "Pazo"];
     for (var i = 0; i < names.length; i++) {
       Jugadores.insert({name: names[i]});
     }
@@ -409,7 +409,7 @@ PartidaService = {
     PazoId = JugadoresService.getPlayer("Pazo");
 
     Partidas.insert({
-      status: "stop",
+      status: "partida1",
       listaJugadores: [AlexId,JonaId,PazoId],
     });
   },
@@ -423,18 +423,19 @@ PartidaService = {
 
 CaracteristicasService = {
   caracteristicasInsert: function(){
-    PartidaId = PartidaService.getPartida("stop");
+    PartidaId = PartidaService.getPartida("partida1");
     Lista = PartidaService.getList();
-    var Rolls = ["Saboteador",
+    /*var Rolls = ["Saboteador",
                  "Buscador",
-                  "Buscador"];
+                  "Buscador"];*/
+    CartasRoll = PrepararRolles(3);
     var estado = "arreglado";
     for (var i = 0; i < 3; i++) {
       Caracteristicas.insert({
           JugadorId: Lista[i]._id,
           PartidaId: PartidaId,
           Puntuacion: 0,
-          Roll: Rolls[i], // distintos roles
+          Roll: CartasRoll[i], // distintos roles
           Mano: null,
           Pico: estado,
           Vagoneta: estado,
