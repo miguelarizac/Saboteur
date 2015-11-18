@@ -391,7 +391,7 @@ Partida = function(PartidaId){
     }
 
     //Aquí Comprabación de puntos de Jugadores, y decir el Ganador.
-    ComprobarPuntuacion();
+    Ganador = ComprobarPuntuacion();
     //FIN PARTIDA.
 
 
