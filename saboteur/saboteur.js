@@ -227,8 +227,7 @@ RobarCartas = function(IdenPartida,Turnos){
             Cartas = Caracteristicas.findOne({turno: Turnos}).Mano;
             Cartas.push(MAZO_GENERAL[MAZO_GENERAL.length]);
             MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
-            Caracteristicas.update({
-                Mano: Cartas});   
+            Caracteristicas.update({turno: Turnos},{$set: {Mano: Cartas}});
         }
     }
 };
@@ -243,8 +242,7 @@ RepartirPuntos = function(Buscadores,Saboteadores){
             if (Roll === "Buscador"){
                 Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
                 Puntuacion = Puntuacion + Puntos;
-                Caracteristicas.update({
-                    Puntuacion: Puntos});
+                Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
             }
         }
     }
@@ -264,8 +262,7 @@ RepartirPuntos = function(Buscadores,Saboteadores){
             if (Roll === "Saboteador"){
                 Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
                 Puntuacion = Puntuacion + Puntos;
-                Caracteristicas.update({
-                    Puntuacion: Puntos});
+                Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
             }
         }
     }
@@ -284,7 +281,7 @@ ComprobarPuntuacion = function(){
     idenJugador = Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
     nombreGanador = Jugadores.findOne({_id: idenJugador}).name;
 
-    return nombreGanador; 
+    return nombreGanador;
 }
 
 var Celda = function(){
