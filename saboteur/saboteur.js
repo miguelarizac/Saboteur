@@ -220,7 +220,7 @@ RepartirCartasIniciales = function(PartidaId){
 
 
 
-RobarCartas = function(IdenPartida,Turnos){
+/*RobarCartas = function(IdenPartida,Turnos){
     if(MAZO_GENERAL.length > 0){
         numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
         part = Caracteristicas.findOne({PartidaId: IdenPartida}).PartidaId;
@@ -231,6 +231,12 @@ RobarCartas = function(IdenPartida,Turnos){
             Caracteristicas.update({turno: Turnos},{$set: {Mano: Cartas}});
         }
     }
+};*/
+
+RobarCartas = function(Turnos,Cartas,Mazo_Pila){
+    Cartas.push(Mazo_Pila[Mazo_Pila.length]);
+    Mazo_Pila.splice(Mazo_Pila.length, 1);
+    Caracteristicas.update({turno: Turnos},{$set: {Mano: Cartas}});
 };
 
 RepartirPuntos = function(Buscadores,Saboteadores){
@@ -357,13 +363,21 @@ Partida = function(PartidaId){
         while((PepitaEncontrada === false)){
             //Hacer con while.
             while(turnos < NumeroJugadores){
+                
                 Cartas = Caracteristicas.findOne({turno: turnos}).Mano;
+                numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
+                part = Caracteristicas.findOne({PartidaId: PartidaId}).PartidaId;
+                Mazo_Pila = Partidas.findOne({PartidaId: PartidaId}).Pila;
                 //Si un jugador tiene cartas en su mano,jugará Carta y Robará {
                 if (Cartas.length > 0){
-                    //Aquí llamar a la función Jugar una Carta.
+                        if(Mazo_Pila.length > 0){
+                            if ((numTurno === turnos) && (part === PartidaId)){
+                                 //Aquí llamar a la función Jugar una Carta.
 
-                    //Aquí llamar a la función Robar una Carta.
-                    RobarCartas(PartidaId,turnos);
+                                //Aquí llamar a la función Robar una Carta.
+                                RobarCartas(numTurno,Cartas,Mazo_Pila);
+                            }
+                        }
                 }
                 turnos++;
             }
@@ -414,11 +428,14 @@ PartidaService = {
     AlexId = JugadoresService.getPlayer("Alex");
     JonaId = JugadoresService.getPlayer("Jona");
     PazoId = JugadoresService.getPlayer("Pazo");
+    NumRonda = 1;
 
     Partidas.insert({
       numPartida: nombrePartida,
       listaJugadores: [AlexId,JonaId,PazoId],
-      mazoGeneral: MAZO_GENERAL,
+      Pila: MAZO_GENERAL,
+      CartasDestino: MAZO_DESTINO,
+      Ronda: NumRonda, 
       Tablero:null,
     });
   },
