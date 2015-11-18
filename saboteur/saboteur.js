@@ -463,10 +463,6 @@ CaracteristicasService = {
 if (Meteor.isClient) {
   // counter starts at 0
 
-/*  Template.hello.helpers({
-    players: function () {
-      return PlayersService.getPlayerList();
-    },*/
 }
 
 
@@ -477,18 +473,11 @@ if (Meteor.isServer) {
           Partida(PartidaId);
           //
         },
-        'NuevaPartida': function(userId) {
-          Partidas.insert({
-            status: "stop",
-            listaJugadores: [userId],
-          });
-        },
       });
 
-    if (!JugadoresService.playersExist()) {
-      JugadoresService.generateRandomPlayers();
-    }
-
+      if (!JugadoresService.playersExist()) {
+        JugadoresService.generateRandomPlayers();
+      }
       PartidaService.generarPartida();
       CaracteristicasService.caracteristicasInsert();
   });
