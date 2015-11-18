@@ -3,6 +3,7 @@ Partidas = new Meteor.Collection("Partidas");
 Caracteristicas = new Meteor.Collection("Caracteristicas");
 //var mongoose = require('mongoose'),Schema = mongoose.Schema;
 
+var nombrePartida = "partida1";
 var TiposCartas = {
     //Tipo tunel
     Camino1: { Izquierda: 0, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 0},
@@ -424,21 +425,26 @@ PartidaService = {
     PazoId = JugadoresService.getPlayer("Pazo");
 
     Partidas.insert({
-      numPartida: "partida1",
+      numPartida: nombrePartida,
       listaJugadores: [AlexId,JonaId,PazoId],
+      mazoGeneral: MAZO_GENERAL,
+      Tablero:null,
     });
   },
   getList: function () {
     return Jugadores.find().fetch();
   },
-  getPartida: function (numPartida) {
+  getPartidaId: function (numPartida) {
     return Partidas.findOne({numPartida:numPartida})._id;
+  },
+  getAttr: function(attr){
+    return Partida.findOne({_id:Partidas.getpartidaId(nombrePartida)}).attr;
   },
 };
 
 CaracteristicasService = {
   caracteristicasInsert: function(){
-    PartidaId = PartidaService.getPartida("partida1");
+    PartidaId = PartidaService.getPartidaId(nombrePartida);
     Lista = PartidaService.getList();
     CartasRoll = PrepararRolles(3);
     CartasIniciales = ["camino1","camino2","camino3","camino4",
