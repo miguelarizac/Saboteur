@@ -150,7 +150,6 @@ BarajarMazo_Roll = function(){
 };
 
 BarajarMazo_General = function(CartasPila){
-    //CartasAccion = CartasAccion.sort(function() {return Math.random() - 0.5});
     var Total = CartasPila.length;
     for (i=0; i<Total; i++) {
         aleatorio = Math.floor(Math.random()*(CartasPila.length));
@@ -159,7 +158,7 @@ BarajarMazo_General = function(CartasPila){
     }
 };
 
-BarajaMazo_Destino = function(CartasDestino){
+BarajarMazo_Destino = function(CartasDestino){
     var Total = CartasDestino.length;
     for (i=0; i<Total; i++) {
         aleatorio = Math.floor(Math.random()*(CartasDestino.length));
@@ -222,8 +221,6 @@ RepartirCartasIniciales = function(PartidaId){
 
 RobarCartas = function(IdenPartida,Turnos){
     if(MAZO_GENERAL.length > 0){
-        //Cartas.push(MAZO_GENERAL[MAZO_GENERAL.length]);
-        //MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
         numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
         part = Caracteristicas.findOne({PartidaId: IdenPartida}).PartidaId;
         if ((numTurno === Turnos) &&(part === IdenPartida)){
@@ -273,6 +270,21 @@ RepartirPuntos = function(Buscadores,Saboteadores){
         }
     }
 
+}
+
+ComprobarPuntuacion = function(){
+    NumeroJugadores = ComprobarNum();
+    Puntos = 0;
+    for (i=0; i<NumeroJugadores; i++) {
+        Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+        if(Puntuacion > Puntos){
+            Puntos = Puntuacion;
+        }
+    }
+    idenJugador = Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
+    nombreGanador = Jugadores.findOne({_id: idenJugador}).name;
+
+    return nombreGanador; 
 }
 
 var Celda = function(){
@@ -382,6 +394,7 @@ Partida = function(PartidaId){
     }
 
     //Aquí Comprabación de puntos de Jugadores, y decir el Ganador.
+    ComprobarPuntuacion();
     //FIN PARTIDA.
 
 
