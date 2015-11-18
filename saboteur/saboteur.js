@@ -202,7 +202,8 @@ RepartirCartasIniciales = function(PartidaId){
         Roll = MAZO_ROLL[MAZO_ROLL.length];
         MAZO_ROLL.splice(MAZO_ROLL.length, 1);
         Caracteristicas.insert({
-            JugadorId: listaJugadores[i],
+            turno: i,
+            JugadorId: listaJugadores[i]._id,
             PartidaId: PartidaId,
             Puntuacion: Puntos,
             Roll: Roll,
@@ -219,13 +220,18 @@ RepartirCartasIniciales = function(PartidaId){
 
 
 
-RobarCartas = function(PartidaId,JugadorId){
+RobarCartas = function(IdenPartida,Turnos){
     if(MAZO_GENERAL.length > 0){
-        Cartas.push(MAZO_GENERAL[MAZO_GENERAL.length]);
-        MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
-        if(Caracteristicas.find({"Turno":NumeroTurno}) === NumeroTurno ){
+        //Cartas.push(MAZO_GENERAL[MAZO_GENERAL.length]);
+        //MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
+        numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
+        part = Caracteristicas.findOne({PartidaId: IdenPartida}).PartidaId;
+        if ((numTurno === Turnos) &&(part === IdenPartida)){
+            Cartas = Caracteristicas.findOne({turno: Turnos}).Mano;
+            Cartas.push(MAZO_GENERAL[MAZO_GENERAL.length]);
+            MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
             Caracteristicas.update({
-                Mano: Cartas});
+                Mano: Cartas});   
         }
     }
 };
@@ -235,14 +241,11 @@ RepartirPuntos = function(Buscadores,Saboteadores){
     var Puntos;
     if(Buscadores){
         Puntos = 4;
-        for (i=1; i<=NumeroJugadores; i++) {
-            var x;
-            //Actualizar puntos.
-            x = Caracteristicas.find({"Puntuacion":i});
-            x = x + Puntos;
-            Puntos = x;
-            if(Caracteristicas.find({"Roll":i}) === 'Buscador'){
-            //Repartir puntos
+        for (i=0; i<NumeroJugadores; i++) {
+            Roll = Caracteristicas.findOne({turno: i}).Roll;
+            if (Roll === "Buscador"){
+                Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+                Puntuacion = Puntuacion + Puntos;
                 Caracteristicas.update({
                     Puntuacion: Puntos});
             }
@@ -259,14 +262,11 @@ RepartirPuntos = function(Buscadores,Saboteadores){
         if (NumeroJugadores === 10) { // Para 4 saboteadores
             Puntos = 2;
         }
-        for (i=1; i<=NumeroJugadores; i++) {
-            var x;
-            //Actualizar puntos.
-            x = Caracteristicas.find({"Puntuacion":i});
-            x = x + Puntos;
-            Puntos = x;
-            if(Caracteristicas.find({"Roll":i}) === 'Saboteador'){
-            //Repartir puntos
+        for (i=0; i<NumeroJugadores; i++) {
+            Roll = Caracteristicas.findOne({turno: i}).Roll;
+            if (Roll === "Saboteador"){
+                Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+                Puntuacion = Puntuacion + Puntos;
                 Caracteristicas.update({
                     Puntuacion: Puntos});
             }
@@ -341,6 +341,7 @@ var NumRondas = 3;
 Partida = function(PartidaId){
     var Saboteadores = false;
     var Buscadores = false;
+    var turnos = 0
     NumeroJugadores = ComprobarNum();
     var Cartas = [];
     var PepitaEncontrada = false;
@@ -353,15 +354,19 @@ Partida = function(PartidaId){
 
         //Aquí TURNOS dentro de una ronda,while(mientras que un jugador no llegue a la pepita.)
         while((PepitaEncontrada === false)){
-
-            for (i=0; i<NumeroJugadores; i++) {
+            //Hacer con while.
+            while(turnos < NumeroJugadores){
+                Cartas = Caracteristicas.findOne({turno: turnos}).Mano;
                 //Si un jugador tiene cartas en su mano,jugará Carta y Robará {
+                if (Cartas.length > 0){
                     //Aquí llamar a la función Jugar una Carta.
 
                     //Aquí llamar a la función Robar una Carta.
-                    RobarCartas(i);
-                //}
+                    RobarCartas(PartidaId,turnos);
+                }
+                turnos++;
             }
+            turnos = 0;
         }
         //FIN DE LA RONDA.
             if(PepitaEncontrada){
@@ -409,15 +414,15 @@ PartidaService = {
     PazoId = JugadoresService.getPlayer("Pazo");
 
     Partidas.insert({
-      status: "partida1",
+      numPartida: "partida1",
       listaJugadores: [AlexId,JonaId,PazoId],
     });
   },
   getList: function () {
     return Jugadores.find().fetch();
   },
-  getPartida: function (status) {
-    return Partidas.findOne({status:status})._id;
+  getPartida: function (numPartida) {
+    return Partidas.findOne({numPartida:numPartida})._id;
   },
 };
 
@@ -426,14 +431,17 @@ CaracteristicasService = {
     PartidaId = PartidaService.getPartida("partida1");
     Lista = PartidaService.getList();
     CartasRoll = PrepararRolles(3);
+    CartasIniciales = ["camino1","camino2","camino3","camino4",
+                       "Mapa","RomperPico","Mapa",];
     var estado = "arreglado";
     for (var i = 0; i < 3; i++) {
       Caracteristicas.insert({
+          turno: i,
           JugadorId: Lista[i]._id,
           PartidaId: PartidaId,
           Puntuacion: 0,
           Roll: CartasRoll[i], // distintos roles
-          Mano: null,
+          Mano: CartasIniciales,
           Pico: estado,
           Vagoneta: estado,
           Farolillo: estado
