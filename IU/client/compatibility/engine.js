@@ -26,7 +26,7 @@ var Card = function(sprite, x, y) {
 	this.w = 60;
 	this.h = 90;
 	this.sprite = sprite;
-	
+
 	this.draw = function() {
 		SpriteSheet.draw(this.sprite, this.x, this.y);
 		ctx.strokeStyle = "black";
@@ -42,13 +42,13 @@ var Board = function() {
 	this.y = 0;
 	this.w = 900;
 	this.h = 630;
-	this.cell_w = 60; 
+	this.cell_w = 60;
 	this.cell_h = 90;
 	this.list = {};
 
 	for (i = 0; i < 7; i++) {
   		for (j = 0; j < 15; j++) {
-	  		this.list[i.toString() + "," + j.toString()] = new Card("standard",j*this.cell_w,i*this.cell_h); 
+	  		this.list[i.toString() + "," + j.toString()] = new Card("standard",j*this.cell_w,i*this.cell_h);
 	  	};
    	};
 
@@ -60,12 +60,20 @@ var Board = function() {
    		}
    	};
 
-   	this.draw = function() {
-   		for (key in this.list) {
-   			this.list[key].draw();
-   		};
-   	}
-}
+		/*this.up = function(){
+			console.log("subo");
+		};
+
+		this.down = function(){
+			console.log("bajo");
+		};*/
+
+		this.draw = function() {
+			for(key in this.list){
+				this.list[key].draw();
+			}
+   	};
+};
 
 
 // POINTS TABLE
@@ -121,6 +129,7 @@ var Game = function(spriteData) {
 	this.spriteData = spriteData;
 	this.gameboard = new GameBoard();
 	that = this;
+
 
 	this.initialize = function(callback) {
 		SpriteSheet.load(this.spriteData, "sprites.png",callback);
