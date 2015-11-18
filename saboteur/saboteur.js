@@ -241,7 +241,7 @@ RepartirPuntos = function(Buscadores,Saboteadores){
             Roll = Caracteristicas.findOne({turno: i}).Roll;
             if (Roll === "Buscador"){
                 Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
-                Puntuacion = Puntuacion + Puntos;
+                Puntos = Puntuacion + Puntos;
                 Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
             }
         }
@@ -261,7 +261,7 @@ RepartirPuntos = function(Buscadores,Saboteadores){
             Roll = Caracteristicas.findOne({turno: i}).Roll;
             if (Roll === "Saboteador"){
                 Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
-                Puntuacion = Puntuacion + Puntos;
+                Puntos = Puntuacion + Puntos;
                 Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
             }
         }
