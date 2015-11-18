@@ -9,8 +9,8 @@ var sprites = {
 	dos:	{sx: 0, sy: 0, w: 60, h: 90, frames: 1},
 	tres:	{sx: 0, sy: 0, w: 60, h: 90, frames: 2},
 	cuatro:	{sx: 0, sy: 0, w: 60, h: 90, frames: 3},
-
-	standard:	{sx: 0, sy: 270, w: 60, h: 90, frames: 4},
+	claro:	{sx: 0, sy: 270, w: 60, h: 90, frames: 5},
+	standard:	{sx: 0, sy: 630, w: 60, h: 90, frames: 4},
 
 };
 
@@ -25,18 +25,25 @@ var loadCanvas = function(){
   	var newGame = new Game(sprites)
   	newGame.initialize(newGame.loop);
   	listener(newGame);
-		//listenKey(newGame);
+  	CartasMano(newGame);
+	listenKey(newGame);
 };
 
 
 var listener = function(Game) {
 	$('#canvas').click(function(event) {
-		Game.gameboard.board.updateCell(event.pageX,event.pageY);
+		var x = event.pageX - offsetLeft;
+   		var y = event.pageY - offsetTop;
+		Game.listener(x,y);
 	});
 };
 
+var CartasMano = function(Game){
+	var array = ["dos","uno","tres","cuatro","dos","uno"];
+	Game.gameboard.handboard.updateList(array);
+};
 
-/*var listenKey = function(Game) {
+var listenKey = function(Game) {
 	window.addEventListener('keydown', function(e) {
     if(e.keyCode == '38'){
         e.preventDefault();
@@ -48,4 +55,4 @@ var listener = function(Game) {
 				Game.gameboard.board.down();
 		}
 	});
-};*/
+};

@@ -20,18 +20,40 @@ var SpriteSheet = new function () {
 
 // CARD
 
-var Card = function(sprite, x, y) {
+var Card = function(sprite, x, y,str) {
 	this.x = x;
 	this.y = y;
 	this.w = 60;
 	this.h = 90;
+	if(str) { 
+		this.str = str;
+	}
+	this.strokeStyle = "black";
+	this.lineWidth = 1;
 	this.sprite = sprite;
 
-	this.draw = function() {
-		SpriteSheet.draw(this.sprite, this.x, this.y);
-		ctx.strokeStyle = "black";
-  		ctx.lineWidth = 1;
-		ctx.strokeRect(this.x,this.y,this.w,this.h);
+	this.inSide = function(x,y){
+		if(x >= this.x && x < this.x + this.w && y >= this.y && y < this.y + this.h){
+			this.strokeStyle = "red";
+			return this;
+		}
+		return null;
+	};
+
+	this.draw = function(scroll) {
+		var x = this.x;
+		var y = this.y;
+		if(scroll){
+			y = this.y - (scroll * this.h);
+		}
+		SpriteSheet.draw(this.sprite, x,y);
+		ctx.strokeStyle = this.strokeStyle;
+  		ctx.lineWidth = this.lineWidth;
+		ctx.strokeRect(x,y,this.w,this.h);
+		if(this.str){
+			ctx.font = "20px Georgia";
+			ctx.fillText(this.str,x,y+40);
+		}	
 	}
 }
 
@@ -42,36 +64,45 @@ var Board = function() {
 	this.y = 0;
 	this.w = 900;
 	this.h = 630;
+	this.scroll = 12;
 	this.cell_w = 60;
 	this.cell_h = 90;
 	this.list = {};
 
-	for (i = 0; i < 7; i++) {
+	for (i = 0; i < 31; i++) {
   		for (j = 0; j < 15; j++) {
-	  		this.list[i.toString() + "," + j.toString()] = new Card("standard",j*this.cell_w,i*this.cell_h);
+  			var str = i.toString() + "," + j.toString();
+	  		this.list[str] = new Card("standard",j*this.cell_w,i*this.cell_h,str);
 	  	};
    	};
 
-   	this.updateCell = function(clickedX, clickedY) {
-   		var columna = Math.floor((clickedX - offsetLeft)/60);
-   		var fila = Math.floor((clickedY - offsetTop)/90);
-   		if (clickedX - offsetLeft <= this.w && clickedY - offsetTop <= this.h) {
-   			this.list[fila.toString() + "," + columna.toString()].sprite = "uno";
+   	this.updateCard = function(x, y, sprite) {
+   		var columna = Math.floor(x/60);
+   		var fila = Math.floor(y/90);
+   		if (x <= this.w && y <= this.h) {
+   			this.list[(fila+this.scroll).toString() + "," + columna.toString()].sprite = sprite;
    		}
    	};
 
-		/*this.up = function(){
-			console.log("subo");
-		};
 
-		this.down = function(){
-			console.log("bajo");
-		};*/
+	this.up = function(){
+		if (this.scroll > 0){
+			this.scroll--;
+		}
+	};
 
-		this.draw = function() {
-			for(key in this.list){
-				this.list[key].draw();
-			}
+	this.down = function(){
+		if (this.scroll < 24){
+			this.scroll++;
+		}	
+	};
+
+	this.draw = function() {
+		for (i = this.scroll; i < this.scroll + 7; i++) {
+  			for (j = 0; j < 15; j++) {
+	  			this.list[i.toString() + "," + j.toString()].draw(this.scroll);
+	  		};
+   		};
    	};
 };
 
@@ -83,6 +114,10 @@ var PointsBoard = function() {
 	this.y = 0;
 	this.w = c.width - this.x;
 	this.h = c.height - this.y;
+
+	this.listener = function(x,y){
+		console.log("POINTS BOARD");
+	};
 
 	this.draw = function() {
 		ctx.strokeStyle = "black";
@@ -99,11 +134,41 @@ var HandBoard = function() {
 	this.y = 630;
 	this.w = 900;
 	this.h = c.height - this.y;
+	this.list = [];
+
+	for (i = 0; i < 6; i++) { // Maximo de cartas en mano son 6
+			this.list[i] = new Card("standard",(i*60)+(30*i)+50,this.y+50); 
+	};
+
+	this.defaultCards = function() {
+		for (i = 0; i < this.list.length; i++) {
+			this.list[i].strokeStyle = "black";
+		};
+	};
+
+	this.updateList = function(arrayCards) {
+		for (i = 0; i < arrayCards.length; i++) {
+			this.list[i].sprite = arrayCards[i];
+		};
+	};
+
+	this.selectCard = function(x,y) {
+		for (i = 0; i < this.list.length; i++) {
+			if (this.list[i].inSide(x,y) != null){
+				return this.list[i].inSide(x,y);
+			}
+		};
+
+		return null;
+	};
 
 	this.draw = function() {
 		ctx.strokeStyle = "black";
   		ctx.lineWidth = 1;
 		ctx.strokeRect(this.x,this.y,this.w,this.h);
+		for (i = 0; i < this.list.length; i++) {
+			this.list[i].draw();
+		};
 	};
 }
 
@@ -113,6 +178,18 @@ var GameBoard = function() {
 	this.board = new Board();
 	this.handboard = new HandBoard();
 	this.pointsboard = new PointsBoard();
+
+	this.inRegion = function(x, y){
+		var aux;
+		if (x >= this.board.x && x < this.board.x + this.board.w && y >= this.board.y && y < this.board.y + this.board.h){
+   			aux = this.board;
+   		} else if (x >= this.handboard.x && x < this.handboard.x + this.handboard.w && y >= this.handboard.y && y < this.handboard.y + this.handboard.h){
+   			aux = this.handboard;
+   		} else {
+   			aux = this.pointsboard;
+   		}
+		return aux;
+	};
 
 	this.draw = function() {
 		this.board.draw();
@@ -128,6 +205,8 @@ var Game = function(spriteData) {
 	this.height = c.height;
 	this.spriteData = spriteData;
 	this.gameboard = new GameBoard();
+	this.status = false;
+	this.Cardselected = null;
 	that = this;
 
 
@@ -135,7 +214,29 @@ var Game = function(spriteData) {
 		SpriteSheet.load(this.spriteData, "sprites.png",callback);
 	};
 
+	this.listener = function(x,y){
+		var aux = this.gameboard.inRegion(x,y);
+		if(!this.status){
+			if (aux === this.gameboard.handboard){
+				this.Cardselected = this.gameboard.handboard.selectCard(x,y);
+				if(this.Cardselected != null){
+					this.status = true;
+				}
+			}	
+		}else{
+			if (aux === this.gameboard.board){
+				this.gameboard.board.updateCard(x,y,this.Cardselected.sprite);
+				this.gameboard.handboard.defaultCards();
+				this.Cardselected = null;
+				this.status = false;
+			}
+		}		
+	};
+
 	this.loop = function() {
+		var image = new Image();
+		image.src = "fondo.jpg";
+		ctx.drawImage(image,0,0,1100,810);
 		that.gameboard.draw();
 		setTimeout(that.loop, 100);
 	};
