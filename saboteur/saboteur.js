@@ -7,7 +7,8 @@ Caracteristicas = new Meteor.Collection("Caracteristicas");
 //			CARTAS 				  //
 ////////////////////////////////////
 var nombrePartida = "partida1";
-var TiposCartas = {
+
+var tiposCartas = {
 	//Tipo tunel
 	Camino1: { Izquierda: 0, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 0},
 	Camino2: { Izquierda: 1, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 0},
@@ -93,12 +94,19 @@ var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','C
 /////////////////////////////
 //			TABLERO        //
 /////////////////////////////
+var carta = function(){
+	this.izquierda = null;
+	this.derecha = null;
+	this.arriba = null;
+	this.abajo = null;
+	this.bloqueante = null;
+};
 
-var Celda = function(){
+var celda = function(){
 	this.carta = null;
 };
 
-var Tablero = function(destinos){
+var tablero = function(destinos){
 	this.celdas = {};
 	this.celdasOcupadas=[];
 
@@ -156,37 +164,37 @@ var Tablero = function(destinos){
 //////////////////////////////////
 
 
-PrepararRolles = function(NumeroJugadores){
-	if (NumeroJugadores === 3){
-		var CartasRoll = ['Saboteador','Buscador','Buscador'];
+prepararRolles = function(numeroJugadores){
+	if (numeroJugadores === 3){
+		var cartasRoll = ['Saboteador','Buscador','Buscador'];
 	}
-	else if (NumeroJugadores === 4){
-		var CartasRoll = ['Saboteador','Buscador','Buscador','Buscador'];
+	else if (numeroJugadores === 4){
+		var cartasRoll = ['Saboteador','Buscador','Buscador','Buscador'];
 	}
-	else if (NumeroJugadores === 5){
-		var CartasRoll = ['Saboteador','Saboteador','Buscador','Buscador','Buscador'];
+	else if (numeroJugadores === 5){
+		var cartasRoll = ['Saboteador','Saboteador','Buscador','Buscador','Buscador'];
 	}
-	else if (NumeroJugadores === 6){
-		var CartasRoll = ['Saboteador','Saboteador','Buscador','Buscador','Buscador',
+	else if (numeroJugadores === 6){
+		var cartasRoll = ['Saboteador','Saboteador','Buscador','Buscador','Buscador',
 						   'Buscador'];
 	}
-	else if (NumeroJugadores === 7){
-		var CartasRoll = ['Saboteador','Saboteador','Saboteador','Buscador','Buscador',
+	else if (numeroJugadores === 7){
+		var cartasRoll = ['Saboteador','Saboteador','Saboteador','Buscador','Buscador',
 						   'Buscador','Buscador'];
 	}
-	else if (NumeroJugadores === 8){
-		var CartasRoll = ['Saboteador','Saboteador','Saboteador','Buscador','Buscador',
+	else if (numeroJugadores === 8){
+		var cartasRoll = ['Saboteador','Saboteador','Saboteador','Buscador','Buscador',
 						   'Buscador','Buscador','Buscador'];
 	}
-	else if (NumeroJugadores === 9){
-		var CartasRoll = ['Saboteador','Saboteador','Saboteador','Buscador','Buscador',
+	else if (numeroJugadores === 9){
+		var cartasRoll = ['Saboteador','Saboteador','Saboteador','Buscador','Buscador',
 						   'Buscador','Buscador','Buscador','Buscador'];
 	}
-	else if (NumeroJugadores === 10){
-		var CartasRoll = ['Saboteador','Saboteador','Saboteador','Saboteador','Buscador','Buscador',
+	else if (numeroJugadores === 10){
+		var cartasRoll = ['Saboteador','Saboteador','Saboteador','Saboteador','Buscador','Buscador',
 						   'Buscador','Buscador','Buscador','Buscador','Buscador'];
 	}
-	return CartasRoll;
+	return cartasRoll;
 };
 
 BarajarMazo_General = function(CartasPila){
@@ -201,7 +209,7 @@ BarajarMazo_General = function(CartasPila){
 };
 
 BarajarMazo_Roll = function(NumeroJugadores){
-	CartasRoll = PrepararRolles(NumeroJugadores);
+	CartasRoll = prepararRolles(NumeroJugadores);
 	var Total = CartasRoll.length;
 	var mazo_roll = [];
 	for (i=0; i<Total; i++) {
@@ -283,9 +291,6 @@ RepartirCartasIniciales = function(PartidaId){
 	}
 
 };
-
-
-
 
 
 /*RobarCartas = function(IdenPartida,Turnos){
@@ -435,46 +440,50 @@ JugadoresService = {
 		return Jugadores.find().count() > 0;
 	},
 	getPlayerList: function () {
-		return Jugadores.find({}, {sort: { name: 1}});
+		return Jugadores.find();						// esta funcion solo la usamos para probar
 	},
-	getPlayer: function (name) {
-		return Jugadores.findOne({name: name})._id;
+	getPlayerId: function (nameJugador) {
+		return Jugadores.findOne({name: nameJugador})._id;
 	},
 };
 
 PartidaService = {
 	generarPartida:function(){
-		AlexId = JugadoresService.getPlayer("Alex");
-		JonaId = JugadoresService.getPlayer("Jona");
-		PazoId = JugadoresService.getPlayer("Pazo");
-		NumRonda = 1;
-		mazo_general = BarajarMazo_general(CartasPila);
-		mazo_destinos = BarajarMazo_Destino(CartasDestino);
-
+		AlexId = JugadoresService.getPlayerId("Alex");
+		JonaId = JugadoresService.getPlayerId("Jona");
+		PazoId = JugadoresService.getPlayerId("Pazo");
 		Partidas.insert({
-			ListaJugadores: [AlexId,JonaId,PazoId],
-			Tablero:null,
-			MazoGeneral: mazo_general,
-			MazoDestinos: MAZO_DESTINO,
-			JugadorActivo: AlexId;
-			Ronda: NumRonda, 
-			
+			numPartida: 1,//para probar
+			listaJugadores: [AlexId,JonaId,PazoId], 
 		});
 	},
-	getList: function () {
-		return Jugadores.find().fetch();
+	getPartidaId: function (num) {
+		return Partidas.findOne({numPartida:num})._id;
 	},
-	getPartidaId: function (numPartida) {
-		return Partidas.findOne({numPartida:numPartida})._id;
-	},
-	getAttr: function(attr){
-		return Partida.findOne({_id:Partidas.getpartidaId(nombrePartida)}).attr;
+
+	//getAttr: function(attr, PartidaId){
+	//	return Partida.findOne({_id:Partidas.getpartidaId(nombrePartida)}).attr;
+	//},
+
+	empezarPartida: function(partidaId){
+		tablero = null;
+		mazoGeneral = BarajarMazo_General(CartasPila);
+		mazoDestinos = BarajarMazo_Destino(CartasDestino);
+		jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[0]; //coge el primero de la lista
+		nRonda = 1;
+		Partidas.insert({
+			tablero: this.tablero,
+			mazoGeneral: this.mazoGeneral,
+			mazoDestinos: this.mazoDestinos,
+			jugadorActivo: this.jugadorActivo,
+			nRonda: this.nRonda, 
+			
+		});
 	},
 };
 
 CaracteristicasService = {
-	caracteristicasInsert: function(){
-		PartidaId = PartidaService.getPartidaId(nombrePartida);
+	caracteristicasInsert: function(partidaId){
 		Lista = PartidaService.getList();
 		CartasRoll = PrepararRolles(3);
 		CartasIniciales = ["camino1","camino2","camino3","camino4",
@@ -501,19 +510,27 @@ if (Meteor.isClient) {
 
 }
 
-
 if (Meteor.isServer) {
 	Meteor.startup(function () {
 		Meteor.methods({
 			'empezarPartida': function(PartidaId) {
-				Partida(PartidaId);
+				
+				//Preparar tabero 
+				//Barajar mazos
+				//numero ronda = 1
+				//Jugador activo el primero de la lista
+				//meterlo en PArtidas._id
+
+				//repartir cartas iniciales a cada jugador
 			},
 		});
 
 		if (!JugadoresService.playersExist()) {
 			JugadoresService.generateRandomPlayers();
 	  	}
-		PartidaService.generarPartida();
-		CaracteristicasService.caracteristicasInsert();
+		PartidaService.generarPartida();						//esto lo tienen que hacer los de la aplicacion
+		var partidaId = PartidaService.getPartidaId(1);			//esto nos lo pasan de la aplicacion
+		PartidaService.empezarPartida(partidaId);
+		//CaracteristicasService.caracteristicasInsert();
   });
 }
