@@ -365,9 +365,6 @@ ComprobarPuntuacion = function(){
 }
 
 
-
-
-
 var NumRondas = 3;
 
 Partida = function(PartidaId){
@@ -452,13 +449,10 @@ PartidaService = {
 		AlexId = JugadoresService.getPlayerId("Alex");
 		JonaId = JugadoresService.getPlayerId("Jona");
 		PazoId = JugadoresService.getPlayerId("Pazo");
-		jugadoresArray = []
-		jugadoresArray[0]= AlexId;
-		jugadoresArray[1]= JonaId;
-		jugadoresArray[2]= PazoId;
+		
 		Partidas.insert({
 			numPartida: 1,//para probar
-			listaJugadores: this.jugadoresArray, 
+			listaJugadores: [AlexId,JonaId,PazoId], 
 		});
 	},
 	getPartidaId: function (num) {
@@ -476,10 +470,6 @@ PartidaService = {
 		jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[0]; //coge el primero de la lista
 		nRonda = 1;
 
-
-
-
-
 		Partidas.update({_id: partidaId},
 						{$set:{
 							tablero: this.tablero,
@@ -494,23 +484,24 @@ PartidaService = {
 };
 
 CaracteristicasService = {
-	caracteristicasInsert: function(partidaId){
-		Lista = PartidaService.getList();
-		CartasRoll = PrepararRolles(3);
-		CartasIniciales = ["camino1","camino2","camino3","camino4",
+	crearCaractIniciales: function(partidaId){
+		listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
+		nJugadores = listaJugadores.length;
+		cartasRoll = BarajarMazo_Roll(nJugadores);
+
+		cartasIniciales = ["camino1","camino2","camino3","camino4",
 						   "Mapa","RomperPico","Mapa",];
-		var estado = "arreglado";
+
 		for (var i = 0; i < 3 ; i++) {
 			Caracteristicas.insert({
-				turno: i,
-				JugadorId: Lista[i]._id,
-				PartidaId: PartidaId,
-				Puntuacion: 0,
-				Roll: CartasRoll[i], // distintos roles
-				Mano: CartasIniciales,
-				Pico: estado,
-				Vagoneta: estado,
-				Farolillo: estado
+				partidaId: partidaId,
+				jugadorId: listaJugadores[i],
+				puntuacion: 0,
+				roll: cartasRoll[i], 
+				cartas: CartasIniciales,
+				pico: "arreglado",
+				vagoneta: "arreglado",
+				farolillo: "arreglado"
 			});
 		}
 	}
@@ -519,18 +510,21 @@ CaracteristicasService = {
 if (Meteor.isClient) {
 	// counter starts at 0
 
+
 }
 
 if (Meteor.isServer) {
 	Meteor.startup(function () {
 		Meteor.methods({
 			'empezarPartida': function(PartidaId) {
-				
 				//Preparar tabero 
 				//Barajar mazos
 				//numero ronda = 1
 				//Jugador activo el primero de la lista
-				//meterlo en PArtidas._id
+				PartidaService.empezarPartida(partidaId);	//meterlo en PArtidas._id
+				
+				CaracteristicasService.crearCaractIniciales(partidaId);
+
 
 				//repartir cartas iniciales a cada jugador
 			},
@@ -542,7 +536,6 @@ if (Meteor.isServer) {
 		PartidaService.generarPartida();						//esto lo tienen que hacer los de la plataforma
 		var partidaId = PartidaService.getPartidaId(1);			//esto nos lo pasan de la plataforma
 		//esto ira dentro de meteor.merhods empezarpartida.
-		PartidaService.empezarPartida(partidaId);
-		//CaracteristicasService.caracteristicasInsert();
+		
   });
 }
