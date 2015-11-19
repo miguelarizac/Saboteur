@@ -444,6 +444,7 @@ PartidaService = {
 	  Pila: MAZO_GENERAL,
 	  CartasDestino: MAZO_DESTINO,
 	  Ronda: NumRonda, 
+	  JugadorActivo: AlexId;
 	  Tablero:null,
 	});
   },
