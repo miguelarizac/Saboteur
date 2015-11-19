@@ -264,8 +264,8 @@ RepartirCartasIniciales = function(PartidaId){
 	}
 	for (i=0; i<NumeroJugadores; i++) {
 		for(j = 1; j < MaxCartas; j++){
-			Cartas[j] = mazo_general[mazo_general.length];
-			mazo_general.splice(mazo_general.length, 1);
+			Cartas[j] = mazo_general[this.mazo_general.length];
+			this.mazo_general.splice(this.mazo_general.length, 1);
 		}
 		Roll = mazo_roll[mazo_roll.length];
 		mazo_roll.splice(mazo_roll.length, 1);
@@ -374,7 +374,7 @@ Partida = function(PartidaId){
 	var PepitaEncontrada = false;
 	for(i=0; i<NumRondas; i++){
 		//Aquí preparación del tablero
-
+		//Añadir a la partida : Lista de jugadores/ Mazo_general / JugadorActivo / 
 
 		//Aquí reparto de Cartas iniciales
 		RepartirCartasIniciales(PartidaId);
@@ -390,29 +390,29 @@ Partida = function(PartidaId){
 				Mazo_Pila = Partidas.findOne({PartidaId: PartidaId}).Pila;
 				//Si un jugador tiene cartas en su mano,jugará Carta y Robará {
 				if (Cartas.length > 0){
-						if(Mazo_Pila.length > 0){
-							if ((numTurno === turnos) && (part === PartidaId)){
-								 //Aquí llamar a la función Jugar una Carta.
+					if(Mazo_Pila.length > 0){
+						if ((numTurno === turnos) && (part === PartidaId)){
+							 //Aquí llamar a la función Jugar una Carta.
 
-								//Aquí llamar a la función Robar una Carta.
-								RobarCartas(numTurno,Cartas,Mazo_Pila);
-							}
+							//Aquí llamar a la función Robar una Carta.
+							RobarCartas(numTurno,Cartas,Mazo_Pila);
 						}
+					}
 				}
 				turnos++;
 			}
 			turnos = 0;
 		}
 		//FIN DE LA RONDA.
-			if(PepitaEncontrada){
-				Buscadores = true;
-			}else {
-				Saboteadores = true;
-			}
-			//Aquí llamar a la función Repartir Puntuacion.
-			RepartirPuntos(Buscadores,Saboteadores);
-			Saboteadores = false;
-			Buscadores = false;
+		if(PepitaEncontrada){
+			Buscadores = true;
+		}else {
+			Saboteadores = true;
+		}
+		//Aquí llamar a la función Repartir Puntuacion.
+		RepartirPuntos(Buscadores,Saboteadores);
+		Saboteadores = false;
+		Buscadores = false;
 
 	}
 
@@ -420,79 +420,80 @@ Partida = function(PartidaId){
 	Ganador = ComprobarPuntuacion();
 	//FIN PARTIDA.
 
-
 };
 
 JugadoresService = {
-  generateRandomPlayers: function () {
-	var names = ["Jona",
-				 "Alex",
-				 "Pazo"];
-	for (var i = 0; i < names.length; i++) {
-	  Jugadores.insert({name: names[i]});
-	}
-  },
-  playersExist: function () {
-	return Jugadores.find().count() > 0;
-  },
-  getPlayerList: function () {
-	return Jugadores.find({}, {sort: { name: 1}});
-  },
-  getPlayer: function (name) {
-	return Jugadores.findOne({name: name})._id;
-  },
+	generateRandomPlayers: function () {
+		var names = ["Jona",
+					"Alex",
+					"Pazo"];
+		for (var i = 0; i < names.length; i++) {
+			Jugadores.insert({name: names[i]});
+		}
+	},
+	playersExist: function () {
+		return Jugadores.find().count() > 0;
+	},
+	getPlayerList: function () {
+		return Jugadores.find({}, {sort: { name: 1}});
+	},
+	getPlayer: function (name) {
+		return Jugadores.findOne({name: name})._id;
+	},
 };
 
 PartidaService = {
-  generarPartida:function(){
-	AlexId = JugadoresService.getPlayer("Alex");
-	JonaId = JugadoresService.getPlayer("Jona");
-	PazoId = JugadoresService.getPlayer("Pazo");
-	NumRonda = 1;
+	generarPartida:function(){
+		AlexId = JugadoresService.getPlayer("Alex");
+		JonaId = JugadoresService.getPlayer("Jona");
+		PazoId = JugadoresService.getPlayer("Pazo");
+		NumRonda = 1;
+		mazo_general = BarajarMazo_general(CartasPila);
+		mazo_destinos = BarajarMazo_Destino(CartasDestino);
 
-	Partidas.insert({
-	  numPartida: nombrePartida,
-	  listaJugadores: [AlexId,JonaId,PazoId],
-	  Pila: mazo_general,
-	  CartasDestino: MAZO_DESTINO,
-	  Ronda: NumRonda, 
-	  JugadorActivo: AlexId;
-	  Tablero:null,
-	});
-  },
-  getList: function () {
-	return Jugadores.find().fetch();
-  },
-  getPartidaId: function (numPartida) {
-	return Partidas.findOne({numPartida:numPartida})._id;
-  },
-  getAttr: function(attr){
-	return Partida.findOne({_id:Partidas.getpartidaId(nombrePartida)}).attr;
-  },
+		Partidas.insert({
+			ListaJugadores: [AlexId,JonaId,PazoId],
+			Tablero:null,
+			MazoGeneral: mazo_general,
+			MazoDestinos: MAZO_DESTINO,
+			JugadorActivo: AlexId;
+			Ronda: NumRonda, 
+			
+		});
+	},
+	getList: function () {
+		return Jugadores.find().fetch();
+	},
+	getPartidaId: function (numPartida) {
+		return Partidas.findOne({numPartida:numPartida})._id;
+	},
+	getAttr: function(attr){
+		return Partida.findOne({_id:Partidas.getpartidaId(nombrePartida)}).attr;
+	},
 };
 
 CaracteristicasService = {
-  caracteristicasInsert: function(){
-	PartidaId = PartidaService.getPartidaId(nombrePartida);
-	Lista = PartidaService.getList();
-	CartasRoll = PrepararRolles(3);
-	CartasIniciales = ["camino1","camino2","camino3","camino4",
-					   "Mapa","RomperPico","Mapa",];
-	var estado = "arreglado";
-	for (var i = 0; i < 3; i++) {
-	  Caracteristicas.insert({
-		  turno: i,
-		  JugadorId: Lista[i]._id,
-		  PartidaId: PartidaId,
-		  Puntuacion: 0,
-		  Roll: CartasRoll[i], // distintos roles
-		  Mano: CartasIniciales,
-		  Pico: estado,
-		  Vagoneta: estado,
-		  Farolillo: estado
-	  });
+	caracteristicasInsert: function(){
+		PartidaId = PartidaService.getPartidaId(nombrePartida);
+		Lista = PartidaService.getList();
+		CartasRoll = PrepararRolles(3);
+		CartasIniciales = ["camino1","camino2","camino3","camino4",
+						   "Mapa","RomperPico","Mapa",];
+		var estado = "arreglado";
+		for (var i = 0; i < 3 ; i++) {
+			Caracteristicas.insert({
+				turno: i,
+				JugadorId: Lista[i]._id,
+				PartidaId: PartidaId,
+				Puntuacion: 0,
+				Roll: CartasRoll[i], // distintos roles
+				Mano: CartasIniciales,
+				Pico: estado,
+				Vagoneta: estado,
+				Farolillo: estado
+			});
+		}
 	}
-  }
 };
 
 if (Meteor.isClient) {
@@ -507,7 +508,7 @@ if (Meteor.isServer) {
 			'empezarPartida': function(PartidaId) {
 				Partida(PartidaId);
 			},
-	 	});
+		});
 
 		if (!JugadoresService.playersExist()) {
 			JugadoresService.generateRandomPlayers();
