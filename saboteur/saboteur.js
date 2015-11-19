@@ -3,6 +3,9 @@ Partidas = new Meteor.Collection("Partidas");
 Caracteristicas = new Meteor.Collection("Caracteristicas");
 //var mongoose = require('mongoose'),Schema = mongoose.Schema;
 
+////////////////////////////////////
+//			CARTAS 				  //
+////////////////////////////////////
 var nombrePartida = "partida1";
 var TiposCartas = {
 	//Tipo tunel
@@ -36,19 +39,18 @@ var TiposCartas = {
 	Pepitas2: {nPepitas: 2},
 	Pepitas3: {nPepitas: 3},
 	//Tipo Accion
-	RomperVagoneta: {Funcion: "RomperVagoneta"},
-	RomperFarolillo: {Funcion: "RomperFarolillo"},
-	RomperPico: {Funcion: "RomperPico"},
-	ArreglarVagoneta: {Funcion: "ArreglarVagoneta"},
-	ArreglarFarolillo: {Funcion: "ArreglarFarolillo"},
-	ArreglarPico: {Funcion: "ArreglarPico"},
-	ArreglarFaro_Pico: {Funcion1: "ArreglarFarolillo", Funcion2: "ArreglarPico"},
-	ArreglarFaro_Vagon: {Funcion1: "ArreglarFarolillo", Funcion2: "ArreglarVagoneta"},
-	ArreglarVagon_Pico: {Funcion1: "ArreglarVagoneta", Funcion2: "ArreglarPico"},
+	RomperVagoneta: {Funcion: "Romper", Objeto: "Vagoneta"},
+	RomperFarolillo: {Funcion: "Romper", Objeto: "Farolillo"},
+	RomperPico: {Funcion: "Romper", Objeto: "Pico"},
+	ArreglarVagoneta: {Funcion: "Arreglar", Objeto:"Vagoneta"},
+	ArreglarFarolillo: {Funcion: "Arreglar", Objeto:"Farolillo"},
+	ArreglarPico: {Funcion: "Arreglar", Objeto:"Pico"},
+	ArreglarFaro_Pico: {Funcion:"Arreglar", Objeto1: "Farolillo", Obejeto2: "Pico"},
+	ArreglarFaro_Vagon: {Funcion:"Arreglar", Objeto1: "Farolillo", Objeto2: "Vagoneta"},
+	ArreglarVagon_Pico: {Funcion:"Arreglar", Objeto1: "Vagoneta", Objeto2: "Pico"},
 	Mapa: {Funcion: "DestapaCartaDestino"},
 	Derrumbamiento: {Funcion: "Derrumbamiento"}
 };
-
 
 var CartasTunel = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','Camino2','Camino2','Camino2','Camino3',
 				   'Camino3','Camino3','Camino3','Camino3','Camino4','Camino4','Camino4','Camino4','Camino5','Camino5',
@@ -57,14 +59,10 @@ var CartasTunel = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','
 				   'SinCamino7','SinCamino8','SinCamino9'
 ];
 
-var CartaInicio = [
-	'ComienzoEscalera'
+var CartaInicio = ['ComienzoEscalera'
 ];
 
-var CartasDestino = [
-	'DestinoNada1',
-	'DestinoNada2',
-	'DestinoPepita'
+var CartasDestino = ['DestinoNada1','DestinoNada2','DestinoPepita'
 ];
 
 var CartasPepitas = ['Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1',
@@ -89,13 +87,74 @@ var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','C
 				  'RomperVagoneta','RomperVagoneta','RomperVagoneta','RomperFarolillo','RomperFarolillo',
 				  'RomperFarolillo','RomperPico','RomperPico','RomperPico', 'ArreglarFaro_Pico','ArreglarFaro_Vagon',
 				  'ArreglarVagon_Pico','Derrumbamiento','Derrumbamiento','Derrumbamiento'
-
 ];
 
-var MAZO_DESTINO = [];
-var MAZO_GENERAL = [];
-var MAZO_ROLL = [];
-var MAZO_PEPITAS = [];
+
+/////////////////////////////
+//			TABLERO        //
+/////////////////////////////
+
+var Celda = function(){
+	this.carta = null;
+};
+
+var Tablero = function(destinos){
+	this.celdas = {};
+	this.celdasOcupadas=[];
+
+	for (fila = -15; i < 15; i++) {
+		for (columna = -3; j < 11; j++) {
+			this.celdas[columna.toString() + "," + fila.toString()] = new Celda();
+		};
+	};
+	this.celdas["0,0"].carta = 'ComienzoEscalera';
+	this.celdasOcupadas.push("0,0");
+	this.celdas["8,2"].carta = destinos[0];
+	this.celdasOcupadas.push("8,2");
+	this.celdas["8,0"].carta = destinos[1];
+	this.celdasOcupadas.push("8,0");
+	this.celdas["8,-2"].carta = destinos[2];
+	this.celdasOcupadas.push("8,-2");
+
+	this.posiblesCeldas = function(carta){
+		for (i = 0; i < this.celdasOcupadas.length; i++) {
+
+		};
+	};
+
+	this.ponerCarta = function(carta, columna, fila) {
+		var cartasAround = [];
+		var success = true;
+		var cord1 = (columna-1).toString() + "," + fila.toString();
+		var cord2 = columna.toString() + "," + (fila+1).toString();
+		var cord3 = (columna+1).toString() + "," + fila.toString();
+		var cord4 =  columna.toString() + "," + (fila-1).toString();
+		var cords = [cord1, cord2, cord3, cord4];
+
+		for (i=0; i < 4; i++) {
+			//guardamos las cartas a su alrededor en cartasAround[]
+			//n
+		};
+
+		for (i=0; i<4; i++) {
+			if(!compatibles(cartasAround[i], carta, i)){
+				success = false;	//compatibles(cartaAround[i], carta, lado)
+				break;
+			}
+		};
+		this.celdas[columna.toString() + "," + fila.toString()].carta = 'ComienzoEscalera';
+		this.celdasOcupadas.push(columna.toString() + "," + fila.toString());
+			
+		return success;
+	};
+
+};
+
+
+//////////////////////////////////
+//		PREPARACION Cartas 		//
+//////////////////////////////////
+
 
 PrepararRolles = function(NumeroJugadores){
 	if (NumeroJugadores === 3){
@@ -127,46 +186,54 @@ PrepararRolles = function(NumeroJugadores){
 		var CartasRoll = ['Saboteador','Saboteador','Saboteador','Saboteador','Buscador','Buscador',
 						   'Buscador','Buscador','Buscador','Buscador','Buscador'];
 	}
-
 	return CartasRoll;
-};
-
-BarajarMazo_Pepitas = function(CartasPepitas){
-	var Total = CartasPepitas.length;
-	for (i=0; i<Total; i++) {
-		aleatorio = Math.floor(Math.random()*(CartasPepitas.length));
-		MAZO_PEPITAS[i] = CartasPepitas[aleatorio];
-		CartasPepitas.splice(aleatorio, 1);
-	}
-};
-
-BarajarMazo_Roll = function(){
-	CartasRoll = PrepararRolles();
-	var Total = CartasRoll.length;
-	for (i=0; i<Total; i++) {
-		aleatorio = Math.floor(Math.random()*(CartasRoll.length));
-		MAZO_ROLL[i] = CartasRoll[aleatorio];
-		CartasRoll.splice(aleatorio, 1);
-	}
 };
 
 BarajarMazo_General = function(CartasPila){
 	var Total = CartasPila.length;
+	var mazo_general = [];
 	for (i=0; i<Total; i++) {
 		aleatorio = Math.floor(Math.random()*(CartasPila.length));
-		MAZO_GENERAL[i] = CartasPila[aleatorio];
+		mazo_general[i] = CartasPila[aleatorio];
 		CartasPila.splice(aleatorio, 1);
 	}
+	return mazo_general;
+};
+
+BarajarMazo_Roll = function(NumeroJugadores){
+	CartasRoll = PrepararRolles(NumeroJugadores);
+	var Total = CartasRoll.length;
+	var mazo_roll = [];
+	for (i=0; i<Total; i++) {
+		aleatorio = Math.floor(Math.random()*(CartasRoll.length));
+		mazo_roll[i] = CartasRoll[aleatorio];
+		CartasRoll.splice(aleatorio, 1);
+	}
+	return mazo_roll;
 };
 
 BarajarMazo_Destino = function(CartasDestino){
 	var Total = CartasDestino.length;
+	var mazo_destino = [];
 	for (i=0; i<Total; i++) {
 		aleatorio = Math.floor(Math.random()*(CartasDestino.length));
-		MAZO_DESTINO[i] = CartasDestino[aleatorio];
+		mazo_destino[i] = CartasDestino[aleatorio];
 		CartasDestino.splice(aleatorio, 1);
 	}
+	return mazo_destino;
 };
+
+BarajarMazo_Pepitas = function(CartasPepitas){
+	var Total = CartasPepitas.length;
+	var mazo_pepitas = [];
+	for (i=0; i<Total; i++) {
+		aleatorio = Math.floor(Math.random()*(CartasPepitas.length));
+		mazo_pepitas[i] = CartasPepitas[aleatorio];
+		CartasPepitas.splice(aleatorio, 1);
+	}
+	return mazo_pepitas;
+};
+
 
 ComprobarNum = function(){
 	var NumeroJugadores;
@@ -181,6 +248,7 @@ ComprobarNum = function(){
 
 RepartirCartasIniciales = function(PartidaId){
 	var listaJugadores = Partidas.findOne({_id: PartidaId}).listaJugadores
+	var mazo_general = BarajarMazo_general(CartasPila);
 	var NumeroJugadores = listaJugadores.length;
 	var Puntos = 0;
 	var Cartas = [];
@@ -196,11 +264,11 @@ RepartirCartasIniciales = function(PartidaId){
 	}
 	for (i=0; i<NumeroJugadores; i++) {
 		for(j = 1; j < MaxCartas; j++){
-			Cartas[j] = MAZO_GENERAL[MAZO_GENERAL.length];
-			MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
+			Cartas[j] = mazo_general[mazo_general.length];
+			mazo_general.splice(mazo_general.length, 1);
 		}
-		Roll = MAZO_ROLL[MAZO_ROLL.length];
-		MAZO_ROLL.splice(MAZO_ROLL.length, 1);
+		Roll = mazo_roll[mazo_roll.length];
+		mazo_roll.splice(mazo_roll.length, 1);
 		Caracteristicas.insert({
 			turno: i,
 			JugadorId: listaJugadores[i]._id,
@@ -221,13 +289,13 @@ RepartirCartasIniciales = function(PartidaId){
 
 
 /*RobarCartas = function(IdenPartida,Turnos){
-	if(MAZO_GENERAL.length > 0){
+	if(mazo_general.length > 0){
 		numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
 		part = Caracteristicas.findOne({PartidaId: IdenPartida}).PartidaId;
 		if ((numTurno === Turnos) &&(part === IdenPartida)){
 			Cartas = Caracteristicas.findOne({turno: Turnos}).Mano;
-			Cartas.push(MAZO_GENERAL[MAZO_GENERAL.length]);
-			MAZO_GENERAL.splice(MAZO_GENERAL.length, 1);
+			Cartas.push(mazo_general[mazo_general.length]);
+			mazo_general.splice(mazo_general.length, 1);
 			Caracteristicas.update({turno: Turnos},{$set: {Mano: Cartas}});
 		}
 	}
@@ -291,63 +359,7 @@ ComprobarPuntuacion = function(){
 	return nombreGanador;
 }
 
-var Celda = function(){
-	this.carta = null;
-};
 
-
-var Tablero = function(destinos){
-	this.celdas = {};
-	this.celdasOcupadas=[];
-
-	for (fila = -15; i < 15; i++) {
-		for (columna = -3; j < 11; j++) {
-			this.celdas[columna.toString() + "," + fila.toString()] = new Celda();
-		};
-	};
-	this.celdas["0,0"].carta = 'ComienzoEscalera';
-	this.celdasOcupadas.push("0,0");
-	this.celdas["8,2"].carta = destinos[0];
-	this.celdasOcupadas.push("8,2");
-	this.celdas["8,0"].carta = destinos[1];
-	this.celdasOcupadas.push("8,0");
-	this.celdas["8,-2"].carta = destinos[2];
-	this.celdasOcupadas.push("8,-2");
-
-	this.posiblesCeldas = function(carta){
-		for (i = 0; i < this.celdasOcupadas.length; i++) {
-
-		};
-	};
-
-
-	this.ponerCarta = function(carta, columna, fila) {
-		var cartasAround = [];
-		var success = true;
-		var cord1 = (columna-1).toString() + "," + fila.toString();
-		var cord2 = columna.toString() + "," + (fila+1).toString();
-		var cord3 = (columna+1).toString() + "," + fila.toString();
-		var cord4 =  columna.toString() + "," + (fila-1).toString();
-		var cords = [cord1, cord2, cord3, cord4];
-
-		for (i=0; i < 4; i++) {
-			//guardamos las cartas a su alrededor en cartasAround[]
-			//n
-		};
-
-		for (i=0; i<4; i++) {
-			if(!compatibles(cartasAround[i], carta, i)){
-				success = false;	//compatibles(cartaAround[i], carta, lado)
-				break;
-			}
-		};
-		this.celdas[columna.toString() + "," + fila.toString()].carta = 'ComienzoEscalera';
-		this.celdasOcupadas.push(columna.toString() + "," + fila.toString());
-			
-		return success;
-	};
-
-};
 
 
 
@@ -441,7 +453,7 @@ PartidaService = {
 	Partidas.insert({
 	  numPartida: nombrePartida,
 	  listaJugadores: [AlexId,JonaId,PazoId],
-	  Pila: MAZO_GENERAL,
+	  Pila: mazo_general,
 	  CartasDestino: MAZO_DESTINO,
 	  Ronda: NumRonda, 
 	  JugadorActivo: AlexId;
@@ -484,24 +496,23 @@ CaracteristicasService = {
 };
 
 if (Meteor.isClient) {
-  // counter starts at 0
+	// counter starts at 0
 
 }
 
 
 if (Meteor.isServer) {
 	Meteor.startup(function () {
-	  Meteor.methods({
-		'empezarPartida': function(PartidaId) {
-		  Partida(PartidaId);
-		  //
-		},
-	  });
+		Meteor.methods({
+			'empezarPartida': function(PartidaId) {
+				Partida(PartidaId);
+			},
+	 	});
 
-	  if (!JugadoresService.playersExist()) {
-		JugadoresService.generateRandomPlayers();
-	  }
-	  PartidaService.generarPartida();
-	  CaracteristicasService.caracteristicasInsert();
+		if (!JugadoresService.playersExist()) {
+			JugadoresService.generateRandomPlayers();
+	  	}
+		PartidaService.generarPartida();
+		CaracteristicasService.caracteristicasInsert();
   });
 }
