@@ -452,9 +452,13 @@ PartidaService = {
 		AlexId = JugadoresService.getPlayerId("Alex");
 		JonaId = JugadoresService.getPlayerId("Jona");
 		PazoId = JugadoresService.getPlayerId("Pazo");
+		jugadoresArray = []
+		jugadoresArray[0]= AlexId;
+		jugadoresArray[1]= JonaId;
+		jugadoresArray[2]= PazoId;
 		Partidas.insert({
 			numPartida: 1,//para probar
-			listaJugadores: [AlexId,JonaId,PazoId], 
+			listaJugadores: this.jugadoresArray, 
 		});
 	},
 	getPartidaId: function (num) {
@@ -471,14 +475,21 @@ PartidaService = {
 		mazoDestinos = BarajarMazo_Destino(CartasDestino);
 		jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[0]; //coge el primero de la lista
 		nRonda = 1;
-		Partidas.insert({
-			tablero: this.tablero,
-			mazoGeneral: this.mazoGeneral,
-			mazoDestinos: this.mazoDestinos,
-			jugadorActivo: this.jugadorActivo,
-			nRonda: this.nRonda, 
-			
-		});
+
+
+
+
+
+		Partidas.update({_id: partidaId},
+						{$set:{
+							tablero: this.tablero,
+							mazoGeneral: this.mazoGeneral,
+							mazoDestinos: this.mazoDestinos,
+							jugadorActivo: this.jugadorActivo,
+							nRonda: this.nRonda,}
+						});
+
+
 	},
 };
 
@@ -528,8 +539,9 @@ if (Meteor.isServer) {
 		if (!JugadoresService.playersExist()) {
 			JugadoresService.generateRandomPlayers();
 	  	}
-		PartidaService.generarPartida();						//esto lo tienen que hacer los de la aplicacion
-		var partidaId = PartidaService.getPartidaId(1);			//esto nos lo pasan de la aplicacion
+		PartidaService.generarPartida();						//esto lo tienen que hacer los de la plataforma
+		var partidaId = PartidaService.getPartidaId(1);			//esto nos lo pasan de la plataforma
+		//esto ira dentro de meteor.merhods empezarpartida.
 		PartidaService.empezarPartida(partidaId);
 		//CaracteristicasService.caracteristicasInsert();
   });
