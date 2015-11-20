@@ -321,7 +321,7 @@ robarCarta = function(partidaId){
 	mazo = Partidas.findOne({_id: partidaId}).mazoGeneral;
     carta = mazo.indexOf(mazo.length);
     mazo = mazo.pop();
-	//carta = mazo.pop();Esto esta mal porque pop borra el ultimo elemento pero devuelve los otros en el array.
+	//carta = mazo.pop();//Esto esta mal porque pop borra el ultimo elemento pero devuelve los otros en el array.
 	//mazo.splice(mazo.length, 1);
 	return carta;
 };
@@ -537,6 +537,11 @@ if (Meteor.isServer) {
 				//Preparar tablero 
 				//Barajar mazos
 				//numero ronda = 1
+                //Ganador de la ronda
+                //Ganador de la partida
+                //Ambas variables GanadorPartida y GanadorRonda deberan actualizarse cuando se encuentre una pepita(ronda acabada)
+                //o cuando se finalice una partida,para lo cual se actualizarán ambas variables a True,para poder comprobar
+                //el estado en que esta la partida.
 				//Jugador activo el primero de la lista
 				PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
 				
@@ -553,6 +558,9 @@ if (Meteor.isServer) {
 		PartidaService.generarPartida();						//esto lo tienen que hacer los de la plataforma
 		var partidaId = PartidaService.getPartidaId(1);			//esto nos lo pasan de la plataforma
 		//esto ira dentro de meteor.merhods empezarpartida.
+        PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
+				
+	    CaracteristicasService.crearCaractIniciales(partidaId);
 		
   });
 }
