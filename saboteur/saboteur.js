@@ -320,7 +320,7 @@ RepartirCartasIniciales = function(PartidaId){
 robarCarta = function(partidaId){
 	mazo = Partidas.findOne({_id: partidaId}).mazoGeneral;
     carta = mazo.indexOf(mazo.length);
-    mazo.pop();
+    mazo = mazo.pop();
 	//carta = mazo.pop();Esto esta mal porque pop borra el ultimo elemento pero devuelve los otros en el array.
 	//mazo.splice(mazo.length, 1);
 	return carta;
@@ -484,12 +484,16 @@ PartidaService = {
 		tablero = new tablero(mazoDestinos);
 		jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[0]; //coge el primero de la lista
 		nRonda = 1;
+        GanadorRonda = false;
+        GanadorPartida = false;
 
 		Partidas.update({_id: partidaId},{$set:{tablero: tablero,
 							                    mazoGeneral: mazoGeneral,
 							                    mazoDestinos: mazoDestinos,
 							                    jugadorActivo: jugadorActivo,
-							                    nRonda: nRonda,}});
+							                    nRonda: nRonda,
+                                                FinRonda: GanadorRonda,
+                                                FinPartida: GanadorPartida,}});
 	},
 };
 
@@ -530,7 +534,7 @@ if (Meteor.isServer) {
 	Meteor.startup(function () {
 		Meteor.methods({
 			'empezarPartida': function(PartidaId) {
-				//Preparar tabero 
+				//Preparar tablero 
 				//Barajar mazos
 				//numero ronda = 1
 				//Jugador activo el primero de la lista
