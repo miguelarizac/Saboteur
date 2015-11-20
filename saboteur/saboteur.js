@@ -46,7 +46,7 @@ var tiposCartas = {
 	ArreglarVagoneta: {Funcion: "Arreglar", Objeto:"Vagoneta"},
 	ArreglarFarolillo: {Funcion: "Arreglar", Objeto:"Farolillo"},
 	ArreglarPico: {Funcion: "Arreglar", Objeto:"Pico"},
-	ArreglarFaro_Pico: {Funcion:"Arreglar", Objeto1: "Farolillo", Obejeto2: "Pico"},
+	ArreglarFaro_Pico: {Funcion:"Arreglar", Objeto1: "Farolillo", Objeto2: "Pico"},
 	ArreglarFaro_Vagon: {Funcion:"Arreglar", Objeto1: "Farolillo", Objeto2: "Vagoneta"},
 	ArreglarVagon_Pico: {Funcion:"Arreglar", Objeto1: "Vagoneta", Objeto2: "Pico"},
 	Mapa: {Funcion: "DestapaCartaDestino"},
@@ -436,8 +436,8 @@ Partida = function(PartidaId){
 JugadoresService = {
 	generateRandomPlayers: function () {
 		var names = ["Jona",
-					"Alex",
-					"Pazo"];
+					 "Alex",
+					 "Pazo"];
 		for (var i = 0; i < names.length; i++) {
 			Jugadores.insert({name: names[i]});
 		}
@@ -480,16 +480,11 @@ PartidaService = {
 		jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[0]; //coge el primero de la lista
 		nRonda = 1;
 
-		Partidas.update({_id: partidaId},
-						{$set:{
-							tablero: tablero,
-							mazoGeneral: mazoGeneral,
-							mazoDestinos: mazoDestinos,
-							jugadorActivo: jugadorActivo,
-							nRonda: nRonda,}
-						});
-
-
+		Partidas.update({_id: partidaId},{$set:{tablero: tablero,
+							                    mazoGeneral: mazoGeneral,
+							                    mazoDestinos: mazoDestinos,
+							                    jugadorActivo: jugadorActivo,
+							                    nRonda: nRonda,}});
 	},
 };
 
@@ -534,7 +529,7 @@ if (Meteor.isServer) {
 				//Barajar mazos
 				//numero ronda = 1
 				//Jugador activo el primero de la lista
-				PartidaService.empezarPartida(partidaId);	//meterlo en PArtidas._id
+				PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
 				
 				CaracteristicasService.crearCaractIniciales(partidaId);
 
