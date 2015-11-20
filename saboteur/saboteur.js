@@ -94,7 +94,8 @@ var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','C
 /////////////////////////////
 //			TABLERO        //
 /////////////////////////////
-var carta = function(){
+
+carta = function(){
 	this.izquierda = null;
 	this.derecha = null;
 	this.arriba = null;
@@ -102,17 +103,17 @@ var carta = function(){
 	this.bloqueante = null;
 };
 
-var celda = function(){
+celda = function(){
 	this.carta = null;
 };
 
-var tablero = function(destinos){
+tablero = function(destinos){
 	this.celdas = {};
 	this.celdasOcupadas=[];
 
-	for (fila = -15; i < 15; i++) {
-		for (columna = -3; j < 11; j++) {
-			this.celdas[columna.toString() + "," + fila.toString()] = new Celda();
+	for (fila = -15; fila < 15; fila++) {
+		for (columna = -3; columna < 11; columna++) {
+			this.celdas[columna.toString() + "," + fila.toString()] = new celda();
 		};
 	};
 	this.celdas["0,0"].carta = 'ComienzoEscalera';
@@ -123,7 +124,7 @@ var tablero = function(destinos){
 	this.celdasOcupadas.push("8,0");
 	this.celdas["8,-2"].carta = destinos[2];
 	this.celdasOcupadas.push("8,-2");
-
+/*
 	this.posiblesCeldas = function(carta){
 		for (i = 0; i < this.celdasOcupadas.length; i++) {
 
@@ -155,7 +156,7 @@ var tablero = function(destinos){
 			
 		return success;
 	};
-
+*/
 };
 
 
@@ -464,19 +465,20 @@ PartidaService = {
 	//},
 
 	empezarPartida: function(partidaId){
-		tablero = null;
+		
 		mazoGeneral = BarajarMazo_General(CartasPila);
 		mazoDestinos = BarajarMazo_Destino(CartasDestino);
+		tablero = new tablero(mazoDestinos);
 		jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[0]; //coge el primero de la lista
 		nRonda = 1;
 
 		Partidas.update({_id: partidaId},
 						{$set:{
-							tablero: this.tablero,
-							mazoGeneral: this.mazoGeneral,
-							mazoDestinos: this.mazoDestinos,
-							jugadorActivo: this.jugadorActivo,
-							nRonda: this.nRonda,}
+							tablero: tablero,
+							mazoGeneral: mazoGeneral,
+							mazoDestinos: mazoDestinos,
+							jugadorActivo: jugadorActivo,
+							nRonda: nRonda,}
 						});
 
 
@@ -498,7 +500,7 @@ CaracteristicasService = {
 				jugadorId: listaJugadores[i],
 				puntuacion: 0,
 				roll: cartasRoll[i], 
-				cartas: CartasIniciales,
+				cartas: cartasIniciales,
 				pico: "arreglado",
 				vagoneta: "arreglado",
 				farolillo: "arreglado"
