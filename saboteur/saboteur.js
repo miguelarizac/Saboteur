@@ -314,9 +314,14 @@ RepartirCartasIniciales = function(PartidaId){
 	}
 };*/
 
+
+//Este método sigue estando mal puesto que se coge el mazo se guarda la ultima carta para devolverla
+//y se borra del mazo esa carta para actualizrlo,pero el mazo habria que devolverlo.
 robarCarta = function(partidaId){
 	mazo = Partidas.findOne({_id: partidaId}).mazoGeneral;
-	carta = mazo.pop();
+    carta = mazo.indexOf(mazo.length);
+    mazo.pop();
+	//carta = mazo.pop();Esto esta mal porque pop borra el ultimo elemento pero devuelve los otros en el array.
 	//mazo.splice(mazo.length, 1);
 	return carta;
 };
