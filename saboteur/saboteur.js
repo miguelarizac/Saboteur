@@ -255,6 +255,20 @@ ComprobarNum = function(){
 	return NumeroJugadores;
 }
 
+nMaxCartas = function(nJugadores){
+	var n;
+	if ((nJugadores >= 3) && (nJugadores <= 5)) {
+		n = 7;
+	}
+	if ((nJugadores === 6) || (nJugadores === 7)) {
+		n = 6;
+	}
+	if ((nJugadores >= 8) && (nJugadores <= 10)) {
+		n = 4;
+	}
+	return n;
+}
+
 RepartirCartasIniciales = function(PartidaId){
 	var listaJugadores = Partidas.findOne({_id: PartidaId}).listaJugadores
 	var mazo_general = BarajarMazo_general(CartasPila);
@@ -262,15 +276,8 @@ RepartirCartasIniciales = function(PartidaId){
 	var Puntos = 0;
 	var Cartas = [];
 	var Roll;
-	if ((NumeroJugadores >= 3) && (NumeroJugadores <= 5)) {
-		var MaxCartas = 7;
-	}
-	if ((NumeroJugadores === 6) || (NumeroJugadores === 7)) {
-		var MaxCartas = 6;
-	}
-	if ((NumeroJugadores >= 8) && (NumeroJugadores <= 10)) {
-		var MaxCartas = 4;
-	}
+	var MaxCartas = nMaxCartas(NumeroJugadores);
+	
 	for (i=0; i<NumeroJugadores; i++) {
 		for(j = 1; j < MaxCartas; j++){
 			Cartas[j] = mazo_general[this.mazo_general.length];
@@ -294,7 +301,7 @@ RepartirCartasIniciales = function(PartidaId){
 };
 
 
-/*RobarCartas = function(IdenPartida,Turnos){
+/*robarCarta = function(IdenPartida,Turnos){
 	if(mazo_general.length > 0){
 		numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
 		part = Caracteristicas.findOne({PartidaId: IdenPartida}).PartidaId;
@@ -307,10 +314,11 @@ RepartirCartasIniciales = function(PartidaId){
 	}
 };*/
 
-RobarCartas = function(Turnos,Cartas,Mazo_Pila){
-	Cartas.push(Mazo_Pila[Mazo_Pila.length]);
-	Mazo_Pila.splice(Mazo_Pila.length, 1);
-	Caracteristicas.update({turno: Turnos},{$set: {Mano: Cartas}});
+robarCarta = function(partidaId){
+	mazo = Partidas.findOne({_id: partidaId}).mazoGeneral;
+	carta = mazo.pop();
+	//mazo.splice(mazo.length, 1);
+	return carta;
 };
 
 RepartirPuntos = function(Buscadores,Saboteadores){
@@ -398,7 +406,7 @@ Partida = function(PartidaId){
 							 //Aquí llamar a la función Jugar una Carta.
 
 							//Aquí llamar a la función Robar una Carta.
-							RobarCartas(numTurno,Cartas,Mazo_Pila);
+							robarCarta(numTurno,Cartas,Mazo_Pila);
 						}
 					}
 				}
@@ -490,9 +498,12 @@ CaracteristicasService = {
 		listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
 		nJugadores = listaJugadores.length;
 		cartasRoll = BarajarMazo_Roll(nJugadores);
+		nMaxCartas = nMaxCartas(nJugadores);
+		var cartasIniciales = [];
 
-		cartasIniciales = ["camino1","camino2","camino3","camino4",
-						   "Mapa","RomperPico","Mapa",];
+		for (var i = 0; i < nMaxCartas; i++) {
+			cartasIniciales[i] = robarCarta(partidaId);
+		};
 
 		for (var i = 0; i < 3 ; i++) {
 			Caracteristicas.insert({
