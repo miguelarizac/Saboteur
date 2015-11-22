@@ -270,7 +270,7 @@ nMaxCartas = function(nJugadores){
 }
 
 //////////////////////////FUNCIONA CORRECTAMENTE////////////DANGER,NO TOCAR///////////
-crearCaractIniciales = function(partidaId){
+CaracteristicasIniciales = function(partidaId){
         listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
 		NumeroJugadores = listaJugadores.length;
 		mazo_roll = BarajarMazo_Roll(NumeroJugadores);
@@ -515,32 +515,11 @@ PartidaService = {
 	},
 };
 
-/*CaracteristicasService = {
-	crearrCaractIniciales: function(partidaId){
-		listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
-		nJugadores = listaJugadores.length;
-		cartasRoll = BarajarMazo_Roll(nJugadores);
-		nMaxCartas = nMaxCartas(nJugadores);
-		var cartasIniciales = [];
-
-		for (var i = 0; i < nMaxCartas; i++) {
-			cartasIniciales[i] = robarCarta(partidaId);
-		};
-
-		for (var i = 0; i < 3 ; i++) {
-			Caracteristicas.insert({
-				partidaId: partidaId,
-				jugadorId: listaJugadores[i],
-				puntuacion: 0,
-				roll: cartasRoll[i], 
-				cartas: cartasIniciales,
-				pico: "arreglado",
-				vagoneta: "arreglado",
-				farolillo: "arreglado"
-			});
-		}
+CaracteristicasService = {
+	crearCaractIniciales: function(partidaId){
+        CaracteristicasIniciales(partidaId);
 	}
-};*/
+};
 
 
 
@@ -566,7 +545,7 @@ if (Meteor.isServer) {
 				//Jugador activo el primero de la lista
 				PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
 				
-				crearCaractIniciales(partidaId);
+				CaracteristicasService.crearCaractIniciales(partidaId);
 
 
 				//repartir cartas iniciales a cada jugador
@@ -627,7 +606,7 @@ if (Meteor.isServer) {
 		//esto ira dentro de meteor.methods empezarpartida.
         PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
 				
-	    crearCaractIniciales(partidaId);
+	    CaracteristicasService.crearCaractIniciales(partidaId);
 		
   });
 }
