@@ -269,60 +269,49 @@ nMaxCartas = function(nJugadores){
 	return n;
 }
 
-RepartirCartasIniciales = function(PartidaId){
-	var listaJugadores = Partidas.findOne({_id: PartidaId}).listaJugadores
-	var mazo_general = BarajarMazo_general(CartasPila);
-	var NumeroJugadores = listaJugadores.length;
-	var Puntos = 0;
-	var Cartas = [];
-	var Roll;
-	var MaxCartas = nMaxCartas(NumeroJugadores);
+
+crearCaractIniciales = function(partidaId){
+        listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
+		NumeroJugadores = listaJugadores.length;
+		mazo_roll = BarajarMazo_Roll(NumeroJugadores);
+		MaxCartas = nMaxCartas(NumeroJugadores);
+
+	    mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
+	    var Puntos = 0;
+	    var Cartas = [];
+	    var Roll;
 	
-	for (i=0; i<NumeroJugadores; i++) {
-		for(j = 1; j < MaxCartas; j++){
-			Cartas[j] = mazo_general[this.mazo_general.length];
-			this.mazo_general.splice(this.mazo_general.length, 1);
-		}
-		Roll = mazo_roll[mazo_roll.length];
-		mazo_roll.splice(mazo_roll.length, 1);
-		Caracteristicas.insert({
-			turno: i,
-			JugadorId: listaJugadores[i]._id,
-			PartidaId: PartidaId,
-			Puntuacion: Puntos,
-			Roll: Roll,
-			Mano: Cartas,
-			Pico: "arreglado",
-			Vagoneta: "arreglado",
-			Farolillo: "arreglado"
-		});
-	}
+	    for (i=0; i<NumeroJugadores; i++) {
+		    for(j = 0; j < MaxCartas; j++){
+			    Cartas[j] = mazo_general[mazo_general.length-1];
+			    mazo_general.splice(mazo_general.length-1, 1);
+                Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo_general}});
+		    }
+		    Roll = mazo_roll[mazo_roll.length-1];
+		    mazo_roll.splice(mazo_roll.length-1, 1);
+		    Caracteristicas.insert({
+			    turno: i,
+			    JugadorId: listaJugadores[i],
+			    partidaId: partidaId,
+			    Puntuacion: Puntos,
+			    Roll: Roll,
+			    Mano: Cartas,
+			    Pico: "arreglado",
+			    Vagoneta: "arreglado",
+			    Farolillo: "arreglado"
+		    });
+	    }
 
 };
 
 
-/*robarCarta = function(IdenPartida,Turnos){
-	if(mazo_general.length > 0){
-		numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
-		part = Caracteristicas.findOne({PartidaId: IdenPartida}).PartidaId;
-		if ((numTurno === Turnos) &&(part === IdenPartida)){
-			Cartas = Caracteristicas.findOne({turno: Turnos}).Mano;
-			Cartas.push(mazo_general[mazo_general.length]);
-			mazo_general.splice(mazo_general.length, 1);
-			Caracteristicas.update({turno: Turnos},{$set: {Mano: Cartas}});
-		}
-	}
-};*/
-
-
-//Este método sigue estando mal puesto que se coge el mazo se guarda la ultima carta para devolverla
-//y se borra del mazo esa carta para actualizrlo,pero el mazo habria que devolverlo.
+////////////ESTA FUNCIÓN YA ESTÁ BIEN PROBADA:)(GODMODE)se coge el mazo se guarda la ultima carta se borra del mazo esa carta
+//se actualiza el mazo general para esa partida, y devolvemos la carta que hemos cogido del mazo./////////////////////////
 robarCarta = function(partidaId){
 	mazo = Partidas.findOne({_id: partidaId}).mazoGeneral;
-    carta = mazo.indexOf(mazo.length);
-    mazo = mazo.pop();
-	//carta = mazo.pop();//Esto esta mal porque pop borra el ultimo elemento pero devuelve los otros en el array.
-	//mazo.splice(mazo.length, 1);
+    carta = mazo[mazo.length -1];
+    mazo.pop();
+    Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo}});
 	return carta;
 };
 
@@ -497,7 +486,7 @@ PartidaService = {
 	},
 };
 
-CaracteristicasService = {
+/*CaracteristicasService = {
 	crearCaractIniciales: function(partidaId){
 		listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
 		nJugadores = listaJugadores.length;
@@ -522,7 +511,10 @@ CaracteristicasService = {
 			});
 		}
 	}
-};
+};*/
+
+
+
 
 if (Meteor.isClient) {
 	// counter starts at 0
@@ -533,7 +525,7 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
 	Meteor.startup(function () {
 		Meteor.methods({
-			'empezarPartida': function(PartidaId) {
+			'empezar': function(PartidaId) {
 				//Preparar tablero 
 				//Barajar mazos
 				//numero ronda = 1
@@ -545,22 +537,24 @@ if (Meteor.isServer) {
 				//Jugador activo el primero de la lista
 				PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
 				
-				CaracteristicasService.crearCaractIniciales(partidaId);
+				crearCaractIniciales(partidaId);
 
 
 				//repartir cartas iniciales a cada jugador
 			},
 		});
 
+
+/////////////////////////////PARA PROBAR QUE FUNCIONA BIEN LO CREAMOS AQUÍ.//////////////////////////////////////7
 		if (!JugadoresService.playersExist()) {
 			JugadoresService.generateRandomPlayers();
 	  	}
 		PartidaService.generarPartida();						//esto lo tienen que hacer los de la plataforma
 		var partidaId = PartidaService.getPartidaId(1);			//esto nos lo pasan de la plataforma
-		//esto ira dentro de meteor.merhods empezarpartida.
+		//esto ira dentro de meteor.methods empezarpartida.
         PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
 				
-	    CaracteristicasService.crearCaractIniciales(partidaId);
+	    crearCaractIniciales(partidaId);
 		
   });
 }
