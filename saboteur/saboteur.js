@@ -275,17 +275,17 @@ crearCaractIniciales = function(partidaId){
 		NumeroJugadores = listaJugadores.length;
 		mazo_roll = BarajarMazo_Roll(NumeroJugadores);
 		MaxCartas = nMaxCartas(NumeroJugadores);
-
-	    mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
+	    //mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
 	    var Puntos = 0;
 	    var Cartas = [];
 	    var Roll;
 	
 	    for (i=0; i<NumeroJugadores; i++) {
 		    for(j = 0; j < MaxCartas; j++){
-			    Cartas[j] = mazo_general[mazo_general.length-1];
-			    mazo_general.splice(mazo_general.length-1, 1);
-                Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo_general}});
+                Cartas[j] = robarCarta(partidaId);
+			    //Cartas[j] = mazo_general[mazo_general.length-1];
+			    //mazo_general.splice(mazo_general.length-1, 1);
+                //Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo_general}});
 		    }
 		    Roll = mazo_roll[mazo_roll.length-1];
 		    mazo_roll.splice(mazo_roll.length-1, 1);
