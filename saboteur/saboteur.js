@@ -269,7 +269,7 @@ nMaxCartas = function(nJugadores){
 	return n;
 }
 
-
+//////////////////////////FUNCIONA CORRECTAMENTE////////////DANGER,NO TOCAR///////////
 crearCaractIniciales = function(partidaId){
         listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
 		NumeroJugadores = listaJugadores.length;
@@ -315,6 +315,23 @@ robarCarta = function(partidaId){
 	return carta;
 };
 
+///////////////////////FUNCION JUGAR CARTA SIN TERMINAR////////////////////////
+JugarCarta = function(partidaId){
+    var CualquierCarta = false; 
+    identificador = Partidas.findOne({_id: partidaId}).jugadorActivo;
+    idCarcateristicas = Caracteristicas.findOne({partidaId: partidaId,
+                                                JugadorId: identificador,})._id;
+    Pico = Caracteristicas.findOne({_id:idCaracteristicas}).Pico;
+    Vagoneta = Caracteristicas.findOne({_id:idCaracteristicas}).Vagoneta;
+    Farolillo = Caracteristicas.findOne({_id:idCaracteristicas}).Farolillo;
+    
+    if ((Pico === "arreglado") && (Vagoneta === "arreglado") && (Farolillo === "arreglado")){
+        CualquierCarta = true;
+    }
+    return CualquierCarta;
+};
+
+
 RepartirPuntos = function(Buscadores,Saboteadores){
 	NumeroJugadores = ComprobarNum();
 	var Puntos;
@@ -351,6 +368,16 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 	}
 
 }
+
+
+ActualizarTurno = function(partidaId){
+    Turno = Partidas.findOne({_id: partidaId}).turnoPartida;
+    TurnoActualizado = Turno + 1;
+    jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[TurnoActualizado];
+    Partidas.update({_id: partidaId},{$set:{jugadorActivo: jugadorActivo,
+                                            turnoPartida: TurnoActualizado,}});
+}
+
 
 ComprobarPuntuacion = function(){
 	NumeroJugadores = ComprobarNum();
@@ -471,7 +498,8 @@ PartidaService = {
 		mazoGeneral = BarajarMazo_General(CartasPila);
 		mazoDestinos = BarajarMazo_Destino(CartasDestino);
 		tablero = new tablero(mazoDestinos);
-		jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[0]; //coge el primero de la lista
+        turno = 0
+		jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[turno]; //coge el primero de la lista
 		nRonda = 1;
         GanadorRonda = false;
         GanadorPartida = false;
@@ -480,6 +508,7 @@ PartidaService = {
 							                    mazoGeneral: mazoGeneral,
 							                    mazoDestinos: mazoDestinos,
 							                    jugadorActivo: jugadorActivo,
+                                                turnoPartida: turno,
 							                    nRonda: nRonda,
                                                 FinRonda: GanadorRonda,
                                                 FinPartida: GanadorPartida,}});
@@ -487,7 +516,7 @@ PartidaService = {
 };
 
 /*CaracteristicasService = {
-	crearCaractIniciales: function(partidaId){
+	crearrCaractIniciales: function(partidaId){
 		listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
 		nJugadores = listaJugadores.length;
 		cartasRoll = BarajarMazo_Roll(nJugadores);
@@ -525,7 +554,7 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
 	Meteor.startup(function () {
 		Meteor.methods({
-			'empezar': function(PartidaId) {
+			'empezar': function(partidaId) {
 				//Preparar tablero 
 				//Barajar mazos
 				//numero ronda = 1
@@ -542,10 +571,54 @@ if (Meteor.isServer) {
 
 				//repartir cartas iniciales a cada jugador
 			},
+            'PonerCartaExcavacion': function(partidaId) {
+                CualquierCarta = JugarCarta(partidaId);
+                if (CualquierCarta){
+                    //Se puede poner Carta de EXCAVACION,coger las coordenadas que nos pasen y poner carta en el tablero.
+
+                    ////////////////////////PASAMOS TURNO////////////////////////////
+                    ActualizarTurno(partidaId);
+                             
+                } else {
+                    //Solo se puede poner Carta de ACCION o PASAR TURNO.
+             
+                    ////////////////////////PASAMOS TURNO////////////////////////////
+                    ActualizarTurno(partidaId);                
+                }
+            },
+            'PonerCartaAccion': function(partidaId) {
+                CualquierCarta = JugarCarta(partidaId);
+                if (CualquierCarta){
+                    //Se puede poner Carta de ACCION,coger el id del jugador(Nos lo pasara la IU) al que se quiere
+                    //poner la carta de accion,poner la carta de Accion para arreglarnos algo,derrumbar tunel o utilizar Mapa.
+
+                    ////////////////////////PASAMOS TURNO////////////////////////////
+                    ActualizarTurno(partidaId);
+                } else {
+                    //Solo se puede poner Carta de ACCION o PASAR TURNO.
+
+                    ////////////////////////PASAMOS TURNO////////////////////////////
+                    ActualizarTurno(partidaId);                
+                }
+            },
+            'DescartarCartaMano': function(partidaId) {
+                CualquierCarta = JugarCarta(partidaId);
+                if (CualquierCarta){
+                    //Descartar Carta.
+
+                    ////////////////////////PASAMOS TURNO////////////////////////////
+                    ActualizarTurno(partidaId);
+                } else {
+                    //Solo se puede poner Carta de ACCION o PASAR TURNO.
+
+                    ////////////////////////PASAMOS TURNO////////////////////////////
+                    ActualizarTurno(partidaId);                
+                }
+            },
 		});
 
 
-/////////////////////////////PARA PROBAR QUE FUNCIONA BIEN LO CREAMOS AQUÍ.//////////////////////////////////////7
+/////////////////////////////PARA PROBAR QUE FUNCIONA BIEN LO CREAMOS AQUÍ.//////////////////////////////////////
 		if (!JugadoresService.playersExist()) {
 			JugadoresService.generateRandomPlayers();
 	  	}
