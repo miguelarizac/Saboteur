@@ -269,191 +269,8 @@ nMaxCartas = function(nJugadores){
 	return n;
 }
 
-//////////////////////////FUNCIONA CORRECTAMENTE////////////DANGER,NO TOCAR///////////
-CaracteristicasIniciales = function(partidaId){
-        listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
-		NumeroJugadores = listaJugadores.length;
-		mazo_roll = BarajarMazo_Roll(NumeroJugadores);
-		MaxCartas = nMaxCartas(NumeroJugadores);
-	    //mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
-	    var Puntos = 0;
-	    var Cartas = [];
-	    var Roll;
-	
-	    for (i=0; i<NumeroJugadores; i++) {
-		    for(j = 0; j < MaxCartas; j++){
-                Cartas[j] = robarCarta(partidaId);
-			    //Cartas[j] = mazo_general[mazo_general.length-1];
-			    //mazo_general.splice(mazo_general.length-1, 1);
-                //Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo_general}});
-		    }
-		    Roll = mazo_roll[mazo_roll.length-1];
-		    mazo_roll.splice(mazo_roll.length-1, 1);
-		    Caracteristicas.insert({
-			    turno: i,
-			    JugadorId: listaJugadores[i],
-			    partidaId: partidaId,
-			    Puntuacion: Puntos,
-			    Roll: Roll,
-			    Mano: Cartas,
-			    Pico: "arreglado",
-			    Vagoneta: "arreglado",
-			    Farolillo: "arreglado"
-		    });
-	    }
-
-};
-
-
-////////////ESTA FUNCIÓN YA ESTÁ BIEN PROBADA:)(GODMODE)se coge el mazo se guarda la ultima carta se borra del mazo esa carta
-//se actualiza el mazo general para esa partida, y devolvemos la carta que hemos cogido del mazo./////////////////////////
-robarCarta = function(partidaId){
-	mazo = Partidas.findOne({_id: partidaId}).mazoGeneral;
-    carta = mazo[mazo.length -1];
-    mazo.pop();
-    Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo}});
-	return carta;
-};
-
-///////////////////////FUNCION JUGAR CARTA SIN TERMINAR////////////////////////
-JugarCarta = function(partidaId){
-    var CualquierCarta = false; 
-    identificador = Partidas.findOne({_id: partidaId}).jugadorActivo;
-    idCarcateristicas = Caracteristicas.findOne({partidaId: partidaId,
-                                                JugadorId: identificador,})._id;
-    Pico = Caracteristicas.findOne({_id:idCaracteristicas}).Pico;
-    Vagoneta = Caracteristicas.findOne({_id:idCaracteristicas}).Vagoneta;
-    Farolillo = Caracteristicas.findOne({_id:idCaracteristicas}).Farolillo;
-    
-    if ((Pico === "arreglado") && (Vagoneta === "arreglado") && (Farolillo === "arreglado")){
-        CualquierCarta = true;
-    }
-    return CualquierCarta;
-};
-
-
-RepartirPuntos = function(Buscadores,Saboteadores){
-	NumeroJugadores = ComprobarNum();
-	var Puntos;
-	if(Buscadores){
-		Puntos = 4;
-		for (i=0; i<NumeroJugadores; i++) {
-			Roll = Caracteristicas.findOne({turno: i}).Roll;
-			if (Roll === "Buscador"){
-				Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
-				Puntos = Puntuacion + Puntos;
-				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
-			}
-		}
-	}
-	if(Saboteadores){
-		//Como sé el número de jugadores,mirando la función PrepararRoles se puede saber el numero de sabotadores que hay.
-		if((NumeroJugadores === 3) || (NumeroJugadores === 4)){ //Para 1 saboteador
-			Puntos = 4;
-		}
-		if ((NumeroJugadores >= 5) && (NumeroJugadores <= 9)) { //Para 2 o 3 saboteadores.
-			Puntos = 3;
-		}
-		if (NumeroJugadores === 10) { // Para 4 saboteadores
-			Puntos = 2;
-		}
-		for (i=0; i<NumeroJugadores; i++) {
-			Roll = Caracteristicas.findOne({turno: i}).Roll;
-			if (Roll === "Saboteador"){
-				Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
-				Puntos = Puntuacion + Puntos;
-				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
-			}
-		}
-	}
-
-}
-
-
-ActualizarTurno = function(partidaId){
-    Turno = Partidas.findOne({_id: partidaId}).turnoPartida;
-    TurnoActualizado = Turno + 1;
-    jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[TurnoActualizado];
-    Partidas.update({_id: partidaId},{$set:{jugadorActivo: jugadorActivo,
-                                            turnoPartida: TurnoActualizado,}});
-}
-
-
-ComprobarPuntuacion = function(){
-	NumeroJugadores = ComprobarNum();
-	Puntos = 0;
-	for (i=0; i<NumeroJugadores; i++) {
-		Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
-		if(Puntuacion > Puntos){
-			Puntos = Puntuacion;
-		}
-	}
-	idenJugador = Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
-	nombreGanador = Jugadores.findOne({_id: idenJugador}).name;
-
-	return nombreGanador;
-}
-
-
-var NumRondas = 3;
-
-Partida = function(PartidaId){
-	var Saboteadores = false;
-	var Buscadores = false;
-	var turnos = 0
-	NumeroJugadores = ComprobarNum();
-	var Cartas = [];
-	var PepitaEncontrada = false;
-	for(i=0; i<NumRondas; i++){
-		//Aquí preparación del tablero
-		//Añadir a la partida : Lista de jugadores/ Mazo_general / JugadorActivo / 
-
-		//Aquí reparto de Cartas iniciales
-		RepartirCartasIniciales(PartidaId);
-
-		//Aquí TURNOS dentro de una ronda,while(mientras que un jugador no llegue a la pepita.)
-		while((PepitaEncontrada === false)){
-			//Hacer con while.
-			while(turnos < NumeroJugadores){
-				
-				Cartas = Caracteristicas.findOne({turno: turnos}).Mano;
-				numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
-				part = Caracteristicas.findOne({PartidaId: PartidaId}).PartidaId;
-				Mazo_Pila = Partidas.findOne({PartidaId: PartidaId}).Pila;
-				//Si un jugador tiene cartas en su mano,jugará Carta y Robará {
-				if (Cartas.length > 0){
-					if(Mazo_Pila.length > 0){
-						if ((numTurno === turnos) && (part === PartidaId)){
-							 //Aquí llamar a la función Jugar una Carta.
-
-							//Aquí llamar a la función Robar una Carta.
-							robarCarta(numTurno,Cartas,Mazo_Pila);
-						}
-					}
-				}
-				turnos++;
-			}
-			turnos = 0;
-		}
-		//FIN DE LA RONDA.
-		if(PepitaEncontrada){
-			Buscadores = true;
-		}else {
-			Saboteadores = true;
-		}
-		//Aquí llamar a la función Repartir Puntuacion.
-		RepartirPuntos(Buscadores,Saboteadores);
-		Saboteadores = false;
-		Buscadores = false;
-
-	}
-
-	//Aquí Comprabación de puntos de Jugadores, y decir el Ganador.
-	Ganador = ComprobarPuntuacion();
-	//FIN PARTIDA.
-
-};
-
+// subo servicios 
+//////////SERVICIOS//////////////////////////
 JugadoresService = {
 	generateRandomPlayers: function () {
 		var names = ["Jona",
@@ -520,9 +337,257 @@ CaracteristicasService = {
         CaracteristicasIniciales(partidaId);
 	}
 };
+/*CaracteristicasService = {
+	crearCaractIniciales: function(partidaId){
+		listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
+		nJugadores = listaJugadores.length;
+		cartasRoll = BarajarMazo_Roll(nJugadores);
+		nMaxCartas = nMaxCartas(nJugadores);
+		var cartasIniciales = [];
+
+		for (var i = 0; i < nMaxCartas; i++) {
+			cartasIniciales[i] = robarCarta(partidaId);
+		};
+
+		for (var i = 0; i < 3 ; i++) {
+			Caracteristicas.insert({
+				partidaId: partidaId,
+				jugadorId: listaJugadores[i],
+				puntuacion: 0,
+				roll: cartasRoll[i], 
+				cartas: cartasIniciales,
+				pico: "arreglado",
+				vagoneta: "arreglado",
+				farolillo: "arreglado"
+			});
+		}
+	}
+	//funcion para buscar en la coleccion
+
+	getCar: function(attr,x){
+		return Caracteristicas.findOne({turno: x)}).attr;
+	},
+	getCarbyId:function(attr){
+		return Caracteristicas.findOne({PartidaId: PartidaId)}).attr;
+	},
+
+	getId: function(JugadorId){
+		return Caracteristicas.findOne({Puntuacion: Puntos)}).JugadorId;
+
+	}
+};*/
+//he subido los servicios porque no estoy seguro que los lean las funciones de más abajo de ahi que esta funcion este aqui porque no lo cogerian las demas 
+
+//////////////////////////FUNCIONA CORRECTAMENTE////////////DANGER,NO TOCAR///////////
+CaracteristicasIniciales = function(partidaId){
+        //listaJugadores = Partidas.getAttr(listaJugadores,partidaId);
+        listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
+		NumeroJugadores = listaJugadores.length;
+		mazo_roll = BarajarMazo_Roll(NumeroJugadores);
+		MaxCartas = nMaxCartas(NumeroJugadores);
+		//mazo_general = Partidas.getAttr(mazoGeneral,partidaId);
+	    //mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
+	    var Puntos = 0;
+	    var Cartas = [];
+	    var Roll;
+	
+	    for (i=0; i<NumeroJugadores; i++) {
+		    for(j = 0; j < MaxCartas; j++){
+                Cartas[j] = robarCarta(partidaId);
+			    //Cartas[j] = mazo_general[mazo_general.length-1];
+			    //mazo_general.splice(mazo_general.length-1, 1);
+                //Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo_general}});
+		    }
+		    Roll = mazo_roll[mazo_roll.length-1];
+		    mazo_roll.splice(mazo_roll.length-1, 1);
+		    Caracteristicas.insert({
+			    turno: i,
+			    JugadorId: listaJugadores[i],
+			    partidaId: partidaId,
+			    Puntuacion: Puntos,
+			    Roll: Roll,
+			    Mano: Cartas,
+			    Pico: "arreglado",
+			    Vagoneta: "arreglado",
+			    Farolillo: "arreglado"
+		    });
+	    }
+
+};
 
 
+////////////ESTA FUNCIÓN YA ESTÁ BIEN PROBADA:)(GODMODE)se coge el mazo se guarda la ultima carta se borra del mazo esa carta
+//se actualiza el mazo general para esa partida, y devolvemos la carta que hemos cogido del mazo./////////////////////////
+robarCarta = function(partidaId){
+	//mazo = Partidas.getAttr(mazoGeneral,partidaId);
+	mazo = Partidas.findOne({_id: partidaId}).mazoGeneral;
+    carta = mazo[mazo.length -1];
+    mazo.pop();
+    Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo}});
+	return carta;
+};
 
+///////////////////////FUNCION JUGAR CARTA SIN TERMINAR////////////////////////
+JugarCarta = function(partidaId){
+    var CualquierCarta = false; 
+    //identificador = Partidas.getAttr(jugadorActivo,partidaId);
+
+    identificador = Partidas.findOne({_id: partidaId}).jugadorActivo;
+    //idCaracteristicas= Caracteristicas.getCarById(PartidaId);
+
+    idCarcateristicas = Caracteristicas.findOne({partidaId: partidaId,
+                                                JugadorId: identificador,})._id;
+    //hacer lo mismo con estas tres 
+    Pico = Caracteristicas.findOne({_id:idCaracteristicas}).Pico;
+    Vagoneta = Caracteristicas.findOne({_id:idCaracteristicas}).Vagoneta;
+    Farolillo = Caracteristicas.findOne({_id:idCaracteristicas}).Farolillo;
+    
+    if ((Pico === "arreglado") && (Vagoneta === "arreglado") && (Farolillo === "arreglado")){
+        CualquierCarta = true;
+    }
+    return CualquierCarta;
+};
+
+
+RepartirPuntos = function(Buscadores,Saboteadores){
+	NumeroJugadores = ComprobarNum();
+	var Puntos;
+	if(Buscadores){
+		Puntos = 4;
+		for (i=0; i<NumeroJugadores; i++) {
+			//Roll= Caracteristicas.getCar(Roll,i);
+
+			Roll = Caracteristicas.findOne({turno: i}).Roll;
+			if (Roll === "Buscador"){
+				//Puntuacion= Caracteristicas.getCar(Puntuacion,i);
+				Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+				Puntos = Puntuacion + Puntos;
+				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
+			}
+		}
+	}
+	if(Saboteadores){
+		//Como sé el número de jugadores,mirando la función PrepararRoles se puede saber el numero de sabotadores que hay.
+		if((NumeroJugadores === 3) || (NumeroJugadores === 4)){ //Para 1 saboteador
+			Puntos = 4;
+		}
+		if ((NumeroJugadores >= 5) && (NumeroJugadores <= 9)) { //Para 2 o 3 saboteadores.
+			Puntos = 3;
+		}
+		if (NumeroJugadores === 10) { // Para 4 saboteadores
+			Puntos = 2;
+		}
+		for (i=0; i<NumeroJugadores; i++) {
+			Roll = Caracteristicas.findOne({turno: i}).Roll;
+			if (Roll === "Saboteador"){
+				//Puntuacion= Caracteristicas.getCar(Puntuacion,i);
+				Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+				Puntos = Puntuacion + Puntos;
+				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
+			}
+		}
+	}
+
+}
+
+
+ActualizarTurno = function(partidaId){
+	//Turno = Partidas.getAttr(turnoPartida,PartidaId);
+
+    Turno = Partidas.findOne({_id: partidaId}).turnoPartida;
+    TurnoActualizado = Turno + 1;
+    jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[TurnoActualizado];
+    Partidas.update({_id: partidaId},{$set:{jugadorActivo: jugadorActivo,
+                                            turnoPartida: TurnoActualizado,}});
+}
+
+
+ComprobarPuntuacion = function(){
+	NumeroJugadores = ComprobarNum();
+	Puntos = 0;
+	for (i=0; i<NumeroJugadores; i++) {
+		//Puntuacion= Caracteristicas.getCar(Puntuacion,i);
+
+		Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+		if(Puntuacion > Puntos){
+			Puntos = Puntuacion;
+		}
+	}
+	//idenJugador= Caracteristicas.getId(JugadorId);
+	idenJugador = Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
+	nombreGanador = Jugadores.findOne({_id: idenJugador}).name;
+
+	return nombreGanador;
+}
+
+
+var NumRondas = 3;
+
+Partida = function(PartidaId){
+	var Saboteadores = false;
+	var Buscadores = false;
+	var turnos = 0
+	NumeroJugadores = ComprobarNum();
+	var Cartas = [];
+	var PepitaEncontrada = false;
+	for(i=0; i<NumRondas; i++){
+		//Aquí preparación del tablero
+		//Añadir a la partida : Lista de jugadores/ Mazo_general / JugadorActivo / 
+
+		//Aquí reparto de Cartas iniciales
+		RepartirCartasIniciales(PartidaId);
+
+		//Aquí TURNOS dentro de una ronda,while(mientras que un jugador no llegue a la pepita.)
+		while((PepitaEncontrada === false)){
+			//Hacer con while.
+			while(turnos < NumeroJugadores){
+				/*la mayuscula de turnos 
+				Cartas = Caracteristicas.getAttr(Mano,turnos);
+				numTurno = Caracteristicas.getAttr(turno,Turnos);
+				*/
+				Cartas = Caracteristicas.findOne({turno: turnos}).Mano;
+				numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
+				//part= Caracteristicas.getCarById(PartidaId);
+				//Mazo_pila= Caracteristicas.getCarById(Pila);
+
+				part = Caracteristicas.findOne({PartidaId: PartidaId}).PartidaId;
+				Mazo_Pila = Partidas.findOne({PartidaId: PartidaId}).Pila;
+				//Si un jugador tiene cartas en su mano,jugará Carta y Robará {
+				if (Cartas.length > 0){
+					if(Mazo_Pila.length > 0){
+						if ((numTurno === turnos) && (part === PartidaId)){
+							 //Aquí llamar a la función Jugar una Carta.
+
+							//Aquí llamar a la función Robar una Carta.
+							robarCarta(numTurno,Cartas,Mazo_Pila);
+						}
+					}
+				}
+				turnos++;
+			}
+			turnos = 0;
+		}
+		//FIN DE LA RONDA.
+		if(PepitaEncontrada){
+			Buscadores = true;
+		}else {
+			Saboteadores = true;
+		}
+		//Aquí llamar a la función Repartir Puntuacion.
+		RepartirPuntos(Buscadores,Saboteadores);
+		Saboteadores = false;
+		Buscadores = false;
+
+	}
+
+	//Aquí Comprabación de puntos de Jugadores, y decir el Ganador.
+	Ganador = ComprobarPuntuacion();
+	//FIN PARTIDA.
+
+};
+
+
+///////////EMPIEZA METEOR/////////////////////////
 
 if (Meteor.isClient) {
 	// counter starts at 0
