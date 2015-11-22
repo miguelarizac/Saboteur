@@ -271,6 +271,8 @@ nMaxCartas = function(nJugadores){
 
 // subo servicios 
 //////////SERVICIOS//////////////////////////
+
+
 JugadoresService = {
 	generateRandomPlayers: function () {
 		var names = ["Jona",
@@ -379,6 +381,9 @@ CaracteristicasService = {
 //he subido los servicios porque no estoy seguro que los lean las funciones de más abajo de ahi que esta funcion este aqui porque no lo cogerian las demas 
 
 //////////////////////////FUNCIONA CORRECTAMENTE////////////DANGER,NO TOCAR///////////
+//esto hay que meterlo arriba mañana lo vemos son dos lineas 
+//*****************************************************************************************************
+//**************************************************************************************///
 CaracteristicasIniciales = function(partidaId){
         //listaJugadores = Partidas.getAttr(listaJugadores,partidaId);
         listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
