@@ -153,7 +153,7 @@ tablero = function(destinos){
 		};
 		this.celdas[columna.toString() + "," + fila.toString()].carta = 'ComienzoEscalera';
 		this.celdasOcupadas.push(columna.toString() + "," + fila.toString());
-			
+
 		return success;
 	};
 */
@@ -269,7 +269,7 @@ nMaxCartas = function(nJugadores){
 	return n;
 }
 
-// subo servicios 
+// subo servicios
 //////////SERVICIOS//////////////////////////
 
 
@@ -298,22 +298,23 @@ PartidaService = {
 		AlexId = JugadoresService.getPlayerId("Alex");
 		JonaId = JugadoresService.getPlayerId("Jona");
 		PazoId = JugadoresService.getPlayerId("Pazo");
-		
+
 		Partidas.insert({
 			numPartida: 1,//para probar
-			listaJugadores: [AlexId,JonaId,PazoId], 
+			listaJugadores: [AlexId,JonaId,PazoId],
 		});
 	},
 	getPartidaId: function (num) {
 		return Partidas.findOne({numPartida:num})._id;
 	},
 
-	//getAttr: function(attr, PartidaId){
-	//	return Partida.findOne({_id:Partidas.getpartidaId(nombrePartida)}).attr;
-	//},
+	getAttr: function(attr, PartidaId){
+		//mirar
+		return Partida.findOne({_id:PartidaId}).attr;
+	},
 
 	empezarPartida: function(partidaId){
-		
+
 		mazoGeneral = BarajarMazo_General(CartasPila);
 		mazoDestinos = BarajarMazo_Destino(CartasDestino);
 		tablero = new tablero(mazoDestinos);
@@ -334,59 +335,70 @@ PartidaService = {
 	},
 };
 
-CaracteristicasService = {
+/*CaracteristicasService = {
 	crearCaractIniciales: function(partidaId){
         CaracteristicasIniciales(partidaId);
 	}
-};
-/*CaracteristicasService = {
+};*/
+
+CaracteristicasService = {
 	crearCaractIniciales: function(partidaId){
-		listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
-		nJugadores = listaJugadores.length;
-		cartasRoll = BarajarMazo_Roll(nJugadores);
-		nMaxCartas = nMaxCartas(nJugadores);
-		var cartasIniciales = [];
+		//listaJugadores = Partidas.getAttr(listaJugadores,partidaId);
+    listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
+		NumeroJugadores = listaJugadores.length;
+		mazo_roll = BarajarMazo_Roll(NumeroJugadores);
+		MaxCartas = nMaxCartas(NumeroJugadores);
+		//mazo_general = Partidas.getAttr(mazoGeneral,partidaId);
+	  mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
+	    var Puntos = 0;
+	    var Cartas = [];
+	    var Roll;
 
-		for (var i = 0; i < nMaxCartas; i++) {
-			cartasIniciales[i] = robarCarta(partidaId);
-		};
-
-		for (var i = 0; i < 3 ; i++) {
-			Caracteristicas.insert({
-				partidaId: partidaId,
-				jugadorId: listaJugadores[i],
-				puntuacion: 0,
-				roll: cartasRoll[i], 
-				cartas: cartasIniciales,
-				pico: "arreglado",
-				vagoneta: "arreglado",
-				farolillo: "arreglado"
-			});
-		}
-	}
+	    for (i=0; i<NumeroJugadores; i++) {
+		    for(j = 0; j < MaxCartas; j++){
+                Cartas[j] = robarCarta(partidaId);
+			    //Cartas[j] = mazo_general[mazo_general.length-1];
+			    //mazo_general.splice(mazo_general.length-1, 1);
+                //Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo_general}});
+		    }
+		    Roll = mazo_roll[mazo_roll.length-1];
+		    mazo_roll.splice(mazo_roll.length-1, 1);
+		    Caracteristicas.insert({
+			    turno: i,
+			    JugadorId: listaJugadores[i],
+			    partidaId: partidaId,
+			    Puntuacion: Puntos,
+			    Roll: Roll,
+			    Mano: Cartas,
+			    Pico: "arreglado",
+			    Vagoneta: "arreglado",
+			    Farolillo: "arreglado"
+		    });
+	    }
+	},
 	//funcion para buscar en la coleccion
 
 	getCar: function(attr,x){
-		return Caracteristicas.findOne({turno: x)}).attr;
+		return Caracteristicas.findOne({turno: x}).attr;
 	},
 	getCarbyId:function(attr){
-		return Caracteristicas.findOne({PartidaId: PartidaId)}).attr;
+		return Caracteristicas.findOne({PartidaId: PartidaId}).attr;
 	},
 
 	getId: function(JugadorId){
-		return Caracteristicas.findOne({Puntuacion: Puntos)}).JugadorId;
+		return Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
 
-	}
-};*/
-//he subido los servicios porque no estoy seguro que los lean las funciones de más abajo de ahi que esta funcion este aqui porque no lo cogerian las demas 
+	},
+};
+//he subido los servicios porque no estoy seguro que los lean las funciones de más abajo de ahi que esta funcion este aqui porque no lo cogerian las demas
 
 //////////////////////////FUNCIONA CORRECTAMENTE////////////DANGER,NO TOCAR///////////
-//esto hay que meterlo arriba mañana lo vemos son dos lineas 
+//esto hay que meterlo arriba mañana lo vemos son dos lineas linea 456
 //*****************************************************************************************************
 //**************************************************************************************///
-CaracteristicasIniciales = function(partidaId){
-        //listaJugadores = Partidas.getAttr(listaJugadores,partidaId);
-        listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
+/*CaracteristicasIniciales = function(partidaId){
+    //listaJugadores = Partidas.getAttr(listaJugadores,partidaId);
+    listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
 		NumeroJugadores = listaJugadores.length;
 		mazo_roll = BarajarMazo_Roll(NumeroJugadores);
 		MaxCartas = nMaxCartas(NumeroJugadores);
@@ -395,7 +407,7 @@ CaracteristicasIniciales = function(partidaId){
 	    var Puntos = 0;
 	    var Cartas = [];
 	    var Roll;
-	
+
 	    for (i=0; i<NumeroJugadores; i++) {
 		    for(j = 0; j < MaxCartas; j++){
                 Cartas[j] = robarCarta(partidaId);
@@ -418,7 +430,7 @@ CaracteristicasIniciales = function(partidaId){
 		    });
 	    }
 
-};
+};*/
 
 
 ////////////ESTA FUNCIÓN YA ESTÁ BIEN PROBADA:)(GODMODE)se coge el mazo se guarda la ultima carta se borra del mazo esa carta
@@ -434,19 +446,18 @@ robarCarta = function(partidaId){
 
 ///////////////////////FUNCION JUGAR CARTA SIN TERMINAR////////////////////////
 JugarCarta = function(partidaId){
-    var CualquierCarta = false; 
+    var CualquierCarta = false;
     //identificador = Partidas.getAttr(jugadorActivo,partidaId);
 
     identificador = Partidas.findOne({_id: partidaId}).jugadorActivo;
-    //idCaracteristicas= Caracteristicas.getCarById(PartidaId);
+    idCaracteristicas= Caracteristicas.getCarById(PartidaId);
 
-    idCarcateristicas = Caracteristicas.findOne({partidaId: partidaId,
-                                                JugadorId: identificador,})._id;
-    //hacer lo mismo con estas tres 
+    //idCarcateristicas = Caracteristicas.findOne({partidaId: partidaId,JugadorId: identificador,})._id;
+    //hacer lo mismo con estas tres
     Pico = Caracteristicas.findOne({_id:idCaracteristicas}).Pico;
     Vagoneta = Caracteristicas.findOne({_id:idCaracteristicas}).Vagoneta;
     Farolillo = Caracteristicas.findOne({_id:idCaracteristicas}).Farolillo;
-    
+
     if ((Pico === "arreglado") && (Vagoneta === "arreglado") && (Farolillo === "arreglado")){
         CualquierCarta = true;
     }
@@ -460,12 +471,12 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 	if(Buscadores){
 		Puntos = 4;
 		for (i=0; i<NumeroJugadores; i++) {
-			//Roll= Caracteristicas.getCar(Roll,i);
+			Roll= Caracteristicas.getCar(Roll,i);
 
-			Roll = Caracteristicas.findOne({turno: i}).Roll;
+			//Roll = Caracteristicas.findOne({turno: i}).Roll;
 			if (Roll === "Buscador"){
-				//Puntuacion= Caracteristicas.getCar(Puntuacion,i);
-				Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+				Puntuacion= Caracteristicas.getCar(Puntuacion,i);
+				//Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
 				Puntos = Puntuacion + Puntos;
 				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
 			}
@@ -485,8 +496,8 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 		for (i=0; i<NumeroJugadores; i++) {
 			Roll = Caracteristicas.findOne({turno: i}).Roll;
 			if (Roll === "Saboteador"){
-				//Puntuacion= Caracteristicas.getCar(Puntuacion,i);
-				Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+				Puntuacion= Caracteristicas.getCar(Puntuacion,i);
+			//	Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
 				Puntos = Puntuacion + Puntos;
 				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
 			}
@@ -497,9 +508,9 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 
 
 ActualizarTurno = function(partidaId){
-	//Turno = Partidas.getAttr(turnoPartida,PartidaId);
+	Turno = Partidas.getAttr(turnoPartida,PartidaId);
 
-    Turno = Partidas.findOne({_id: partidaId}).turnoPartida;
+    //Turno = Partidas.findOne({_id: partidaId}).turnoPartida;
     TurnoActualizado = Turno + 1;
     jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[TurnoActualizado];
     Partidas.update({_id: partidaId},{$set:{jugadorActivo: jugadorActivo,
@@ -518,8 +529,8 @@ ComprobarPuntuacion = function(){
 			Puntos = Puntuacion;
 		}
 	}
-	//idenJugador= Caracteristicas.getId(JugadorId);
-	idenJugador = Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
+	idenJugador= Caracteristicas.getId(JugadorId);
+	//idenJugador = Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
 	nombreGanador = Jugadores.findOne({_id: idenJugador}).name;
 
 	return nombreGanador;
@@ -537,7 +548,7 @@ Partida = function(PartidaId){
 	var PepitaEncontrada = false;
 	for(i=0; i<NumRondas; i++){
 		//Aquí preparación del tablero
-		//Añadir a la partida : Lista de jugadores/ Mazo_general / JugadorActivo / 
+		//Añadir a la partida : Lista de jugadores/ Mazo_general / JugadorActivo /
 
 		//Aquí reparto de Cartas iniciales
 		RepartirCartasIniciales(PartidaId);
@@ -546,17 +557,18 @@ Partida = function(PartidaId){
 		while((PepitaEncontrada === false)){
 			//Hacer con while.
 			while(turnos < NumeroJugadores){
-				/*la mayuscula de turnos 
+				//la mayuscula de turnos
 				Cartas = Caracteristicas.getAttr(Mano,turnos);
 				numTurno = Caracteristicas.getAttr(turno,Turnos);
-				*/
+				/*
 				Cartas = Caracteristicas.findOne({turno: turnos}).Mano;
 				numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
-				//part= Caracteristicas.getCarById(PartidaId);
-				//Mazo_pila= Caracteristicas.getCarById(Pila);
+				*/
+				part= Caracteristicas.getCarById(PartidaId);
+				Mazo_pila= Caracteristicas.getCarById(Pila);
 
-				part = Caracteristicas.findOne({PartidaId: PartidaId}).PartidaId;
-				Mazo_Pila = Partidas.findOne({PartidaId: PartidaId}).Pila;
+				//part = Caracteristicas.findOne({PartidaId: PartidaId}).PartidaId;
+				//Mazo_Pila = Partidas.findOne({PartidaId: PartidaId}).Pila;
 				//Si un jugador tiene cartas en su mano,jugará Carta y Robará {
 				if (Cartas.length > 0){
 					if(Mazo_Pila.length > 0){
@@ -604,7 +616,7 @@ if (Meteor.isServer) {
 	Meteor.startup(function () {
 		Meteor.methods({
 			'empezar': function(partidaId) {
-				//Preparar tablero 
+				//Preparar tablero
 				//Barajar mazos
 				//numero ronda = 1
                 //Ganador de la ronda
@@ -614,7 +626,7 @@ if (Meteor.isServer) {
                 //el estado en que esta la partida.
 				//Jugador activo el primero de la lista
 				PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
-				
+
 				CaracteristicasService.crearCaractIniciales(partidaId);
 
 
@@ -627,12 +639,12 @@ if (Meteor.isServer) {
 
                     ////////////////////////PASAMOS TURNO////////////////////////////
                     ActualizarTurno(partidaId);
-                             
+
                 } else {
                     //Solo se puede poner Carta de ACCION o PASAR TURNO.
-             
+
                     ////////////////////////PASAMOS TURNO////////////////////////////
-                    ActualizarTurno(partidaId);                
+                    ActualizarTurno(partidaId);
                 }
             },
             'PonerCartaAccion': function(partidaId) {
@@ -647,7 +659,7 @@ if (Meteor.isServer) {
                     //Solo se puede poner Carta de ACCION o PASAR TURNO.
 
                     ////////////////////////PASAMOS TURNO////////////////////////////
-                    ActualizarTurno(partidaId);                
+                    ActualizarTurno(partidaId);
                 }
             },
             'DescartarCartaMano': function(partidaId) {
@@ -661,7 +673,7 @@ if (Meteor.isServer) {
                     //Solo se puede poner Carta de ACCION o PASAR TURNO.
 
                     ////////////////////////PASAMOS TURNO////////////////////////////
-                    ActualizarTurno(partidaId);                
+                    ActualizarTurno(partidaId);
                 }
             },
 		});
@@ -675,8 +687,8 @@ if (Meteor.isServer) {
 		var partidaId = PartidaService.getPartidaId(1);			//esto nos lo pasan de la plataforma
 		//esto ira dentro de meteor.methods empezarpartida.
         PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
-				
+
 	    CaracteristicasService.crearCaractIniciales(partidaId);
-		
+
   });
 }
