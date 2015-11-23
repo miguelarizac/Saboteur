@@ -9,26 +9,26 @@ Caracteristicas = new Meteor.Collection("Caracteristicas");
 var nombrePartida = "partida1";
 
 var tiposCartas = {
-	Estandar: { Izquierda: 0, Derecha: 0, Arriba: 0, Abajo: 0, Bloqueante: 0},
+	Estandar: { Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: true},
 	//Tipo tunel
-	Camino1: { Izquierda: 0, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 0},
-	Camino2: { Izquierda: 1, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 0},
-	Camino3: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 1, Bloqueante: 0},
-	Camino4: { Izquierda: 0, Derecha: 1, Arriba: 0, Abajo: 1, Bloqueante: 0},
-	Camino5: { Izquierda: 1, Derecha: 0, Arriba: 0, Abajo: 1, Bloqueante: 0},
-	Camino6: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 0, Bloqueante: 0},
-	Camino7: { Izquierda: 1, Derecha: 1, Arriba: 0, Abajo: 0, Bloqueante: 0},
-	SinCamino1: { Izquierda: 0, Derecha: 0, Arriba: 0, Abajo: 1, Bloqueante: 1},
-	SinCamino2: { Izquierda: 1, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 1},
-	SinCamino3: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 1, Bloqueante: 1},
-	SinCamino4: { Izquierda: 0, Derecha: 1, Arriba: 0, Abajo: 1, Bloqueante: 1},
-	SinCamino5: { Izquierda: 1, Derecha: 0, Arriba: 0, Abajo: 1, Bloqueante: 1},
-	SinCamino6: { Izquierda: 1, Derecha: 0, Arriba: 0, Abajo: 0, Bloqueante: 1},
-	SinCamino7: { Izquierda: 0, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 1},
-	SinCamino8: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 0, Bloqueante: 1},
-	SinCamino9: { Izquierda: 1, Derecha: 1, Arriba: 0, Abajo: 0, Bloqueante: 1},
+	Camino1: { Izquierda: false, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
+	Camino2: { Izquierda: true, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
+	Camino3: { Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false},
+	Camino4: { Izquierda: false, Derecha: true, Arriba: false, Abajo: true, Bloqueante: false},
+	Camino5: { Izquierda: true, Derecha: false, Arriba: false, Abajo: true, Bloqueante: false},
+	Camino6: { Izquierda: true, Derecha: true, Arriba: true, Abajo: false, Bloqueante: false},
+	Camino7: { Izquierda: true, Derecha: true, Arriba: false, Abajo: false, Bloqueante: false},
+	SinCamino1: { Izquierda: false, Derecha: false, Arriba: false, Abajo: true, Bloqueante: true},
+	SinCamino2: { Izquierda: true, Derecha: false, Arriba: true, Abajo: true, Bloqueante: true},
+	SinCamino3: { Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: true},
+	SinCamino4: { Izquierda: false, Derecha: true, Arriba: false, Abajo: true, Bloqueante: true},
+	SinCamino5: { Izquierda: true, Derecha: false, Arriba: false, Abajo: true, Bloqueante: true},
+	SinCamino6: { Izquierda: true, Derecha: false, Arriba: false, Abajo: false, Bloqueante: true},
+	SinCamino7: { Izquierda: false, Derecha: false, Arriba: true, Abajo: true, Bloqueante: true},
+	SinCamino8: { Izquierda: true, Derecha: true, Arriba: true, Abajo: false, Bloqueante: true},
+	SinCamino9: { Izquierda: true, Derecha: true, Arriba: false, Abajo: false, Bloqueante: true},
 	//Tipo Inicio
-	ComienzoEscalera: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 1, Bloqueante: 0},
+	ComienzoEscalera: { Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: 0},
 	//Tipo Destino
 	DestinoNada1: { Izquierda: 1, Derecha: 0, Arriba: 0, Abajo: 1, Bloqueante: 0},
 	DestinoNada2: { Izquierda: 1, Derecha: 0, Arriba: 1, Abajo: 0, Bloqueante: 0},
@@ -98,19 +98,20 @@ var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','C
 
 
 celda = function(){
-	this.carta = null;
+	this.carta = tiposCartas.Estandar;
 };
 
 tablero = function(destinos){
 	this.celdas = {};
 	this.celdasOcupadas=[];
+	this.celdasPosibles=[];
 
 	for (fila = -15; fila < 15; fila++) {
 		for (columna = -3; columna < 11; columna++) {
 			this.celdas[columna.toString() + "," + fila.toString()] = new celda();
 		};
 	};
-	this.celdas["0,0"].carta = 'ComienzoEscalera';
+	this.celdas["0,0"].carta = tiposCartas.ComienzoEscalera;
 	this.celdasOcupadas.push("0,0");
 	this.celdas["8,2"].carta = destinos[0];
 	this.celdasOcupadas.push("8,2");
@@ -119,37 +120,108 @@ tablero = function(destinos){
 	this.celdas["8,-2"].carta = destinos[2];
 	this.celdasOcupadas.push("8,-2");
 
-	this.posiblesCeldas = function(carta){
-		for (i = 0; i < this.celdasOcupadas.length; i++) {
+	this.celdasPosibles.push("0,1");
+	this.celdasPosibles.push("0,-1");
+	this.celdasPosibles.push("-1,0");
+	this.celdasPosibles.push("1,0");
 
-		};
-	};
+};
 
-	this.ponerCarta = function(carta, columna, fila) {
-		var cartasAround = [];
-		var success = true;
-		var cord1 = (columna-1).toString() + "," + fila.toString();
-		var cord2 = columna.toString() + "," + (fila+1).toString();
-		var cord3 = (columna+1).toString() + "," + fila.toString();
-		var cord4 =  columna.toString() + "," + (fila-1).toString();
-		var cords = [cord1, cord2, cord3, cord4];
+compatibles = function(c1,cAux){
+	var comp = true;
+	console.log("carta aux");
+	console.log(cAux.Izquierda);
+	console.log(cAux.Derecha);
+	console.log(cAux.Arriba);
+	console.log(cAux.Abajo);
+	if((c1.Izquierda != cAux.Izquierda) || (cAux.Izquierda != null) ){
+		comp = false;
+		console.log("comp1");
+	}
+	if((c1.Derecha != cAux.Derecha) || (cAux.Derecha != null) ){
+		comp = false;
+		console.log("comp2");
+	}
+	if((c1.Arriba != cAux.Arriba) || (cAux.Arriba != null) ){
+		comp = false;
+		console.log("comp3");
+	}
+	if((c1.Abajo != cAux.Abajo) || (cAux.Abajo != null) ){
+		comp = false;
+		console.log("comp4");
+	}
+	return comp;
+};
 
-		for (i=0; i < 4; i++) {
-			//guardamos las cartas a su alrededor en cartasAround[]
-			//n
-		};
+ponerCarta = function(partidaId,tablero, carta, columna, fila) {
+	var success = true;
+	/*var cordL = (columna-1).toString() + "," + fila.toString();
+	var cordR = (columna+1).toString() + "," + fila.toString();
+	var cordUp = columna.toString() + "," + (fila+1).toString();
+	var cordDown =  columna.toString() + "," + (fila-1).toString();
+	//var cords = [cordL, cordR, cordUp, cordDown];
+	var cartaAux = tiposCartas.Estandar;
+	console.log(carta);
+	if (tablero.celdas[cordL]!= null){
+		console.log("hay carta a la Izquierda");
+		cartaAux.Izquierda = tablero.celdas[cordL].carta.Derecha;
+	}
+	else if (tablero.celdas[cordR] != null){
+		console.log("hay carta a la dhca");
+		cartaAux.Derecha = tablero.celdas[cordR].carta.Izquierda;
+	}
+	else if (tablero.celdas[cordUp] != null){
+		console.log("hay carta a la arriba");
+		cartaAux.Arriba = tablero.celdas[cordUp].carta.Abajo;
+	}
+	else if (tablero.celdas[cordDown] != null) {
+		console.log("hay carta a la abajo");
+		cartaAux.Abajo = tablero.celdas[cordDown].carta.Arriba;
+	}
+	console.log(cartaAux);
 
-		for (i=0; i<4; i++) {
-			if(!compatibles(cartasAround[i], carta, i)){
-				success = false;	//compatibles(cartaAround[i], carta, lado)
-				break;
-			}
-		};
-		this.celdas[columna.toString() + "," + fila.toString()].carta = 'ComienzoEscalera';
-		this.celdasOcupadas.push(columna.toString() + "," + fila.toString());
+	//ya esta la carta posible y ahora hay que comprobar con la carta que quieren poner sin son compatibles
+	if(compatibles(carta, cartaAux)){
+		console.log("son compatibles");
+		tablero.celdas[columna.toString() + "," + fila.toString()].carta = carta;
+		tablero.celdasOcupadas.push(columna.toString() + "," + fila.toString());
+		success = true;
+	}
+	//ya esta añadida la carta al tablero ahora hay que actualizar el array de celdasPosibles
+	Partidas.update({_id: partidaId},{$set:{tablero: tablero}});
+	return success;*/
+	var cordL = (columna-1).toString() + "," + fila.toString();
+	var cordR = (columna+1).toString() + "," + fila.toString();
+	var cordUp = columna.toString() + "," + (fila+1).toString();
+	var cordDown =  columna.toString() + "," + (fila-1).toString();
 
-		return success;
-	};
+	if(carta.Arriba){
+		if(!tablero.celdas[cordUp].carta.Abajo){
+			success = false;
+		}
+	}
+
+	if(carta.Abajo){
+		if(!tablero.celdas[cordDown].carta.Arriba){
+			success = false;
+
+		}
+	}
+
+	if(carta.Izquierda){
+		if(!tablero.celdas[cordL].carta.Derecha){
+			success = false;
+
+		}
+	}
+
+	if(carta.Derecha){
+		if(!tablero.celdas[cordR].carta.Izquierda){
+			success = false;
+		}
+	}
+	console.log(success);
+	return success;
 
 };
 
@@ -304,7 +376,7 @@ PartidaService = {
 
 	getAttr: function(attr, PartidaId){
 		//mirar
-		return Partida.findOne({_id:PartidaId}).attr;
+		return Partidas.findOne({_id:PartidaId}).attr;
 	},
 
 	empezarPartida: function(partidaId){
@@ -325,6 +397,13 @@ PartidaService = {
                                   FinRonda: GanadorRonda,
                                   FinPartida: GanadorPartida,}});
 	},
+
+	tryPonerCarta: function(partidaId,carta,columna, fila){
+		tablero = Partidas.findOne({_id: partidaId}).tablero;
+		success = ponerCarta(partidaId,tablero,carta,columna,fila);
+
+	},
+
 };
 
 /*CaracteristicasService = {
@@ -456,7 +535,7 @@ JugarCarta = function(partidaId){
     return CualquierCarta;
 };
 
-
+/*
 RepartirPuntos = function(Buscadores,Saboteadores){
 	NumeroJugadores = ComprobarNum();
 	var Puntos;
@@ -497,7 +576,7 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 	}
 
 }
-
+*/
 
 ActualizarTurno = function(partidaId){
 	Turno = PartidaService.getAttr(turnoPartida,PartidaId);
@@ -527,7 +606,7 @@ ComprobarPuntuacion = function(){
 
 	return nombreGanador;
 }
-
+/*
 
 var NumRondas = 3;
 
@@ -555,13 +634,13 @@ Partida = function(PartidaId){
 				/*
 				Cartas = Caracteristicas.findOne({turno: turnos}).Mano;
 				numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
-				*/
+				*
 				part= CaracteristicasService.getCarById(PartidaId);
 				Mazo_pila= CaracteristicasService.getCarById(Pila);
 
 				//part = Caracteristicas.findOne({PartidaId: PartidaId}).PartidaId;
 				//Mazo_Pila = Partidas.findOne({PartidaId: PartidaId}).Pila;
-				//Si un jugador tiene cartas en su mano,jugará Carta y Robará {
+				//Si un jugador tiene cartas en su mano,jugará Carta y Robará
 				if (Cartas.length > 0){
 					if(Mazo_Pila.length > 0){
 						if ((numTurno === turnos) && (part === PartidaId)){
@@ -573,29 +652,30 @@ Partida = function(PartidaId){
 					}
 				}
 				turnos++;
-			}
-			turnos = 0;
-		}
-		//FIN DE LA RONDA.
-		if(PepitaEncontrada){
-			Buscadores = true;
-		}else {
-			Saboteadores = true;
-		}
-		//Aquí llamar a la función Repartir Puntuacion.
-		RepartirPuntos(Buscadores,Saboteadores);
-		Saboteadores = false;
-		Buscadores = false;
 
-	}
+			turnos = 0;
+			}
+		//FIN DE LA RONDA.
+			if(PepitaEncontrada){
+				Buscadores = true;
+			}else {
+				Saboteadores = true;
+			}
+		//Aquí llamar a la función Repartir Puntuacion.
+			RepartirPuntos(Buscadores,Saboteadores);
+			Saboteadores = false;
+			Buscadores = false;
+
+		}
 
 	//Aquí Comprabación de puntos de Jugadores, y decir el Ganador.
 	Ganador = ComprobarPuntuacion();
 	//FIN PARTIDA.
 
+	}
 };
 
-
+*/
 ///////////EMPIEZA METEOR/////////////////////////
 
 if (Meteor.isClient) {
@@ -624,52 +704,52 @@ if (Meteor.isServer) {
 
 				//repartir cartas iniciales a cada jugador
 			},
-            'ponerCartaTablero': function(partidaId, carta, columna,fila) {
-                CualquierCarta = JugarCarta(partidaId);
-                if (CualquierCarta){
-                    //Se puede poner Carta de EXCAVACION,coger las coordenadas que nos pasen y poner carta en el tablero.
+      'ponerCartaTablero': function(partidaId, carta, columna,fila) {
+          CualquierCarta = JugarCarta(partidaId);
+          if (CualquierCarta){
+              //Se puede poner Carta de EXCAVACION,coger las coordenadas que nos pasen y poner carta en el tablero.
 
-                    ////////////////////////PASAMOS TURNO////////////////////////////
+              ////////////////////////PASAMOS TURNO////////////////////////////
 
 
-                } else {
-                    //Solo se puede poner Carta de ACCION o PASAR TURNO.
+          } else {
+              //Solo se puede poner Carta de ACCION o PASAR TURNO.
 
-                    ////////////////////////PASAMOS TURNO////////////////////////////
+              ////////////////////////PASAMOS TURNO////////////////////////////
 
-                }
-								robarCarta(partidaId);
-								ActualizarTurno(partidaId);
-            },
-            'ponerCartaJugador': function(partidaId, carta, jugadorId) {
-                CualquierCarta = JugarCarta(partidaId);
-                if (CualquierCarta){
-                    //Se puede poner Carta de ACCION,coger el id del jugador(Nos lo pasara la IU) al que se quiere
-                    //poner la carta de accion,poner la carta de Accion para arreglarnos algo,derrumbar tunel o utilizar Mapa.
+          }
+					robarCarta(partidaId);
+					ActualizarTurno(partidaId);
+      },
+      'ponerCartaJugador': function(partidaId, carta, jugadorId) {
+          CualquierCarta = JugarCarta(partidaId);
+          if (CualquierCarta){
+              //Se puede poner Carta de ACCION,coger el id del jugador(Nos lo pasara la IU) al que se quiere
+              //poner la carta de accion,poner la carta de Accion para arreglarnos algo,derrumbar tunel o utilizar Mapa.
 
-                    ////////////////////////PASAMOS TURNO////////////////////////////
-                    ActualizarTurno(partidaId);
-                } else {
-                    //Solo se puede poner Carta de ACCION o PASAR TURNO.
+              ////////////////////////PASAMOS TURNO////////////////////////////
+              ActualizarTurno(partidaId);
+          } else {
+              //Solo se puede poner Carta de ACCION o PASAR TURNO.
 
-                    ////////////////////////PASAMOS TURNO////////////////////////////
-                    ActualizarTurno(partidaId);
-                }
-            },
-            'DescartarCartaMano': function(partidaId) {
-                CualquierCarta = JugarCarta(partidaId);
-                if (CualquierCarta){
-                    //Descartar Carta.
+              ////////////////////////PASAMOS TURNO////////////////////////////
+              ActualizarTurno(partidaId);
+          }
+      },
+      'DescartarCartaMano': function(partidaId) {
+          CualquierCarta = JugarCarta(partidaId);
+          if (CualquierCarta){
+              //Descartar Carta.
 
-                    ////////////////////////PASAMOS TURNO////////////////////////////
-                    ActualizarTurno(partidaId);
-                } else {
-                    //Solo se puede poner Carta de ACCION o PASAR TURNO.
+              ////////////////////////PASAMOS TURNO////////////////////////////
+              ActualizarTurno(partidaId);
+          } else {
+              //Solo se puede poner Carta de ACCION o PASAR TURNO.
 
-                    ////////////////////////PASAMOS TURNO////////////////////////////
-                    ActualizarTurno(partidaId);
-                }
-            },
+              ////////////////////////PASAMOS TURNO////////////////////////////
+              ActualizarTurno(partidaId);
+          }
+      },
 		});
 
 
@@ -680,9 +760,14 @@ if (Meteor.isServer) {
 		PartidaService.generarPartida();						//esto lo tienen que hacer los de la plataforma
 		var partidaId = PartidaService.getPartidaId(1);			//esto nos lo pasan de la plataforma
 		//esto ira dentro de meteor.methods empezarpartida.
-        PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
+    PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
 
-	    CaracteristicasService.crearCaractIniciales(partidaId);
+	  CaracteristicasService.crearCaractIniciales(partidaId);
+		carta = tiposCartas.Camino6;
+		PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino6,1,0);
+		PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino2,1,0);
+		PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino1,1,0);
+
 
   });
 }
