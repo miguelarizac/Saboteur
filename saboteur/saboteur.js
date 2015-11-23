@@ -9,6 +9,7 @@ Caracteristicas = new Meteor.Collection("Caracteristicas");
 var nombrePartida = "partida1";
 
 var tiposCartas = {
+	Estandar: { Izquierda: 0, Derecha: 0, Arriba: 0, Abajo: 0, Bloqueante: 0},
 	//Tipo tunel
 	Camino1: { Izquierda: 0, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 0},
 	Camino2: { Izquierda: 1, Derecha: 0, Arriba: 1, Abajo: 1, Bloqueante: 0},
@@ -95,13 +96,6 @@ var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','C
 //			TABLERO        //
 /////////////////////////////
 
-carta = function(){
-	this.izquierda = null;
-	this.derecha = null;
-	this.arriba = null;
-	this.abajo = null;
-	this.bloqueante = null;
-};
 
 celda = function(){
 	this.carta = null;
@@ -124,7 +118,7 @@ tablero = function(destinos){
 	this.celdasOcupadas.push("8,0");
 	this.celdas["8,-2"].carta = destinos[2];
 	this.celdasOcupadas.push("8,-2");
-/*
+
 	this.posiblesCeldas = function(carta){
 		for (i = 0; i < this.celdasOcupadas.length; i++) {
 
@@ -156,7 +150,7 @@ tablero = function(destinos){
 
 		return success;
 	};
-*/
+
 };
 
 
@@ -318,20 +312,18 @@ PartidaService = {
 		mazoGeneral = BarajarMazo_General(CartasPila);
 		mazoDestinos = BarajarMazo_Destino(CartasDestino);
 		tablero = new tablero(mazoDestinos);
-        turno = 0
-		jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[turno]; //coge el primero de la lista
+		jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[0]; //coge el primero de la lista
 		nRonda = 1;
-        GanadorRonda = false;
-        GanadorPartida = false;
+    GanadorRonda = false;
+    GanadorPartida = false;
 
 		Partidas.update({_id: partidaId},{$set:{tablero: tablero,
 							                    mazoGeneral: mazoGeneral,
-							                    mazoDestinos: mazoDestinos,
+							                    //mazoDestinos: mazoDestinos,
 							                    jugadorActivo: jugadorActivo,
-                                                turnoPartida: turno,
 							                    nRonda: nRonda,
-                                                FinRonda: GanadorRonda,
-                                                FinPartida: GanadorPartida,}});
+                                  FinRonda: GanadorRonda,
+                                  FinPartida: GanadorPartida,}});
 	},
 };
 
@@ -449,14 +441,14 @@ JugarCarta = function(partidaId){
     var CualquierCarta = false;
     //identificador = Partidas.getAttr(jugadorActivo,partidaId);
 
-    identificador = Partidas.findOne({_id: partidaId}).jugadorActivo;
-    idCaracteristicas= Caracteristicas.getCarById(PartidaId);
+    identificador = PartidaService.findOne({_id: partidaId}).jugadorActivo;
+//idCaracteristicas= CaracteristicasService.getCarById(PartidaId);
 
     //idCarcateristicas = Caracteristicas.findOne({partidaId: partidaId,JugadorId: identificador,})._id;
     //hacer lo mismo con estas tres
-    Pico = Caracteristicas.findOne({_id:idCaracteristicas}).Pico;
-    Vagoneta = Caracteristicas.findOne({_id:idCaracteristicas}).Vagoneta;
-    Farolillo = Caracteristicas.findOne({_id:idCaracteristicas}).Farolillo;
+    Pico = Caracteristicas.findOne({_id:identificador}).Pico;
+    Vagoneta = Caracteristicas.findOne({_id:identificador}).Vagoneta;
+    Farolillo = Caracteristicas.findOne({_id:identificador}).Farolillo;
 
     if ((Pico === "arreglado") && (Vagoneta === "arreglado") && (Farolillo === "arreglado")){
         CualquierCarta = true;
@@ -471,12 +463,12 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 	if(Buscadores){
 		Puntos = 4;
 		for (i=0; i<NumeroJugadores; i++) {
-			Roll= Caracteristicas.getCar(Roll,i);
+			//Roll= Caracteristicas.getCar(Roll,i);
 
-			//Roll = Caracteristicas.findOne({turno: i}).Roll;
+			Roll = Caracteristicas.findOne({turno: i}).Roll;
 			if (Roll === "Buscador"){
-				Puntuacion= Caracteristicas.getCar(Puntuacion,i);
-				//Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+			//	Puntuacion= Caracteristicas.getCar(Puntuacion,i);
+				Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
 				Puntos = Puntuacion + Puntos;
 				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
 			}
@@ -496,8 +488,8 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 		for (i=0; i<NumeroJugadores; i++) {
 			Roll = Caracteristicas.findOne({turno: i}).Roll;
 			if (Roll === "Saboteador"){
-				Puntuacion= Caracteristicas.getCar(Puntuacion,i);
-			//	Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+				//Puntuacion= CaracteristicasService.getCar(Puntuacion,i);
+			Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
 				Puntos = Puntuacion + Puntos;
 				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
 			}
@@ -508,7 +500,7 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 
 
 ActualizarTurno = function(partidaId){
-	Turno = Partidas.getAttr(turnoPartida,PartidaId);
+	Turno = PartidaService.getAttr(turnoPartida,PartidaId);
 
     //Turno = Partidas.findOne({_id: partidaId}).turnoPartida;
     TurnoActualizado = Turno + 1;
@@ -522,14 +514,14 @@ ComprobarPuntuacion = function(){
 	NumeroJugadores = ComprobarNum();
 	Puntos = 0;
 	for (i=0; i<NumeroJugadores; i++) {
-		//Puntuacion= Caracteristicas.getCar(Puntuacion,i);
+		//Puntuacion= CaracteristicasService.getCar(Puntuacion,i);
 
 		Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
 		if(Puntuacion > Puntos){
 			Puntos = Puntuacion;
 		}
 	}
-	idenJugador= Caracteristicas.getId(JugadorId);
+	idenJugador= CaracteristicasService.getId(JugadorId);
 	//idenJugador = Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
 	nombreGanador = Jugadores.findOne({_id: idenJugador}).name;
 
@@ -558,14 +550,14 @@ Partida = function(PartidaId){
 			//Hacer con while.
 			while(turnos < NumeroJugadores){
 				//la mayuscula de turnos
-				Cartas = Caracteristicas.getAttr(Mano,turnos);
-				numTurno = Caracteristicas.getAttr(turno,Turnos);
+				Cartas = CaracteristicasService.getAttr(Mano,turnos);
+				numTurno = CaracteristicasService.getAttr(turno,Turnos);
 				/*
 				Cartas = Caracteristicas.findOne({turno: turnos}).Mano;
 				numTurno = Caracteristicas.findOne({turno:Turnos}).turno;
 				*/
-				part= Caracteristicas.getCarById(PartidaId);
-				Mazo_pila= Caracteristicas.getCarById(Pila);
+				part= CaracteristicasService.getCarById(PartidaId);
+				Mazo_pila= CaracteristicasService.getCarById(Pila);
 
 				//part = Caracteristicas.findOne({PartidaId: PartidaId}).PartidaId;
 				//Mazo_Pila = Partidas.findOne({PartidaId: PartidaId}).Pila;
@@ -632,22 +624,24 @@ if (Meteor.isServer) {
 
 				//repartir cartas iniciales a cada jugador
 			},
-            'PonerCartaExcavacion': function(partidaId) {
+            'ponerCartaTablero': function(partidaId, carta, columna,fila) {
                 CualquierCarta = JugarCarta(partidaId);
                 if (CualquierCarta){
                     //Se puede poner Carta de EXCAVACION,coger las coordenadas que nos pasen y poner carta en el tablero.
 
                     ////////////////////////PASAMOS TURNO////////////////////////////
-                    ActualizarTurno(partidaId);
+
 
                 } else {
                     //Solo se puede poner Carta de ACCION o PASAR TURNO.
 
                     ////////////////////////PASAMOS TURNO////////////////////////////
-                    ActualizarTurno(partidaId);
+
                 }
+								robarCarta(partidaId);
+								ActualizarTurno(partidaId);
             },
-            'PonerCartaAccion': function(partidaId) {
+            'ponerCartaJugador': function(partidaId, carta, jugadorId) {
                 CualquierCarta = JugarCarta(partidaId);
                 if (CualquierCarta){
                     //Se puede poner Carta de ACCION,coger el id del jugador(Nos lo pasara la IU) al que se quiere
