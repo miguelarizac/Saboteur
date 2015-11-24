@@ -433,12 +433,12 @@ PartidaService = {
 CaracteristicasService = {
 	crearCaractIniciales: function(partidaId){
 		//listaJugadores = Partidas.getAttr(listaJugadores,partidaId);
-	listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
+	    listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
 		NumeroJugadores = listaJugadores.length;
 		mazo_roll = barajarMazoRoll(NumeroJugadores);
 		MaxCartas = nMaxCartas(NumeroJugadores);
 		//mazo_general = Partidas.getAttr(mazoGeneral,partidaId);
-	  mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
+	    mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
 		var Puntos = 0;
 		var Cartas = [];
 		var Roll;
@@ -539,7 +539,7 @@ JugarCarta = function(partidaId){
 	//identificador = Partidas.getAttr(jugadorActivo,partidaId);
 
 	identificador = PartidaService.findOne({_id: partidaId}).jugadorActivo;
-//idCaracteristicas= CaracteristicasService.getCarById(PartidaId);
+    //idCaracteristicas= CaracteristicasService.getCarById(PartidaId);
 
 	//idCarcateristicas = Caracteristicas.findOne({partidaId: partidaId,JugadorId: identificador,})._id;
 	//hacer lo mismo con estas tres
@@ -553,7 +553,7 @@ JugarCarta = function(partidaId){
 	return CualquierCarta;
 };
 
-/*
+
 RepartirPuntos = function(Buscadores,Saboteadores){
 	NumeroJugadores = comprobarNum();
 	var Puntos;
@@ -594,7 +594,7 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 	}
 
 }
-*/
+
 
 ActualizarTurno = function(partidaId){
 	Turno = PartidaService.getAttr(turnoPartida,PartidaId);
