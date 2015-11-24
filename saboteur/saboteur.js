@@ -9,7 +9,7 @@ Caracteristicas = new Meteor.Collection("Caracteristicas");
 var nombrePartida = "partida1";
 
 var tiposCartas = {
-	Estandar: { Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: true},
+	Estandar: { Izquierda: null, Derecha: null, Arriba: null, Abajo: null, Bloqueante: null},
 	//Tipo tunel
 	Camino1: { Izquierda: false, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
 	Camino2: { Izquierda: true, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
@@ -28,11 +28,11 @@ var tiposCartas = {
 	SinCamino8: { Izquierda: true, Derecha: true, Arriba: true, Abajo: false, Bloqueante: true},
 	SinCamino9: { Izquierda: true, Derecha: true, Arriba: false, Abajo: false, Bloqueante: true},
 	//Tipo Inicio
-	ComienzoEscalera: { Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: 0},
+	ComienzoEscalera: { Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false},
 	//Tipo Destino
-	DestinoNada1: { Izquierda: 1, Derecha: 0, Arriba: 0, Abajo: 1, Bloqueante: 0},
-	DestinoNada2: { Izquierda: 1, Derecha: 0, Arriba: 1, Abajo: 0, Bloqueante: 0},
-	DestinoPepita: { Izquierda: 1, Derecha: 1, Arriba: 1, Abajo: 1, Bloqueante: 0},
+	DestinoNada1: { Izquierda: true, Derecha: false, Arriba: false, Abajo: true, Bloqueante: false},
+	DestinoNada2: { Izquierda: true, Derecha: false, Arriba: true, Abajo: false, Bloqueante: false},
+	DestinoPepita: { Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false},
 	//Tipo Roll
 	Saboteador: {Roll: "Sabotear"},
 	Buscador: {Roll: "Buscar"},
@@ -93,7 +93,7 @@ var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','C
 
 
 /////////////////////////////
-//			TABLERO        //
+//			TABLERO		//
 /////////////////////////////
 
 
@@ -127,26 +127,25 @@ tablero = function(destinos){
 
 };
 
+vacia = function(tablero, coord){
+	return tablero.celdas[coord].carta.Arriba==null;
+};
+
 compatibles = function(c1,cAux){
 	var comp = true;
-	console.log("carta aux");
-	console.log(cAux.Izquierda);
-	console.log(cAux.Derecha);
-	console.log(cAux.Arriba);
-	console.log(cAux.Abajo);
-	if((c1.Izquierda != cAux.Izquierda) || (cAux.Izquierda != null) ){
+	if((c1.Izquierda != cAux.Izquierda) && (cAux.Izquierda != null) ){
 		comp = false;
 		console.log("comp1");
 	}
-	if((c1.Derecha != cAux.Derecha) || (cAux.Derecha != null) ){
+	if((c1.Derecha != cAux.Derecha) && (cAux.Derecha != null) ){
 		comp = false;
 		console.log("comp2");
 	}
-	if((c1.Arriba != cAux.Arriba) || (cAux.Arriba != null) ){
+	if((c1.Arriba != cAux.Arriba) && (cAux.Arriba != null) ){
 		comp = false;
 		console.log("comp3");
 	}
-	if((c1.Abajo != cAux.Abajo) || (cAux.Abajo != null) ){
+	if((c1.Abajo != cAux.Abajo) && (cAux.Abajo != null) ){
 		comp = false;
 		console.log("comp4");
 	}
@@ -155,74 +154,93 @@ compatibles = function(c1,cAux){
 
 ponerCarta = function(partidaId,tablero, carta, columna, fila) {
 	var success = true;
-	/*var cordL = (columna-1).toString() + "," + fila.toString();
+	var cordL = (columna-1).toString() + "," + fila.toString();
 	var cordR = (columna+1).toString() + "," + fila.toString();
 	var cordUp = columna.toString() + "," + (fila+1).toString();
 	var cordDown =  columna.toString() + "," + (fila-1).toString();
-	//var cords = [cordL, cordR, cordUp, cordDown];
 	var cartaAux = tiposCartas.Estandar;
-	console.log(carta);
-	if (tablero.celdas[cordL]!= null){
-		console.log("hay carta a la Izquierda");
-		cartaAux.Izquierda = tablero.celdas[cordL].carta.Derecha;
-	}
-	else if (tablero.celdas[cordR] != null){
-		console.log("hay carta a la dhca");
-		cartaAux.Derecha = tablero.celdas[cordR].carta.Izquierda;
-	}
-	else if (tablero.celdas[cordUp] != null){
-		console.log("hay carta a la arriba");
-		cartaAux.Arriba = tablero.celdas[cordUp].carta.Abajo;
-	}
-	else if (tablero.celdas[cordDown] != null) {
-		console.log("hay carta a la abajo");
-		cartaAux.Abajo = tablero.celdas[cordDown].carta.Arriba;
-	}
-	console.log(cartaAux);
+
+	cartaAux.Izquierda = tablero.celdas[cordL].carta.Derecha;
+	cartaAux.Derecha = tablero.celdas[cordR].carta.Izquierda;
+	cartaAux.Arriba = tablero.celdas[cordUp].carta.Abajo;
+	cartaAux.Abajo = tablero.celdas[cordDown].carta.Arriba;
 
 	//ya esta la carta posible y ahora hay que comprobar con la carta que quieren poner sin son compatibles
 	if(compatibles(carta, cartaAux)){
-		console.log("son compatibles");
 		tablero.celdas[columna.toString() + "," + fila.toString()].carta = carta;
 		tablero.celdasOcupadas.push(columna.toString() + "," + fila.toString());
 		success = true;
+		console.log(columna.toString() + "," + fila.toString())
+		for (var i = 0; i < tablero.celdasPosibles.length; i++) {
+			console.log(tablero.celdasPosibles[i]);
+			//borro la carta recien añadida de celdas posibles
+			if( tablero.celdasPosibles[i] == columna.toString() + "," + fila.toString() ){
+				tablero.celdasPosibles.splice(i,1);
+				break;
+			}
+		};
+		//añado las nuevas celdas posibles
+		if(carta.Izquierda==true && vacia(tablero,cordL)){
+			tablero.celdasPosibles.push(cordL);
+		}
+		if (carta.Derecha==true && vacia(tablero, cordR)) {
+			tablero.celdasPosibles.push(cordR);
+		};
+		if (carta.Arriba==true && vacia(tablero, cordUp)) {
+			tablero.celdasPosibles.push(cordUp);
+		};
+		if (carta.Abajo==true && vacia(tablero, cordDown)) {
+			tablero.celdasPosibles.push(cordDown);
+		};
+
 	}
-	//ya esta añadida la carta al tablero ahora hay que actualizar el array de celdasPosibles
+	//ya esta añadida la carta al tablero ahora hay que actualizar el tablero
 	Partidas.update({_id: partidaId},{$set:{tablero: tablero}});
-	return success;*/
+	return success;
+	/*
 	var cordL = (columna-1).toString() + "," + fila.toString();
 	var cordR = (columna+1).toString() + "," + fila.toString();
 	var cordUp = columna.toString() + "," + (fila+1).toString();
 	var cordDown =  columna.toString() + "," + (fila-1).toString();
 
 	if(carta.Arriba){
+		//console.log("la carta tiene camino arriba");
+		//console.log(tablero.celdas[cordUp].carta.Abajo);
 		if(!tablero.celdas[cordUp].carta.Abajo){
+			//console.log("entro1");
 			success = false;
 		}
 	}
 
 	if(carta.Abajo){
+		//console.log("la carta tiene camino abajo");
 		if(!tablero.celdas[cordDown].carta.Arriba){
+			//console.log("entro2");
 			success = false;
 
 		}
 	}
 
 	if(carta.Izquierda){
+		//console.log("la carta tiene camino Izquierda");
+		//console.log(tablero.celdas[cordL].carta.Derecha);
 		if(!tablero.celdas[cordL].carta.Derecha){
+			//console.log("entro3");
 			success = false;
 
 		}
 	}
 
 	if(carta.Derecha){
+		//console.log("la carta tiene camino Derecha");
 		if(!tablero.celdas[cordR].carta.Izquierda){
+			//console.log("entro4");
 			success = false;
 		}
 	}
 	console.log(success);
 	return success;
-
+	*/
 };
 
 
@@ -264,7 +282,7 @@ prepararRolles = function(numeroJugadores){
 	return cartasRoll;
 };
 
-BarajarMazo_General = function(CartasPila){
+barajarMazoGeneral = function(CartasPila){
 	var Total = CartasPila.length;
 	var mazo_general = [];
 	for (i=0; i<Total; i++) {
@@ -275,7 +293,7 @@ BarajarMazo_General = function(CartasPila){
 	return mazo_general;
 };
 
-BarajarMazo_Roll = function(NumeroJugadores){
+barajarMazoRoll = function(NumeroJugadores){
 	CartasRoll = prepararRolles(NumeroJugadores);
 	var Total = CartasRoll.length;
 	var mazo_roll = [];
@@ -287,7 +305,7 @@ BarajarMazo_Roll = function(NumeroJugadores){
 	return mazo_roll;
 };
 
-BarajarMazo_Destino = function(CartasDestino){
+barajarMazoDestino = function(CartasDestino){
 	var Total = CartasDestino.length;
 	var mazo_destino = [];
 	for (i=0; i<Total; i++) {
@@ -298,7 +316,7 @@ BarajarMazo_Destino = function(CartasDestino){
 	return mazo_destino;
 };
 
-BarajarMazo_Pepitas = function(CartasPepitas){
+barajarMazoPepitas = function(CartasPepitas){
 	var Total = CartasPepitas.length;
 	var mazo_pepitas = [];
 	for (i=0; i<Total; i++) {
@@ -310,15 +328,15 @@ BarajarMazo_Pepitas = function(CartasPepitas){
 };
 
 
-ComprobarNum = function(){
-	var NumeroJugadores;
+comprobarNum = function(){
+	var nJugadores;
 	if(Jugadores.find().count() < 3){
-		NumeroJugadores = 3
+		nJugadores = 3
 	}
 	if(Jugadores.find().count() > 2){
-		NumeroJugadores = Jugadores.find().count();
+		nJugadores = Jugadores.find().count();
 	}
-	return NumeroJugadores;
+	return nJugadores;
 }
 
 nMaxCartas = function(nJugadores){
@@ -381,21 +399,21 @@ PartidaService = {
 
 	empezarPartida: function(partidaId){
 
-		mazoGeneral = BarajarMazo_General(CartasPila);
-		mazoDestinos = BarajarMazo_Destino(CartasDestino);
+		mazoGeneral = barajarMazoGeneral(CartasPila);
+		mazoDestinos = barajarMazoDestino(CartasDestino);
 		tablero = new tablero(mazoDestinos);
 		jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[0]; //coge el primero de la lista
 		nRonda = 1;
-    GanadorRonda = false;
-    GanadorPartida = false;
+		GanadorRonda = false;
+		GanadorPartida = false;
 
 		Partidas.update({_id: partidaId},{$set:{tablero: tablero,
-							                    mazoGeneral: mazoGeneral,
-							                    //mazoDestinos: mazoDestinos,
-							                    jugadorActivo: jugadorActivo,
-							                    nRonda: nRonda,
-                                  FinRonda: GanadorRonda,
-                                  FinPartida: GanadorPartida,}});
+												mazoGeneral: mazoGeneral,
+												//mazoDestinos: mazoDestinos,
+												jugadorActivo: jugadorActivo,
+												nRonda: nRonda,
+								  				FinRonda: GanadorRonda,
+								  				FinPartida: GanadorPartida,}});
 	},
 
 	tryPonerCarta: function(partidaId,carta,columna, fila){
@@ -408,44 +426,44 @@ PartidaService = {
 
 /*CaracteristicasService = {
 	crearCaractIniciales: function(partidaId){
-        CaracteristicasIniciales(partidaId);
+		CaracteristicasIniciales(partidaId);
 	}
 };*/
 
 CaracteristicasService = {
 	crearCaractIniciales: function(partidaId){
 		//listaJugadores = Partidas.getAttr(listaJugadores,partidaId);
-    listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
+	listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
 		NumeroJugadores = listaJugadores.length;
-		mazo_roll = BarajarMazo_Roll(NumeroJugadores);
+		mazo_roll = barajarMazoRoll(NumeroJugadores);
 		MaxCartas = nMaxCartas(NumeroJugadores);
 		//mazo_general = Partidas.getAttr(mazoGeneral,partidaId);
 	  mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
-	    var Puntos = 0;
-	    var Cartas = [];
-	    var Roll;
+		var Puntos = 0;
+		var Cartas = [];
+		var Roll;
 
-	    for (i=0; i<NumeroJugadores; i++) {
-		    for(j = 0; j < MaxCartas; j++){
-                Cartas[j] = robarCarta(partidaId);
-			    //Cartas[j] = mazo_general[mazo_general.length-1];
-			    //mazo_general.splice(mazo_general.length-1, 1);
-                //Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo_general}});
-		    }
-		    Roll = mazo_roll[mazo_roll.length-1];
-		    mazo_roll.splice(mazo_roll.length-1, 1);
-		    Caracteristicas.insert({
-			    turno: i,
-			    JugadorId: listaJugadores[i],
-			    partidaId: partidaId,
-			    Puntuacion: Puntos,
-			    Roll: Roll,
-			    Mano: Cartas,
-			    Pico: "arreglado",
-			    Vagoneta: "arreglado",
-			    Farolillo: "arreglado"
-		    });
-	    }
+		for (i=0; i<NumeroJugadores; i++) {
+			for(j = 0; j < MaxCartas; j++){
+				Cartas[j] = robarCarta(partidaId);
+				//Cartas[j] = mazo_general[mazo_general.length-1];
+				//mazo_general.splice(mazo_general.length-1, 1);
+				//Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo_general}});
+			}
+			Roll = mazo_roll[mazo_roll.length-1];
+			mazo_roll.splice(mazo_roll.length-1, 1);
+			Caracteristicas.insert({
+				turno: i,
+				JugadorId: listaJugadores[i],
+				partidaId: partidaId,
+				Puntuacion: Puntos,
+				Roll: Roll,
+				Mano: Cartas,
+				Pico: "arreglado",
+				Vagoneta: "arreglado",
+				Farolillo: "arreglado"
+			});
+		}
 	},
 	//funcion para buscar en la coleccion
 
@@ -468,38 +486,38 @@ CaracteristicasService = {
 //*****************************************************************************************************
 //**************************************************************************************///
 /*CaracteristicasIniciales = function(partidaId){
-    //listaJugadores = Partidas.getAttr(listaJugadores,partidaId);
-    listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
+	//listaJugadores = Partidas.getAttr(listaJugadores,partidaId);
+	listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
 		NumeroJugadores = listaJugadores.length;
-		mazo_roll = BarajarMazo_Roll(NumeroJugadores);
+		mazo_roll = barajarMazoRoll(NumeroJugadores);
 		MaxCartas = nMaxCartas(NumeroJugadores);
 		//mazo_general = Partidas.getAttr(mazoGeneral,partidaId);
-	    //mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
-	    var Puntos = 0;
-	    var Cartas = [];
-	    var Roll;
+		//mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
+		var Puntos = 0;
+		var Cartas = [];
+		var Roll;
 
-	    for (i=0; i<NumeroJugadores; i++) {
-		    for(j = 0; j < MaxCartas; j++){
-                Cartas[j] = robarCarta(partidaId);
-			    //Cartas[j] = mazo_general[mazo_general.length-1];
-			    //mazo_general.splice(mazo_general.length-1, 1);
-                //Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo_general}});
-		    }
-		    Roll = mazo_roll[mazo_roll.length-1];
-		    mazo_roll.splice(mazo_roll.length-1, 1);
-		    Caracteristicas.insert({
-			    turno: i,
-			    JugadorId: listaJugadores[i],
-			    partidaId: partidaId,
-			    Puntuacion: Puntos,
-			    Roll: Roll,
-			    Mano: Cartas,
-			    Pico: "arreglado",
-			    Vagoneta: "arreglado",
-			    Farolillo: "arreglado"
-		    });
-	    }
+		for (i=0; i<NumeroJugadores; i++) {
+			for(j = 0; j < MaxCartas; j++){
+				Cartas[j] = robarCarta(partidaId);
+				//Cartas[j] = mazo_general[mazo_general.length-1];
+				//mazo_general.splice(mazo_general.length-1, 1);
+				//Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo_general}});
+			}
+			Roll = mazo_roll[mazo_roll.length-1];
+			mazo_roll.splice(mazo_roll.length-1, 1);
+			Caracteristicas.insert({
+				turno: i,
+				JugadorId: listaJugadores[i],
+				partidaId: partidaId,
+				Puntuacion: Puntos,
+				Roll: Roll,
+				Mano: Cartas,
+				Pico: "arreglado",
+				Vagoneta: "arreglado",
+				Farolillo: "arreglado"
+			});
+		}
 
 };*/
 
@@ -509,35 +527,35 @@ CaracteristicasService = {
 robarCarta = function(partidaId){
 	//mazo = Partidas.getAttr(mazoGeneral,partidaId);
 	mazo = Partidas.findOne({_id: partidaId}).mazoGeneral;
-    carta = mazo[mazo.length -1];
-    mazo.pop();
-    Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo}});
+	carta = mazo[mazo.length -1];
+	mazo.pop();
+	Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo}});
 	return carta;
 };
 
 ///////////////////////FUNCION JUGAR CARTA SIN TERMINAR////////////////////////
 JugarCarta = function(partidaId){
-    var CualquierCarta = false;
-    //identificador = Partidas.getAttr(jugadorActivo,partidaId);
+	var CualquierCarta = false;
+	//identificador = Partidas.getAttr(jugadorActivo,partidaId);
 
-    identificador = PartidaService.findOne({_id: partidaId}).jugadorActivo;
+	identificador = PartidaService.findOne({_id: partidaId}).jugadorActivo;
 //idCaracteristicas= CaracteristicasService.getCarById(PartidaId);
 
-    //idCarcateristicas = Caracteristicas.findOne({partidaId: partidaId,JugadorId: identificador,})._id;
-    //hacer lo mismo con estas tres
-    Pico = Caracteristicas.findOne({_id:identificador}).Pico;
-    Vagoneta = Caracteristicas.findOne({_id:identificador}).Vagoneta;
-    Farolillo = Caracteristicas.findOne({_id:identificador}).Farolillo;
+	//idCarcateristicas = Caracteristicas.findOne({partidaId: partidaId,JugadorId: identificador,})._id;
+	//hacer lo mismo con estas tres
+	Pico = Caracteristicas.findOne({_id:identificador}).Pico;
+	Vagoneta = Caracteristicas.findOne({_id:identificador}).Vagoneta;
+	Farolillo = Caracteristicas.findOne({_id:identificador}).Farolillo;
 
-    if ((Pico === "arreglado") && (Vagoneta === "arreglado") && (Farolillo === "arreglado")){
-        CualquierCarta = true;
-    }
-    return CualquierCarta;
+	if ((Pico === "arreglado") && (Vagoneta === "arreglado") && (Farolillo === "arreglado")){
+		CualquierCarta = true;
+	}
+	return CualquierCarta;
 };
 
 /*
 RepartirPuntos = function(Buscadores,Saboteadores){
-	NumeroJugadores = ComprobarNum();
+	NumeroJugadores = comprobarNum();
 	var Puntos;
 	if(Buscadores){
 		Puntos = 4;
@@ -581,16 +599,16 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 ActualizarTurno = function(partidaId){
 	Turno = PartidaService.getAttr(turnoPartida,PartidaId);
 
-    //Turno = Partidas.findOne({_id: partidaId}).turnoPartida;
-    TurnoActualizado = Turno + 1;
-    jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[TurnoActualizado];
-    Partidas.update({_id: partidaId},{$set:{jugadorActivo: jugadorActivo,
-                                            turnoPartida: TurnoActualizado,}});
+	//Turno = Partidas.findOne({_id: partidaId}).turnoPartida;
+	TurnoActualizado = Turno + 1;
+	jugadorActivo = Partidas.findOne({_id: partidaId}).listaJugadores[TurnoActualizado];
+	Partidas.update({_id: partidaId},{$set:{jugadorActivo: jugadorActivo,
+											turnoPartida: TurnoActualizado,}});
 }
 
 
 ComprobarPuntuacion = function(){
-	NumeroJugadores = ComprobarNum();
+	NumeroJugadores = comprobarNum();
 	Puntos = 0;
 	for (i=0; i<NumeroJugadores; i++) {
 		//Puntuacion= CaracteristicasService.getCar(Puntuacion,i);
@@ -614,7 +632,7 @@ Partida = function(PartidaId){
 	var Saboteadores = false;
 	var Buscadores = false;
 	var turnos = 0
-	NumeroJugadores = ComprobarNum();
+	NumeroJugadores = comprobarNum();
 	var Cartas = [];
 	var PepitaEncontrada = false;
 	for(i=0; i<NumRondas; i++){
@@ -691,11 +709,11 @@ if (Meteor.isServer) {
 				//Preparar tablero
 				//Barajar mazos
 				//numero ronda = 1
-                //Ganador de la ronda
-                //Ganador de la partida
-                //Ambas variables GanadorPartida y GanadorRonda deberan actualizarse cuando se encuentre una pepita(ronda acabada)
-                //o cuando se finalice una partida,para lo cual se actualizarán ambas variables a True,para poder comprobar
-                //el estado en que esta la partida.
+				//Ganador de la ronda
+				//Ganador de la partida
+				//Ambas variables GanadorPartida y GanadorRonda deberan actualizarse cuando se encuentre una pepita(ronda acabada)
+				//o cuando se finalice una partida,para lo cual se actualizarán ambas variables a True,para poder comprobar
+				//el estado en que esta la partida.
 				//Jugador activo el primero de la lista
 				PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
 
@@ -704,69 +722,69 @@ if (Meteor.isServer) {
 
 				//repartir cartas iniciales a cada jugador
 			},
-      'ponerCartaTablero': function(partidaId, carta, columna,fila) {
-          CualquierCarta = JugarCarta(partidaId);
-          if (CualquierCarta){
-              //Se puede poner Carta de EXCAVACION,coger las coordenadas que nos pasen y poner carta en el tablero.
+	  'ponerCartaTablero': function(partidaId, carta, columna,fila) {
+		  CualquierCarta = JugarCarta(partidaId);
+		  if (CualquierCarta){
+			//Se puede poner Carta de EXCAVACION,coger las coordenadas que nos pasen y poner carta en el tablero.
 
-              ////////////////////////PASAMOS TURNO////////////////////////////
+			////////////////////////PASAMOS TURNO////////////////////////////
 
 
-          } else {
-              //Solo se puede poner Carta de ACCION o PASAR TURNO.
+		  } else {
+			  //Solo se puede poner Carta de ACCION o PASAR TURNO.
 
-              ////////////////////////PASAMOS TURNO////////////////////////////
+			  ////////////////////////PASAMOS TURNO////////////////////////////
 
-          }
+		  }
 					robarCarta(partidaId);
 					ActualizarTurno(partidaId);
-      },
-      'ponerCartaJugador': function(partidaId, carta, jugadorId) {
-          CualquierCarta = JugarCarta(partidaId);
-          if (CualquierCarta){
-              //Se puede poner Carta de ACCION,coger el id del jugador(Nos lo pasara la IU) al que se quiere
-              //poner la carta de accion,poner la carta de Accion para arreglarnos algo,derrumbar tunel o utilizar Mapa.
+	  },
+	  'ponerCartaJugador': function(partidaId, carta, jugadorId) {
+		  CualquierCarta = JugarCarta(partidaId);
+		  if (CualquierCarta){
+			  //Se puede poner Carta de ACCION,coger el id del jugador(Nos lo pasara la IU) al que se quiere
+			  //poner la carta de accion,poner la carta de Accion para arreglarnos algo,derrumbar tunel o utilizar Mapa.
 
-              ////////////////////////PASAMOS TURNO////////////////////////////
-              ActualizarTurno(partidaId);
-          } else {
-              //Solo se puede poner Carta de ACCION o PASAR TURNO.
+			  ////////////////////////PASAMOS TURNO////////////////////////////
+			  ActualizarTurno(partidaId);
+		  } else {
+			  //Solo se puede poner Carta de ACCION o PASAR TURNO.
 
-              ////////////////////////PASAMOS TURNO////////////////////////////
-              ActualizarTurno(partidaId);
-          }
-      },
-      'DescartarCartaMano': function(partidaId) {
-          CualquierCarta = JugarCarta(partidaId);
-          if (CualquierCarta){
-              //Descartar Carta.
+			  ////////////////////////PASAMOS TURNO////////////////////////////
+			  ActualizarTurno(partidaId);
+		  }
+	  },
+	  'DescartarCartaMano': function(partidaId) {
+		  CualquierCarta = JugarCarta(partidaId);
+		  if (CualquierCarta){
+			  //Descartar Carta.
 
-              ////////////////////////PASAMOS TURNO////////////////////////////
-              ActualizarTurno(partidaId);
-          } else {
-              //Solo se puede poner Carta de ACCION o PASAR TURNO.
+			  ////////////////////////PASAMOS TURNO////////////////////////////
+			  ActualizarTurno(partidaId);
+		  } else {
+			  //Solo se puede poner Carta de ACCION o PASAR TURNO.
 
-              ////////////////////////PASAMOS TURNO////////////////////////////
-              ActualizarTurno(partidaId);
-          }
-      },
+			  ////////////////////////PASAMOS TURNO////////////////////////////
+			  ActualizarTurno(partidaId);
+		  }
+	  },
 		});
 
 
 /////////////////////////////PARA PROBAR QUE FUNCIONA BIEN LO CREAMOS AQUÍ.//////////////////////////////////////
 		if (!JugadoresService.playersExist()) {
 			JugadoresService.generateRandomPlayers();
-	  	}
+		}
 		PartidaService.generarPartida();						//esto lo tienen que hacer los de la plataforma
 		var partidaId = PartidaService.getPartidaId(1);			//esto nos lo pasan de la plataforma
 		//esto ira dentro de meteor.methods empezarpartida.
-    PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
+		PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
 
-	  CaracteristicasService.crearCaractIniciales(partidaId);
+		CaracteristicasService.crearCaractIniciales(partidaId);
 		carta = tiposCartas.Camino6;
 		PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino6,1,0);
-		PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino2,1,0);
-		PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino1,1,0);
+		//PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino2,1,0);
+		//PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino1,1,0);
 
 
   });
