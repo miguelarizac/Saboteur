@@ -729,15 +729,12 @@ if (Meteor.isServer) {
 
 			////////////////////////PASAMOS TURNO////////////////////////////
 
-
 		  } else {
 			  //Solo se puede poner Carta de ACCION o PASAR TURNO.
-
-			  ////////////////////////PASAMOS TURNO////////////////////////////
-
 		  }
-					robarCarta(partidaId);
-					ActualizarTurno(partidaId);
+			  ////////////////////////PASAMOS TURNO////////////////////////////
+		      robarCarta(partidaId);
+			  ActualizarTurno(partidaId);
 	  },
 	  'ponerCartaJugador': function(partidaId, carta, jugadorId) {
 		  CualquierCarta = JugarCarta(partidaId);
@@ -745,28 +742,26 @@ if (Meteor.isServer) {
 			  //Se puede poner Carta de ACCION,coger el id del jugador(Nos lo pasara la IU) al que se quiere
 			  //poner la carta de accion,poner la carta de Accion para arreglarnos algo,derrumbar tunel o utilizar Mapa.
 
-			  ////////////////////////PASAMOS TURNO////////////////////////////
-			  ActualizarTurno(partidaId);
 		  } else {
 			  //Solo se puede poner Carta de ACCION o PASAR TURNO.
 
-			  ////////////////////////PASAMOS TURNO////////////////////////////
-			  ActualizarTurno(partidaId);
 		  }
+              ////////////////////////PASAMOS TURNO////////////////////////////
+              robarCarta(partidaId);
+			  ActualizarTurno(partidaId);
 	  },
 	  'DescartarCartaMano': function(partidaId) {
 		  CualquierCarta = JugarCarta(partidaId);
 		  if (CualquierCarta){
 			  //Descartar Carta.
 
-			  ////////////////////////PASAMOS TURNO////////////////////////////
-			  ActualizarTurno(partidaId);
 		  } else {
 			  //Solo se puede poner Carta de ACCION o PASAR TURNO.
 
-			  ////////////////////////PASAMOS TURNO////////////////////////////
-			  ActualizarTurno(partidaId);
 		  }
+            ////////////////////////PASAMOS TURNO////////////////////////////
+		    robarCarta(partidaId);
+			ActualizarTurno(partidaId);
 	  },
 		});
 
