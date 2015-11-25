@@ -9,7 +9,7 @@ Caracteristicas = new Meteor.Collection("Caracteristicas");
 var nombrePartida = "partida1";
 
 var tiposCartas = {
-	Estandar: { Izquierda: null, Derecha: null, Arriba: null, Abajo: null, Bloqueante: null},
+	Estandar: { Izquierda: false, Derecha: false, Arriba: false, Abajo: false, Bloqueante: false},
 	//Tipo tunel
 	Camino1: { Izquierda: false, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
 	Camino2: { Izquierda: true, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
@@ -99,33 +99,83 @@ var CartasPila = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','C
 
 celda = function(){
 	this.carta = tiposCartas.Estandar;
+	this.ocupada = false;
 };
 
 tablero = function(destinos){
-	this.celdas = {};
-	this.celdasOcupadas=[];
+	this.celdas = new Array(31);
 	this.celdasPosibles=[];
 
-	for (fila = -15; fila < 15; fila++) {
-		for (columna = -3; columna < 11; columna++) {
-			this.celdas[columna.toString() + "," + fila.toString()] = new celda();
+	for (i = 0; i < 31; i++) {
+		this.celdas[i] = new Array(15);
+		for (j = 0; j < 15; j++) {
+			this.celdas[i][j] = new celda();
 		};
 	};
-	this.celdas["0,0"].carta = tiposCartas.ComienzoEscalera;
-	this.celdasOcupadas.push("0,0");
-	this.celdas["8,2"].carta = destinos[0];
-	this.celdasOcupadas.push("8,2");
-	this.celdas["8,0"].carta = destinos[1];
-	this.celdasOcupadas.push("8,0");
-	this.celdas["8,-2"].carta = destinos[2];
-	this.celdasOcupadas.push("8,-2");
 
-	this.celdasPosibles.push("0,1");
-	this.celdasPosibles.push("0,-1");
-	this.celdasPosibles.push("-1,0");
-	this.celdasPosibles.push("1,0");
+
+	this.celdas[14][4].carta = tiposCartas.ComienzoEscalera;
+	this.celdas[14][4].ocupada = true;
+
+	this.celdas[12][13].carta = destinos[0];
+	this.celdas[12][13].ocupada = true;
+	this.celdas[14][13].carta = destinos[1];
+	this.celdas[14][13].ocupada = true;
+	this.celdas[16][13].carta = destinos[2];
+	this.celdas[14][13].ocupada = true;
+
+	this.celdasPosibles.push("14,3","14,5","13,4","15,4");
+
 
 };
+
+pCarta = function(partidaId,tablero, carta, fila, columna) {
+
+	if (tablero.celdas[fila][columna-1].carta.Derecha && tablero.celdas[fila][columna-1].ocupada){
+		if(!carta.Izquierda){
+			return false;
+		}
+	}
+
+	if (tablero.celdas[fila][columna+1].carta.Izquierda && tablero.celdas[fila][columna+1].ocupada){
+		if(!carta.Derecha){
+			return false;
+		}
+	}
+
+	if (tablero.celdas[fila-1][columna].carta.Abajo && tablero.celdas[fila-1][columna].ocupada){
+		if(!carta.Arriba){
+			return false;
+		}
+	}
+
+	if (tablero.celdas[fila+1][columna].carta.Arriba && tablero.celdas[fila+1][columna].ocupada){
+		if(!carta.Abajo){
+			return false;
+		}
+	}
+
+	tablero.celdas[fila][columna].carta = carta;
+	tablero.celdas[fila][columna].ocupada = true;
+
+	if(carta.Izquierda && !tablero.celdas[fila][columna-1].ocupada){
+		tablero.celdasPosibles.push(fila.toString() + "," + (columna-1).toString());
+	}
+	if (carta.Derecha && !tablero.celdas[fila][columna+1].ocupada) {
+		tablero.celdasPosibles.push(fila.toString() + "," + (columna+1).toString());
+	}
+	if (carta.Arriba && !tablero.celdas[fila-1][columna].ocupada) {
+		tablero.celdasPosibles.push((fila-1).toString() + "," + columna.toString());
+	}
+	if (carta.Abajo && !tablero.celdas[fila+1][columna].ocupada) {
+		tablero.celdasPosibles.push((fila+1).toString() + "," + columna.toString());
+	}
+
+	tablero.celdasPosibles.splice(tablero.celdasPosibles.indexOf(fila.toString() + "," + columna.toString()),1);
+	Partidas.update({_id: partidaId},{$set:{tablero: tablero}});
+	return true;
+};
+
 
 vacia = function(tablero, coord){
 	return tablero.celdas[coord].carta.Arriba==null;
@@ -372,8 +422,9 @@ PartidaService = {
 
 	tryPonerCarta: function(partidaId,carta,columna, fila){
 		tablero = Partidas.findOne({_id: partidaId}).tablero;
-		success = ponerCarta(partidaId,tablero,carta,columna,fila);
-
+		
+		success = pCarta(partidaId,tablero,carta,columna,fila);
+		console.log(success);
 	},
 
 };
@@ -691,7 +742,7 @@ if (Meteor.isServer) {
 
 		CaracteristicasService.crearCaractIniciales(partidaId);
 		carta = tiposCartas.Camino6;
-		PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino6,1,0);
+		PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino6,14,5);
 		//PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino2,1,0);
 		//PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino1,1,0);
 
