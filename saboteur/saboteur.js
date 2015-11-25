@@ -160,9 +160,7 @@ ponerCarta = function(partidaId,tablero, carta, columna, fila) {
 	var cordDown =  columna.toString() + "," + (fila-1).toString();
 	var cartaAux = tiposCartas.Estandar;
 
-	cartaAux.Izquierda = tablero.celdas[cordL].carta.Derecha;
-	cartaAux.Derecha = tablero.celdas[cordR].carta.Izquierda;
-	cartaAux.Arriba = tablero.celdas[cordUp].carta.Abajo;
+	cartaAux.Izquia = tablero.celdas[cordUp].carta.Abajo;
 	cartaAux.Abajo = tablero.celdas[cordDown].carta.Arriba;
 
 	//ya esta la carta posible y ahora hay que comprobar con la carta que quieren poner sin son compatibles
@@ -197,50 +195,6 @@ ponerCarta = function(partidaId,tablero, carta, columna, fila) {
 	//ya esta añadida la carta al tablero ahora hay que actualizar el tablero
 	Partidas.update({_id: partidaId},{$set:{tablero: tablero}});
 	return success;
-	/*
-	var cordL = (columna-1).toString() + "," + fila.toString();
-	var cordR = (columna+1).toString() + "," + fila.toString();
-	var cordUp = columna.toString() + "," + (fila+1).toString();
-	var cordDown =  columna.toString() + "," + (fila-1).toString();
-
-	if(carta.Arriba){
-		//console.log("la carta tiene camino arriba");
-		//console.log(tablero.celdas[cordUp].carta.Abajo);
-		if(!tablero.celdas[cordUp].carta.Abajo){
-			//console.log("entro1");
-			success = false;
-		}
-	}
-
-	if(carta.Abajo){
-		//console.log("la carta tiene camino abajo");
-		if(!tablero.celdas[cordDown].carta.Arriba){
-			//console.log("entro2");
-			success = false;
-
-		}
-	}
-
-	if(carta.Izquierda){
-		//console.log("la carta tiene camino Izquierda");
-		//console.log(tablero.celdas[cordL].carta.Derecha);
-		if(!tablero.celdas[cordL].carta.Derecha){
-			//console.log("entro3");
-			success = false;
-
-		}
-	}
-
-	if(carta.Derecha){
-		//console.log("la carta tiene camino Derecha");
-		if(!tablero.celdas[cordR].carta.Izquierda){
-			//console.log("entro4");
-			success = false;
-		}
-	}
-	console.log(success);
-	return success;
-	*/
 };
 
 
@@ -479,47 +433,7 @@ CaracteristicasService = {
 
 	},
 };
-//he subido los servicios porque no estoy seguro que los lean las funciones de más abajo de ahi que esta funcion este aqui porque no lo cogerian las demas
 
-//////////////////////////FUNCIONA CORRECTAMENTE////////////DANGER,NO TOCAR///////////
-//esto hay que meterlo arriba mañana lo vemos son dos lineas linea 456
-//*****************************************************************************************************
-//**************************************************************************************///
-/*CaracteristicasIniciales = function(partidaId){
-	//listaJugadores = Partidas.getAttr(listaJugadores,partidaId);
-	listaJugadores = Partidas.findOne({_id: partidaId}).listaJugadores;
-		NumeroJugadores = listaJugadores.length;
-		mazo_roll = barajarMazoRoll(NumeroJugadores);
-		MaxCartas = nMaxCartas(NumeroJugadores);
-		//mazo_general = Partidas.getAttr(mazoGeneral,partidaId);
-		//mazo_general = Partidas.findOne({_id: partidaId}).mazoGeneral;
-		var Puntos = 0;
-		var Cartas = [];
-		var Roll;
-
-		for (i=0; i<NumeroJugadores; i++) {
-			for(j = 0; j < MaxCartas; j++){
-				Cartas[j] = robarCarta(partidaId);
-				//Cartas[j] = mazo_general[mazo_general.length-1];
-				//mazo_general.splice(mazo_general.length-1, 1);
-				//Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo_general}});
-			}
-			Roll = mazo_roll[mazo_roll.length-1];
-			mazo_roll.splice(mazo_roll.length-1, 1);
-			Caracteristicas.insert({
-				turno: i,
-				JugadorId: listaJugadores[i],
-				partidaId: partidaId,
-				Puntuacion: Puntos,
-				Roll: Roll,
-				Mano: Cartas,
-				Pico: "arreglado",
-				Vagoneta: "arreglado",
-				Farolillo: "arreglado"
-			});
-		}
-
-};*/
 
 
 ////////////ESTA FUNCIÓN YA ESTÁ BIEN PROBADA:)(GODMODE)se coge el mazo se guarda la ultima carta se borra del mazo esa carta
@@ -659,7 +573,7 @@ Partida = function(PartidaId){
 				//part = Caracteristicas.findOne({PartidaId: PartidaId}).PartidaId;
 				//Mazo_Pila = Partidas.findOne({PartidaId: PartidaId}).Pila;
 				//Si un jugador tiene cartas en su mano,jugará Carta y Robará
-				if (Cartas.length > 0){
+				if (Cartas.length > 0){ana,Orange,Apple
 					if(Mazo_Pila.length > 0){
 						if ((numTurno === turnos) && (part === PartidaId)){
 							 //Aquí llamar a la función Jugar una Carta.
