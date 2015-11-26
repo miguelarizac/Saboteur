@@ -669,8 +669,8 @@ if (Meteor.isServer) {
 				//repartir cartas iniciales a cada jugador
 			},
 			'ponerCartaTablero': function(jugadorId, partidaId, carta, columna,fila) {
-				jugadorActivo = PartidaService.findOne({_id: partidaId}).jugadorActivo;
 				success = true;
+				jugadorActivo = PartidaService.findOne({_id: partidaId}).jugadorActivo;
 				if (jugadorActivo === jugadorId) {
 					if ( puedeJugar(jugadorId,partidaId) ){
 					//Se puede poner Carta de EXCAVACION,coger las coordenadas que nos pasen y poner carta en el tablero.
