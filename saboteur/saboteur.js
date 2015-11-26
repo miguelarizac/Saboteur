@@ -9,7 +9,7 @@ Caracteristicas = new Meteor.Collection("Caracteristicas");
 var nombrePartida = "partida1";
 
 var tiposCartas = {
-	Estandar: {Type: ,  Izquierda: false, Derecha: false, Arriba: false, Abajo: false, Bloqueante: false},
+	Estandar: { Izquierda: false, Derecha: false, Arriba: false, Abajo: false, Bloqueante: false},
 	//Tipo tunel
 	Camino1: {Type: 'excavacion',  Izquierda: false, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
 	Camino2: {Type: 'excavacion',  Izquierda: true, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
@@ -28,7 +28,7 @@ var tiposCartas = {
 	SinCamino8: {Type: 'excavacion',  Izquierda: true, Derecha: true, Arriba: true, Abajo: false, Bloqueante: true},
 	SinCamino9: {Type: 'excavacion',  Izquierda: true, Derecha: true, Arriba: false, Abajo: false, Bloqueante: true},
 	//Tipo Inicio
-	ComienzoEscalera: {Type: ,  Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false},
+	ComienzoEscalera: { Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false},
 	//Tipo Destino
 	DestinoNada1: { Izquierda: true, Derecha: false, Arriba: false, Abajo: true, Bloqueante: false},
 	DestinoNada2: { Izquierda: true, Derecha: false, Arriba: true, Abajo: false, Bloqueante: false},
@@ -491,7 +491,7 @@ puedeJugar = function(jugadorId, partidaId){
 	vagoneta = Caracteristicas.findOne({_id:jugadorId}).vagoneta;
 	farolillo = Caracteristicas.findOne({_id:jugadorId}).farolillo;
 
-	if ((Pico === "arreglado") && (Vagoneta === "arreglado") && (Farolillo === "arreglado")){
+	if ((pico === "arreglado") && (vagoneta === "arreglado") && (farolillo === "arreglado")){
 		return true;
 	}
 	return false;
@@ -745,7 +745,7 @@ if (Meteor.isServer) {
 				var result;
 				success = true;
 
-				jugadorActivo = PartidaService.findOne({_id: partidaId}).jugadorActivo;
+				jugadorActivo = Partidas.findOne({_id: partidaId}).jugadorActivo;
 				if (jugadorActivo === jugadorId) {
 					if ( puedeJugar(jugadorId,partidaId) ){
 
@@ -816,8 +816,8 @@ if (Meteor.isServer) {
 		PartidaService.empezarPartida(partidaId);	//meterlo en Partidas._id
 
 		CaracteristicasService.crearCaractIniciales(partidaId);
-		carta = tiposCartas.Camino6;
-		PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino6,14,5);//fila columna
+		//carta = tiposCartas.Camino6;
+		//PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino6,14,5);//fila columna
 		//PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino2,1,0);
 		//PartidaService.tryPonerCarta(partidaId,tiposCartas.Camino1,1,0);
 
