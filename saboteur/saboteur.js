@@ -52,6 +52,7 @@ var tiposCartas = {
 	ArreglarVagon_Pico: {Funcion:"Arreglar", Objeto1: "Vagoneta", Objeto2: "Pico"},
 	Mapa: {Type: "mapa"},
 	Derrumbamiento: {Type: "derrumbamiento"}
+
 };
 
 var cartasExcavacion = ['Camino1','Camino1','Camino1','Camino1','Camino2','Camino2','Camino2','Camino2','Camino2','Camino3',
@@ -130,26 +131,33 @@ tablero = function(destinos){
 
 ponerCarta = function(partidaId,tablero, carta, fila, columna) {
 
-	if (tablero.celdas[fila][columna-1].carta.Derecha){
+	if (tablero.celdas[fila][columna-1].carta.Derecha && tablero.celdas[fila][columna-1].ocupada){
+		console.log(carta.Izquierda);
 		if(!carta.Izquierda){
+			console.log("entro1");
+
 			return false;
 		}
 	}
 
-	if (tablero.celdas[fila][columna+1].carta.Izquierda){
+	if (tablero.celdas[fila][columna+1].carta.Izquierda &&  tablero.celdas[fila][columna+1].ocupada){
 		if(!carta.Derecha){
+			console.log("entro2");
+
 			return false;
 		}
 	}
 
-	if (tablero.celdas[fila-1][columna].carta.Abajo){
+	if (tablero.celdas[fila-1][columna].carta.Abajo && tablero.celdas[fila-1][columna].ocupada){
 		if(!carta.Arriba){
+			console.log("entro3");
 			return false;
 		}
 	}
 
-	if (tablero.celdas[fila+1][columna].carta.Arriba){
+	if (tablero.celdas[fila+1][columna].carta.Arriba &&  tablero.celdas[fila+1][columna].ocupada){
 		if(!carta.Abajo){
+			console.log("entro4");
 			return false;
 		}
 	}
@@ -171,7 +179,7 @@ ponerCarta = function(partidaId,tablero, carta, fila, columna) {
 	if (carta.Abajo && !tablero.celdas[fila+1][columna].ocupada) {
 		tablero.celdasPosibles.push((fila+1).toString() + "," + columna.toString());
 	}
-	
+
 	Partidas.update({_id: partidaId},{$set:{tablero: tablero}});
 	return true;
 };
@@ -487,15 +495,15 @@ robarCarta = function(partidaId){
 
 ///////////////////////FUNCION JUGAR CARTA SIN TERMINAR////////////////////////
 puedeJugar = function(jugadorId, partidaId){
-	pico = Caracteristicas.findOne({_id:jugadorId}).pico;
-	vagoneta = Caracteristicas.findOne({_id:jugadorId}).vagoneta;
-	farolillo = Caracteristicas.findOne({_id:jugadorId}).farolillo;
+	pico = Caracteristicas.findOne({jugadorId:jugadorId,partidaId:partidaId}).pico;
+	vagoneta = Caracteristicas.findOne({jugadorId:jugadorId,partidaId:partidaId}).vagoneta;
+	farolillo = Caracteristicas.findOne({jugadorId:jugadorId,partidaId:partidaId}).farolillo;
 
 	if ((pico === "arreglado") && (vagoneta === "arreglado") && (farolillo === "arreglado")){
 		return true;
 	}
 	return false;
-	
+
 };
 
 jugarMapa = function(partidaId, fila, columna){
@@ -547,6 +555,7 @@ jugarDerrumbamiento = function(partidaId, fila, columna){
 		tablero.celdasPosibles.push(fila.toString() + "," + columna.toString());
 
 		Partidas.update({_id: partidaId},{$set: {tablero: tablero}});
+		return true;
 	}
 };
 
@@ -733,9 +742,9 @@ if (Meteor.isServer) {
 			var r
 				switch(carta.type)
 				case camino
-					r = 	
+					r =
 				case actiont
-					r = 
+					r =
 				case actionp
 					r
 
@@ -744,11 +753,10 @@ if (Meteor.isServer) {
 			'ponerCartaTablero': function(jugadorId, partidaId, carta, fila, columna) {
 				var result;
 				success = true;
-
+				carta = tiposCartas[carta];
 				jugadorActivo = Partidas.findOne({_id: partidaId}).jugadorActivo;
 				if (jugadorActivo === jugadorId) {
 					if ( puedeJugar(jugadorId,partidaId) ){
-
 						switch(carta.Type){
 							case 'excavacion':
 							tablero = Partidas.findOne({_id: partidaId}).tablero;
@@ -761,12 +769,12 @@ if (Meteor.isServer) {
 							break;
 
 							case 'derrumbamiento':
-							result = jugarDerrumbamiento();
+							result = jugarDerrumbamiento(partidaId,fila,columna);
 							success = result;
 							break;
 						}
 
-					} 
+					}
 					if (success) {
 						descartarCarta(jugadorId, partidaId,carta);
 						robarCarta(partidaId);
@@ -794,7 +802,7 @@ if (Meteor.isServer) {
 			'pasarTurno': function(jugadorId,partidaId,carta) {
 				success = false;
 
-				jugadorActivo = PartidaService.findOne({_id: partidaId}).jugadorActivo;
+				jugadorActivo = Partidas.findOne({_id: partidaId}).jugadorActivo;
 				if (jugadorActivo === jugadorId) {
 					descartarCarta(jugadorId, partidaId,carta);
 					robarCarta(partidaId);
