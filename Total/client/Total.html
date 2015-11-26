@@ -1,0 +1,32 @@
+<body>
+    {{> loginButtons}}
+
+    {{#if currentUser}}
+        {{> totalPartidas}}
+        {{> misPartidas}}
+    {{/if}}
+</body>
+
+<template name="totalPartidas">
+    <div>
+        <h2> TOTAL DE PARTIDAS </h2>
+        {{#each listTotal}}
+            <li>{_id} {listaJugadores}</li>
+            {{#if auxTotal}}
+                <button type="button">Apuntarse a Partida!</button>
+            {{/if}}
+        {{/each}}
+    </div>
+</template>
+
+<template name="misPartidas">
+    <div>
+        <h2> MIS PARTIDAS </h2>
+        {#each listMias}}
+            <li>{_id} : {listaJugadores}</li>
+            {{#if auxMias}}
+                <button type="button">Empezar Partida!</button>
+            {{/if}}
+        {{/each}}
+    </div>
+</template>
