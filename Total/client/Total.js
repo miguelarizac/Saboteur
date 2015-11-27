@@ -26,3 +26,4 @@ Template.misPartidas.helpers({
       return Partidas.findOne({partidaId: this._id}).listJugadores[0] == Meteor.userId();
     },
 });
+//Test
