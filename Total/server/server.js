@@ -14,6 +14,30 @@ var comprobarCredenciales = function(partidaId,jugadorId,carta){
     return true;
 };
 
+var descartarCarta = function(jugadorId, partidaId, carta){
+    mano = Caracteristicas.findOne({jugadorId: jugadorId, partidaId: partidaId}).mano;
+    posicionCarta = mano.indexOf(carta);
+    mano.splice(posicionCarta,1);
+    Caracteristicas.update({jugadorId: jugadorId, partidaId: partidaId},{$set:{mano: mano}});
+}
+
+var robarCarta = function(partidaId){
+    mazo = Partidas.findOne({_id: partidaId}).mazo;
+    carta = mazo[mazo.length -1];
+    mazo.pop();
+    Partidas.update({_id: partidaId},{$set:{mazo: mazo}});
+    return carta;
+};
+
+var actualizarTurno = function(partidaId){
+    var p = Partidas.findOne({_id: partidaId});
+    jugadorId = p.turno;
+    var index = (p.listJugadores.indexOf(Meteor.users.findOne({_id: jugadorId}).username) + 1) % p.numJugadores;
+    var turno = Meteor.users.findOne({username: p.listJugadores[index]})._id;
+    Partidas.update({_id: partidaId}, {$set:{mazo: mazo,turno: turno}});
+
+}
+
 
 Meteor.startup(function () {
     // code to run on server at startup
@@ -76,6 +100,11 @@ Meteor.startup(function () {
 
 
             if(r != false){
+
+                descartarCarta(jugadorId, partidaId,carta);
+                robarCarta(partidaId);
+                actualizarTurno(partidaId);
+                /*
                 //Variable Partida
                 var p = Partidas.findOne({_id: partidaId});
                 //Si se puede poner la carta la quitamos de la Mano.
@@ -90,6 +119,7 @@ Meteor.startup(function () {
                 var turno = Meteor.users.findOne({username: p.listJugadores[index]})._id;
                 Partidas.update({_id: partidaId}, {$set:{mazo: mazo,turno: turno}});
                 Caracteristicas.update({partidaId: partidaId,jugadorId: jugadorId},{$set: {mano: mano}});
+                */
             }
 
             return r;
@@ -99,20 +129,9 @@ Meteor.startup(function () {
             if (!comprobarCredenciales(partidaId,jugadorId,carta)){
               return false;
             } 
-            //Variable Partida
-            var p = Partidas.findOne({_id: partidaId});
-            //
-            var mazo = p.mazo;
-            var mano = Caracteristicas.findOne({partidaId: partidaId, jugadorId: jugadorId}).mano;
-            mano.splice(mano.indexOf(carta),1);
-            // Robamos carta
-            mano.push(mazo[mazo.length-1]);
-            mazo.splice(mazo.length-1,1);
-            // Actualizamos la Mano del Jugador, el Mazo y el Turno
-            var index = (p.listJugadores.indexOf(Meteor.users.findOne({_id: jugadorId}).username) + 1) % p.numJugadores;
-            var turno = Meteor.users.findOne({username: p.listJugadores[index]})._id;
-            Partidas.update({_id: partidaId}, {$set:{mazo: mazo,turno: turno}});
-            Caracteristicas.update({partidaId: partidaId,jugadorId: jugadorId},{$set: {mano: mano}});
+            descartarCarta(jugadorId, partidaId,carta);
+            robarCarta(partidaId);
+            actualizarTurno(partidaId);
 
             return true;
         },
