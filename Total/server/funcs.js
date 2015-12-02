@@ -391,7 +391,7 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 		}
 	}
 
-}
+};
 
 ComprobarPuntuacion = function(){
 	NumeroJugadores = comprobarNum();
@@ -409,7 +409,7 @@ ComprobarPuntuacion = function(){
 	nombreGanador = Jugadores.findOne({_id: idenJugador}).name;
 
 	return nombreGanador;
-}
+};
 
 jugarMapa = function(partidaId, fila, columna){
 	tablero = Partidas.findOne({_id: partidaId}).tablero;
