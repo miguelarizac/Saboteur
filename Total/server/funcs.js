@@ -158,26 +158,26 @@ var comprobarCelda = function(partidaId,tablero,carta,row,col){
 	var c = tiposCartas[carta];
 	// CHECKING
 
-   	if(tablero.list[row][col-1].ocupada && tablero.list[row][col-1].carta.Derecha){
-   		if(!c.Izquierda){
+	if(c.Izquierda){
+   		if(tablero.list[row][col-1].ocupada && !tablero.list[row][col-1].carta.Derecha){
    			return false;
    		}
    	}
 
-   	if(tablero.list[row][col+1].ocupada && tablero.list[row][col+1].carta.Izquierda){
-   		if(!c.Derecha){
-   			return false;
-   		}
+	if(c.Derecha){
+	   	if(tablero.list[row][col+1].ocupada && !tablero.list[row][col+1].carta.Izquierda){
+	   		return false;
+	   	}
+	}
+
+	if(c.Arriba){
+	   	if(tablero.list[row-1][col].ocupada && !tablero.list[row-1][col].carta.Abajo){
+	   		return false;
+	   	}
    	}
 
-   	if(tablero.list[row-1][col].ocupada && tablero.list[row-1][col].carta.Abajo){
-   		if(!c.Arriba){
-   			return false;
-   		}
-   	}
-
-   	if(tablero.list[row+1][col].ocupada && tablero.list[row+1][col].carta.Arriba){
-   		if(!c.Abajo){
+	if(c.Abajo){
+   		if(tablero.list[row+1][col].ocupada && !tablero.list[row+1][col].carta.Arriba){
    			return false;
    		}
    	}
