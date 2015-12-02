@@ -351,3 +351,68 @@ robarCarta = function(partidaId){
 	Partidas.update({_id: partidaId}, {$set:{mazo: mazo}});
 	return nuevaCarta;
 };
+
+RepartirPuntos = function(Buscadores,Saboteadores){
+	NumeroJugadores = comprobarNum();
+	var Puntos;
+	if(Buscadores){
+		Puntos = 4;
+		for (i=0; i<NumeroJugadores; i++) {
+			//Roll= Caracteristicas.getCar(Roll,i);
+
+			Roll = Caracteristicas.findOne({turno: i}).Roll;
+			if (Roll === "Buscador"){
+			//	Puntuacion= Caracteristicas.getCar(Puntuacion,i);
+				Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+				Puntos = Puntuacion + Puntos;
+				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
+			}
+		}
+	}
+	if(Saboteadores){
+		//Como sé el número de jugadores,mirando la función PrepararRoles se puede saber el numero de sabotadores que hay.
+		if((NumeroJugadores === 3) || (NumeroJugadores === 4)){ //Para 1 saboteador
+			Puntos = 4;
+		}
+		if ((NumeroJugadores >= 5) && (NumeroJugadores <= 9)) { //Para 2 o 3 saboteadores.
+			Puntos = 3;
+		}
+		if (NumeroJugadores === 10) { // Para 4 saboteadores
+			Puntos = 2;
+		}
+		for (i=0; i<NumeroJugadores; i++) {
+			Roll = Caracteristicas.findOne({turno: i}).Roll;
+			if (Roll === "Saboteador"){
+				//Puntuacion= CaracteristicasService.getCar(Puntuacion,i);
+			Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+				Puntos = Puntuacion + Puntos;
+				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
+			}
+		}
+	}
+
+}
+
+ComprobarPuntuacion = function(){
+	NumeroJugadores = comprobarNum();
+	Puntos = 0;
+	for (i=0; i<NumeroJugadores; i++) {
+		//Puntuacion= CaracteristicasService.getCar(Puntuacion,i);
+
+		Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+		if(Puntuacion > Puntos){
+			Puntos = Puntuacion;
+		}
+	}
+	idenJugador= CaracteristicasService.getId(JugadorId);
+	//idenJugador = Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
+	nombreGanador = Jugadores.findOne({_id: idenJugador}).name;
+
+	return nombreGanador;
+}
+
+jugarMapa = function(partidaId, fila, columna){
+	tablero = Partidas.findOne({_id: partidaId}).tablero;
+	descubierta = tablero.celdas[fila][columna].carta;
+	return descubierta;
+};
