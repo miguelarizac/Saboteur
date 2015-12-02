@@ -157,7 +157,7 @@ var comprobarCelda = function(partidaId,tablero,carta,row,col){
 	// Variables Importantes
 	var c = tiposCartas[carta];
 	// CHECKING
-   	
+
    	if(tablero.list[row][col-1].ocupada && tablero.list[row][col-1].carta.Derecha){
    		if(!c.Izquierda){
    			return false;
@@ -234,13 +234,12 @@ var crearMazo = function(array){
 
 
 var prepararRolles = function(numJugadores){
-	if (numJugadores == 2){ numJugadores = 3;}
 	var numSaboteadores = Math.round(numJugadores/2)-1;
 	var numBuscadores = numJugadores - numSaboteadores;
 
 	var Sabos = Array.apply(null,Array(numSaboteadores)).map(function() {return "Saboteador"});
-	var Bus = Array.apply(null,Array(numBuscadores)).map(function() {return "Buscador"}); 
-	
+	var Bus = Array.apply(null,Array(numBuscadores)).map(function() {return "Buscador"});
+
 	return Sabos.concat(Bus);
 };
 
@@ -256,7 +255,7 @@ var convertDestinos = function(array){
 			x.push(tiposCartas.DestinoPepita);
 		}
 	};
-	
+
 	return x;
 };
 
@@ -282,7 +281,7 @@ var Tablero = function(){
 
    	this.list[14][3].carta = tiposCartas.ComienzoEscalera;
    	this.list[14][3].ocupada = true;
-   	
+
    	this.list[12][11].carta = arrayDestinos[0];
    	this.list[12][11].ocupada = true;
 
@@ -311,9 +310,9 @@ configurarPartida = function(partidaId){
 		for (j = 0; j < n; j++) {
 			mano[i][j] = mazo[mazo.length-1];
 			mazo.splice(mazo.length-1,1);
-		}; 
+		};
 	};
-	
+
 	//Crear Caracteristicas de Jugadores
 	for (i = 0; i < numJugadores; i++) {
 		Caracteristicas.insert({
@@ -325,7 +324,7 @@ configurarPartida = function(partidaId){
               vagon: true,
               roll: rolls[i],
               points: 0,
-    	});	
+    	});
 	};
 
 	//Crear Tablero

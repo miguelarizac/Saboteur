@@ -4,7 +4,7 @@
 
     <div id="content">
         {{> yield "container"}}
-    </div>    
+    </div>
 </template>
 
 
@@ -13,7 +13,7 @@
         {{> totalPartidas}}
         {{> misPartidas}}
         {{> actualPartida}}
-    {{/if}} 
+    {{/if}}
 </template>
 
 
@@ -31,7 +31,7 @@
         <div class="crearPartida">
             <form>
                 <input type="text" name="titulo" placeholder="Titulo" required />
-                <input type="number" name="numJugadores" min="2" max="10" placeholder="Numero" required />
+                <input type="number" name="numJugadores" min="3" max="10" placeholder="Numero" required />
                 <button type="submit"> Crear Partida </button>
             </form>
         </div>
@@ -47,14 +47,14 @@
                 {{#if auxMias}}
                     <button type="button" class="empezarPartida">Empezar Partida!</button>
                 {{/if}}
-            </li>    
+            </li>
         {{/each}}
 
         <h2> MIS PARTIDAS EMPEZADAS</h2>
         {{#each listMias true}}
             <li class="miPartida {{selectedPartida}}">
                 {{titulo}} : [{{listJugadores}}]
-            </li>    
+            </li>
         {{/each}}
     </div>
 </template>
