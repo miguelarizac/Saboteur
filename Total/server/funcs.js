@@ -54,7 +54,7 @@ var destapaCartaDestino = function(partidaId,row,col){
 	return t.list[row][col].carta;
 };
 
-var derrumbamiento = function(partidaId, carta,row,col){
+var derrumbamiento = function(partidaId,row,col){
 	var t = Partidas.findOne({_id: partidaId}).tablero;
 	var coordenadas = row.toString() + "," + col.toString();
 	if(!t.list[row][col].ocupada || ["14,3","12,11","14,11","16,11"].indexOf(coordenadas) != -1){
