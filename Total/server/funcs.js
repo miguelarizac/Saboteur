@@ -145,7 +145,7 @@ ponerCamino = function(partidaId,jugadorId,carta,row,col){
 	if(!c.farolillo || !c.pico || !c.vagon){
 		return false;
 	}
-    if (t.posiblesCells.indexOf(row.toString() + "," + col.toString()) != -1){
+    if (t.posiblesCells.indexOf(row.toString() + "," + col.toString()) != -1 && !t.list[row][col].ocupada){
         return comprobarCelda(partidaId,t,carta,row,col);
     }
 
