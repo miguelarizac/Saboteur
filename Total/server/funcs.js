@@ -358,11 +358,8 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 	if(Buscadores){
 		Puntos = 4;
 		for (i=0; i<NumeroJugadores; i++) {
-			//Roll= Caracteristicas.getCar(Roll,i);
-
 			Roll = Caracteristicas.findOne({turno: i}).Roll;
 			if (Roll === "Buscador"){
-			//	Puntuacion= Caracteristicas.getCar(Puntuacion,i);
 				Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
 				Puntos = Puntuacion + Puntos;
 				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
@@ -383,8 +380,7 @@ RepartirPuntos = function(Buscadores,Saboteadores){
 		for (i=0; i<NumeroJugadores; i++) {
 			Roll = Caracteristicas.findOne({turno: i}).Roll;
 			if (Roll === "Saboteador"){
-				//Puntuacion= CaracteristicasService.getCar(Puntuacion,i);
-			Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
+			    Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
 				Puntos = Puntuacion + Puntos;
 				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
 			}
@@ -397,15 +393,13 @@ ComprobarPuntuacion = function(){
 	NumeroJugadores = comprobarNum();
 	Puntos = 0;
 	for (i=0; i<NumeroJugadores; i++) {
-		//Puntuacion= CaracteristicasService.getCar(Puntuacion,i);
 
 		Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
 		if(Puntuacion > Puntos){
 			Puntos = Puntuacion;
 		}
 	}
-	idenJugador= CaracteristicasService.getId(JugadorId);
-	//idenJugador = Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
+	idenJugador = Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
 	nombreGanador = Jugadores.findOne({_id: idenJugador}).name;
 
 	return nombreGanador;
