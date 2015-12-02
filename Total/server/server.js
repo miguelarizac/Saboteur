@@ -106,13 +106,13 @@ Meteor.startup(function () {
                 nuevaCarta = robarCarta(partidaId);
                 Caracteristicas.update({partidaId: partidaId,jugadorId: jugadorId},{$push: {mano: nuevaCarta}});
                 actualizarTurno(partidaId);
-                
+
             }
 
             return r;
         },
 
-        descartarCarta: function(partidaId,jugadorId,carta){
+        descartarCarta: function(partidaId,jugadorId,carta){//!!!!!!!!!!!!!!CAMBIAR NOMBRE pasarTurno!!!!!!!!!!!!!!!!!!!!
             if (!comprobarCredenciales(partidaId,jugadorId,carta)){
               return false;
             }

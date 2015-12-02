@@ -64,7 +64,7 @@ var derrumbamiento = function(partidaId,row,col){
 	t.posiblesCells.push(coordenadas);
 	t.list[row][col].carta = tiposCartas.Standard;
 	t.list[row][col].ocupada = false;
-	Partidas.update({_id: partidaId}, {$set: {tablero: tablero}});
+	Partidas.update({_id: partidaId}, {$set: {tablero: t}});
 	return true;
 };
 
