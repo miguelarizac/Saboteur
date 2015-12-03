@@ -8,8 +8,8 @@ var destruir = function(partidaId,carta,nameObjetivo,objeto){
 
 	if(carta.Objeto[0] == "pico"){
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {pico: false}});
-	} else if(carta.Objeto[0] == "vagon"){
-		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {vagon: false}});
+	} else if(carta.Objeto[0] == "vagoneta"){
+		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {vagoneta: false}});
 	}else{
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {farolillo: false}});
 	}
@@ -36,8 +36,8 @@ var arreglar = function(partidaId,carta,nameObjetivo,objeto){
 	console.log(carta.Objeto[index]);
 	if(carta.Objeto[index] == "pico"){
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {pico: true}});
-	} else if(carta.Objeto[index] == "vagon"){
-		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {vagon: true}});
+	} else if(carta.Objeto[index] == "vagoneta"){
+		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {vagoneta: true}});
 	}else{
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {farolillo: true}});
 	}
@@ -100,15 +100,15 @@ tiposCartas = {
 	Pepitas2: {Type: "gold", nPepitas: 2},
 	Pepitas3: {Type: "gold", nPepitas: 3},
 	//Tipo Accion
-	RomperVagoneta: {Type: "accionP", Funcion: destruir, Objeto: ["vagon"]},
+	RomperVagoneta: {Type: "accionP", Funcion: destruir, Objeto: ["vagoneta"]},
 	RomperFarolillo: {Type: "accionP", Funcion: destruir, Objeto: ["farolillo"]},
 	RomperPico: {Type: "accionP", Funcion: destruir, Objeto: ["pico"]},
-	ArreglarVagoneta: {Type: "accionP", Funcion: arreglar, Objeto:["vagon"]},
+	ArreglarVagoneta: {Type: "accionP", Funcion: arreglar, Objeto:["vagoneta"]},
 	ArreglarFarolillo: {Type: "accionP", Funcion: arreglar, Objeto:["farolillo"]},
 	ArreglarPico: {Type: "accionP", Funcion: arreglar, Objeto:["pico"]},
 	ArreglarFaro_Pico: {Type: "accionP", Funcion: arreglar, Objeto:["farolillo","pico"]},
-	ArreglarFaro_Vagon: {Type: "accionP", Funcion: arreglar, Objeto: ["farolillo","vagon"]},
-	ArreglarVagon_Pico: {Type: "accionP", Funcion: arreglar, Objeto: ["vagon","pico"]},
+	ArreglarFaro_Vagon: {Type: "accionP", Funcion: arreglar, Objeto: ["farolillo","vagoneta"]},
+	ArreglarVagon_Pico: {Type: "accionP", Funcion: arreglar, Objeto: ["vagoneta","pico"]},
 	Mapa: {Type: "accionT", Funcion: destapaCartaDestino},
 	Derrumbamiento: {Type: "accionT", Funcion: derrumbamiento}
 };
@@ -142,7 +142,7 @@ cartasAccion = ['Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarVagoneta','Ar
 ponerCamino = function(partidaId,jugadorId,carta,row,col){
 	var t = Partidas.findOne({_id: partidaId}).tablero;
 	var c = Caracteristicas.findOne({partidaId: partidaId, jugadorId: jugadorId});
-	if(!c.farolillo || !c.pico || !c.vagon){
+	if(!c.farolillo || !c.pico || !c.vagoneta){
 		return false;
 	}
     if (t.posiblesCells.indexOf(row.toString() + "," + col.toString()) != -1 && !t.list[row][col].ocupada){
@@ -296,7 +296,7 @@ var Tablero = function(){
 configurarPartida = function(partidaId){
 	//Variables Importantes
 	var p = Partidas.findOne({_id: partidaId});
-	var numJugadores = p.listJugadores.length;
+	var numJugadores = p.listaJugadores.length;
 	var mano = new Array(numJugadores);
 
 	//Crear Mazo Rolles: Array de Rolles
@@ -317,13 +317,13 @@ configurarPartida = function(partidaId){
 	for (i = 0; i < numJugadores; i++) {
 		Caracteristicas.insert({
               partidaId: partidaId,
-              jugadorId: Meteor.users.findOne({username: p.listJugadores[i]})._id,
+              jugadorId: Meteor.users.findOne({username: p.listaJugadores[i]})._id,
               mano: mano[i],
               farolillo: true,
               pico: true,
-              vagon: true,
+              vagoneta: true,
               roll: rolls[i],
-              points: 0,
+              puntuacion: 0,
     	});
 	};
 
@@ -332,24 +332,15 @@ configurarPartida = function(partidaId){
 	//Poner Ronda
 	var ronda = 1;
 	//Poner Turno
-	var turno = Meteor.users.findOne({username: p.listJugadores[0]})._id;
+	var turno = Meteor.users.findOne({username: p.listaJugadores[0]})._id;
 
 	Partidas.update({_id: partidaId}, {$set:{
-						mazo: mazo,
+						mazoGeneral: mazo,
 						ronda: ronda,
 						tablero: tablero,
-						turno: turno,
+						jugadorActivo: turno,
 						empezada: true
 					}});
-};
-
-robarCarta = function(partidaId){
-	var mazo = Partidas.findOne({_id: partidaId}).mazo;
-	nuevaCard = mazo[mazo.length-1];
-	mazo.splice(mazo.length-1,1);
-
-	Partidas.update({_id: partidaId}, {$set:{mazo: mazo}});
-	return nuevaCarta;
 };
 
 RepartirPuntos = function(Buscadores,Saboteadores){
@@ -403,10 +394,4 @@ ComprobarPuntuacion = function(){
 	nombreGanador = Jugadores.findOne({_id: idenJugador}).name;
 
 	return nombreGanador;
-};
-
-jugarMapa = function(partidaId, fila, columna){
-	tablero = Partidas.findOne({_id: partidaId}).tablero;
-	descubierta = tablero.celdas[fila][columna].carta;
-	return descubierta;
 };

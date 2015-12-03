@@ -25,7 +25,7 @@ Template.totalPartidas.helpers({
     },
 
     auxTotal: function () {
-      if (this.listJugadores.indexOf(Meteor.user().username) == -1){
+      if (this.listaJugadores.indexOf(Meteor.user().username) == -1){
         return true;
       }
       return false;
@@ -53,11 +53,11 @@ Template.totalPartidas.events({
 
 Template.misPartidas.helpers({
     listMias: function (bool) {
-      return Partidas.find({listJugadores: Meteor.user().username, empezada: bool});
+      return Partidas.find({listaJugadores: Meteor.user().username, empezada: bool});
     },
 
     auxMias: function () {
-      return this.listJugadores[0] == Meteor.user().username && this.numJugadores == this.listJugadores.length && !this.empezada
+      return this.listaJugadores[0] == Meteor.user().username && this.numJugadores == this.listaJugadores.length && !this.empezada
     },
     selectedPartida: function () {
       var partidaId = this._id;
@@ -95,7 +95,7 @@ Template.actualPartida.helpers({
     },
 
     miTurno: function () {
-      var turno = Partidas.findOne({_id: Session.get("selectedPartida")}).turno;
+      var turno = Partidas.findOne({_id: Session.get("selectedPartida")}).jugadorActivo;
       if(turno == Meteor.userId()){
         return true;
       }
@@ -107,7 +107,7 @@ Template.actualPartida.helpers({
     },
 
     mazoLength: function () {
-      return Partidas.findOne({_id: Session.get("selectedPartida")}).mazo.length;
+      return Partidas.findOne({_id: Session.get("selectedPartida")}).mazoGeneral.length;
     },
 
     carac: function () {
@@ -129,7 +129,7 @@ Template.actualPartida.events({
     if(tipo == "Poner"){
       Meteor.call("ponerCarta", partidaId, Meteor.userId(),carta,parseInt(fila),parseInt(columna),objetivo,objeto);
     }else{
-      Meteor.call("descartarCarta", partidaId, Meteor.userId(),carta);
+      Meteor.call("pasarTurno", partidaId, Meteor.userId(),carta);
     }
 
   },

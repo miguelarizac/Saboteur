@@ -1,9 +1,8 @@
-
 var comprobarCredenciales = function(partidaId,jugadorId,carta){
     var p = Partidas.findOne({_id: partidaId});
     var c = Caracteristicas.findOne({partidaId: partidaId, jugadorId: jugadorId});
 
-    if (p.turno != jugadorId){
+    if (p.jugadorActivo != jugadorId){
         return false;
     }
 
@@ -23,19 +22,19 @@ var descartarCarta = function(jugadorId, partidaId, carta){
 
 var robarCarta = function(partidaId){
     partida = Partidas.findOne({_id: partidaId});
-    mazo = partida.mazo;
+    mazo = partida.mazoGeneral;
     carta = mazo[mazo.length -1];
     mazo.pop();
-    Partidas.update({_id: partidaId},{$set:{mazo: mazo}});
+    Partidas.update({_id: partidaId},{$set:{mazoGeneral: mazo}});
     return carta;
 };
 
 var actualizarTurno = function(partidaId){
     var p = Partidas.findOne({_id: partidaId});
-    jugadorId = p.turno;
-    var index = (p.listJugadores.indexOf(Meteor.users.findOne({_id: jugadorId}).username) + 1) % p.numJugadores;
-    var turno = Meteor.users.findOne({username: p.listJugadores[index]})._id;
-    Partidas.update({_id: partidaId}, {$set:{mazo: mazo,turno: turno}});
+    jugadorId = p.jugadorActivo;
+    var index = (p.listaJugadores.indexOf(Meteor.users.findOne({_id: jugadorId}).username) + 1) % p.numJugadores;
+    var turno = Meteor.users.findOne({username: p.listaJugadores[index]})._id;
+    Partidas.update({_id: partidaId}, {$set:{jugadorActivo: turno}});
 
 }
 
@@ -62,7 +61,7 @@ Meteor.startup(function () {
                 Partidas.insert({
                   titulo: titulo,
                   numJugadores: numJugadores,
-                  listJugadores: [username],
+                  listaJugadores: [username],
                   empezada: false
                 });
             }
@@ -70,8 +69,8 @@ Meteor.startup(function () {
 
         unirsePartida: function(partidaId,username){
             var p = Partidas.findOne({_id: partidaId});
-            if (p.listJugadores.length < p.numJugadores){
-                Partidas.update({_id: partidaId}, {$push: {listJugadores: username}});
+            if (p.listaJugadores.length < p.numJugadores){
+                Partidas.update({_id: partidaId}, {$push: {listaJugadores: username}});
             }
         },
 
@@ -112,7 +111,7 @@ Meteor.startup(function () {
             return r;
         },
 
-        descartarCarta: function(partidaId,jugadorId,carta){//!!!!!!!!!!!!!!CAMBIAR NOMBRE pasarTurno!!!!!!!!!!!!!!!!!!!!
+        pasarTurno: function(partidaId,jugadorId,carta){//!!!!!!!!!!!!!!CAMBIAR NOMBRE pasarTurno!!!!!!!!!!!!!!!!!!!!
             if (!comprobarCredenciales(partidaId,jugadorId,carta)){
               return false;
             }
