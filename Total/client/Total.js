@@ -38,7 +38,7 @@ Template.totalPartidas.events({
 
     var titulo = $('[name=titulo]').val();
     var numJugadores = $('[name=numJugadores]').val();
-    
+
     Meteor.call("nuevaPartida", Meteor.user().username, titulo, numJugadores);
   },
 
@@ -125,11 +125,17 @@ Template.actualPartida.events({
     var objeto = $('#Objeto option:selected').val();
     var fila = $('[name=fila]').val();
     var columna = $('[name=columna]').val();
+    var girada = $('#Girada option:selected').val();
+    if(girada == "true"){
+        giro = true;
+    }else{
+        giro = false;
+    }
 
     if(tipo == "Poner"){
-      Meteor.call("ponerCarta", partidaId, Meteor.userId(),carta,parseInt(fila),parseInt(columna),objetivo,objeto);
+      Meteor.call("ponerCarta", partidaId,carta,parseInt(fila),parseInt(columna),objetivo,objeto,giro);
     }else{
-      Meteor.call("pasarTurno", partidaId, Meteor.userId(),carta);
+      Meteor.call("pasarTurno", partidaId,carta);
     }
 
   },
@@ -158,7 +164,7 @@ Template.register.onRendered(function(){
           if(error){
             if(error.reason == "Username already exists."){
               validator.showErrors({
-                  username: "That username already belongs to a registered user."   
+                  username: "That username already belongs to a registered user."
               });
             }
           }else{
@@ -194,12 +200,12 @@ Template.login.onRendered(function(){
           if(error){
             if(error.reason == "User not found"){
                 validator.showErrors({
-                    username: "That username doesn't belong to a registered user."   
+                    username: "That username doesn't belong to a registered user."
                 });
             }
             if(error.reason == "Incorrect password"){
                 validator.showErrors({
-                    password: "You entered an incorrect password."    
+                    password: "You entered an incorrect password."
                 });
             }
           }else{

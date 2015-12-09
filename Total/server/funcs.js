@@ -33,7 +33,6 @@ var arreglar = function(partidaId,carta,nameObjetivo,objeto){
 		return false;
 	}
 
-	console.log(carta.Objeto[index]);
 	if(carta.Objeto[index] == "pico"){
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {pico: true}});
 	} else if(carta.Objeto[index] == "vagoneta"){
@@ -138,14 +137,29 @@ cartasAccion = ['Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarVagoneta','Ar
 					'Derrumbamiento'
 ];
 
+girarCarta = function(carta){
+	aux = tiposCartas.Standard;
+	aux.Abajo = carta.Arriba;
+	aux.Arriba = carta.Abajo;
+	aux.Izquierda = carta.Derecha;
+	aux.Derecha = carta.Izquierda;
+	aux.Bloqueante = carta.Bloqueante;
 
-ponerCamino = function(partidaId,jugadorId,carta,row,col){
+	return aux;
+};
+
+
+ponerCamino = function(partidaId,jugadorId,carta,row,col,girada){
+	var carta = tiposCartas[carta];
 	var t = Partidas.findOne({_id: partidaId}).tablero;
 	var c = Caracteristicas.findOne({partidaId: partidaId, jugadorId: jugadorId});
 	if(!c.farolillo || !c.pico || !c.vagoneta){
 		return false;
 	}
     if (t.posiblesCells.indexOf(row.toString() + "," + col.toString()) != -1 && !t.list[row][col].ocupada){
+		if(girada){
+			carta = girarCarta(carta);
+		}
         return comprobarCelda(partidaId,t,carta,row,col);
     }
 
@@ -153,9 +167,8 @@ ponerCamino = function(partidaId,jugadorId,carta,row,col){
 };
 
 
-var comprobarCelda = function(partidaId,tablero,carta,row,col){
-	// Variables Importantes
-	var c = tiposCartas[carta];
+var comprobarCelda = function(partidaId,tablero,c,row,col){
+
 	// CHECKING
 
 	if(c.Izquierda){
@@ -165,9 +178,6 @@ var comprobarCelda = function(partidaId,tablero,carta,row,col){
    	}
 
 	if(c.Derecha){
-	   	if(tablero.list[row][col+1].ocupada && !tablero.list[row][col+1].carta.Izquierda){
-	   		return false;
-	   	}
 	}
 
 	if(c.Arriba){

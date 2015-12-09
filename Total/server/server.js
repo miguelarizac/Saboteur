@@ -2,6 +2,10 @@ var comprobarCredenciales = function(partidaId,jugadorId,carta){
     var p = Partidas.findOne({_id: partidaId});
     var c = Caracteristicas.findOne({partidaId: partidaId, jugadorId: jugadorId});
 
+    if(p.listaJugadores.indexOf(Meteor.users.findOne({_id:jugadorId}).username) == -1){
+        return false;
+    }
+
     if (p.jugadorActivo != jugadorId){
         return false;
     }
@@ -79,16 +83,18 @@ Meteor.startup(function () {
             configurarPartida(partidaId);
         },
 
-        ponerCarta: function(partidaId,jugadorId,carta,row,col,nameObjetivo,objeto){
+        ponerCarta: function(partidaId,carta,row,col,nameObjetivo,objeto,girada){
+            jugadorId = Meteor.userId();
             //Comprobamos credenciales: es el turno de JugadorId y tiene la carta en la Mano.
             if (!comprobarCredenciales(partidaId,jugadorId,carta)){
               return false;
             }
+
             //
             var r;
             switch(tiposCartas[carta].Type) {
               case "excavacion":
-                r = ponerCamino(partidaId,jugadorId,carta,row,col);
+                r = ponerCamino(partidaId,jugadorId,carta,row,col,girada);
                 break;
               case "accionT":
                 r = tiposCartas[carta].Funcion(partidaId,row,col);
@@ -111,7 +117,8 @@ Meteor.startup(function () {
             return r;
         },
 
-        pasarTurno: function(partidaId,jugadorId,carta){//!!!!!!!!!!!!!!CAMBIAR NOMBRE pasarTurno!!!!!!!!!!!!!!!!!!!!
+        pasarTurno: function(partidaId,carta){//!!!!!!!!!!!!!!CAMBIAR NOMBRE pasarTurno!!!!!!!!!!!!!!!!!!!!
+            jugadorId = Meteor.userId();
             if (!comprobarCredenciales(partidaId,jugadorId,carta)){
               return false;
             }
