@@ -64,7 +64,7 @@
 <template name="actualPartida">
     <div class="actualPartida">
         {{#if renderThis}}
-            <h1>Titulo: {{partida.titulo}} : {{#if miTurno}} (ES MI TURNO) {{else}} (ESPERANDO) {{/if}}</h1>
+            <h1>Titulo: {{partida.titulo}} > {{#if miTurno}} (ES MI TURNO) {{else}} (ESPERANDO) {{/if}}</h1>
             <li>Jugadores: [{{partida.listaJugadores}}]</li>
             <li>Mazo: {{mazoLength}}</li>
             <li>Roll: {{carac.roll}}</li>
@@ -75,33 +75,51 @@
             <hr>
 
             <form>
+                <li>Mano:
                 <select id="Mano">
                     {{#each carac.mano}}
                         <option value="{{this}}">{{this}}</option>
                     {{/each}}
                 </select>
+                </li>
+
+                <li>Poner o descartar:
                 <select id="Tipo">
                         <option value="Poner">Poner</option>
                         <option value="Descartar">Descartar</option>
                 </select>
+                </li>
+                
+                <li>Carta para jugador:
                 <select id="Objetivo">
                     <option value="none">none</option>
                     {{#each partida.listaJugadores}}
                         <option value="{{this}}">{{this}}</option>
                     {{/each}}
                 </select>
+                </li>
+   
+                <li>Arreglar o romper:
                 <select id="Objeto">
                     <option value="default">Default</option>
                     <option value="farolillo">Farolillo</option>
                     <option value="vagoneta">Vagoneta</option>
                     <option value="pico">Pico</option>
                 </select>
+                </li>
+
+                <li>Posicion del tablero:
                 <input type="number" name="fila"  placeholder="Fila" required/>
                 <input type="number" name="columna"  placeholder="Columna" required/>
+                </li>
+                
+                <li>Girar carta:
                 <select id="Girada">
                     <option value="true">True</option>
                     <option value="false">False</option>
                 </select>
+                </li>
+                
                 <button type="submit"> Submit</button>
             </form>
         {{/if}}
