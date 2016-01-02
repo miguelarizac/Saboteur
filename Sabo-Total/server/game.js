@@ -44,8 +44,11 @@ var arreglar = function(partidaId,carta,nameObjetivo,objeto){
 	return true;
 };
 
-var destapaCartaDestino = function(partidaId,row,col){
+var destapaCartaDestino = function(partidaId,carta){
+	var row = carta.fila;
+	var col = carta.columna;
 	var t = Partidas.findOne({_id: partidaId}).tablero;
+
 	if (col != 11 || [12,14,16].indexOf(row) == -1){
 		return false;
 	}
@@ -53,10 +56,13 @@ var destapaCartaDestino = function(partidaId,row,col){
 	return t.list[row][col].carta;
 };
 
-var derrumbamiento = function(partidaId,row,col){
+var derrumbamiento = function(partidaId,carta){
+	var row = carta.fila;
+	var col = carta.columna;
 	var t = Partidas.findOne({_id: partidaId}).tablero;
+
 	var coordenadas = row.toString() + "," + col.toString();
-	if(!t.list[row][col].ocupada || ["14,3","12,11","14,11","16,11"].indexOf(coordenadas) != -1){
+	if( ["14,3","12,11","14,11","16,11"].indexOf(coordenadas) != -1 || !t.list[row][col].ocupada ){
 		return false;
 	}
 
@@ -71,26 +77,28 @@ var derrumbamiento = function(partidaId,row,col){
 tiposCartas = {
 	Standard: { Type: "excavacion", Izquierda: false, Derecha: false, Arriba: false, Abajo: false, Bloqueante: false},
 	//Tipo tunel
-	Camino1: { Type: "excavacion", Izquierda: false, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
-	Camino2: { Type: "excavacion", Izquierda: true, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
-	Camino3: { Type: "excavacion", Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false},
+	Camino1: { Type: "excavacion", Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false},
+	Camino2: { Type: "excavacion", Izquierda: true, Derecha: true, Arriba: false, Abajo: false, Bloqueante: false},
+	Camino3: { Type: "excavacion", Izquierda: true, Derecha: true, Arriba: false, Abajo: true, Bloqueante: false},
 	Camino4: { Type: "excavacion", Izquierda: false, Derecha: true, Arriba: false, Abajo: true, Bloqueante: false},
 	Camino5: { Type: "excavacion", Izquierda: true, Derecha: false, Arriba: false, Abajo: true, Bloqueante: false},
-	Camino6: { Type: "excavacion", Izquierda: true, Derecha: true, Arriba: true, Abajo: false, Bloqueante: false},
-	Camino7: { Type: "excavacion", Izquierda: true, Derecha: true, Arriba: false, Abajo: false, Bloqueante: false},
-	SinCamino1: { Type: "excavacion", Izquierda: false, Derecha: false, Arriba: false, Abajo: true, Bloqueante: true},
-	SinCamino2: { Type: "excavacion", Izquierda: false, Derecha: true, Arriba: false, Abajo: true, Bloqueante: true},
-	SinCamino5: { Type: "excavacion", Izquierda: true, Derecha: false, Arriba: false, Abajo: true, Bloqueante: true},
-	SinCamino6: { Type: "excavacion", Izquierda: true, Derecha: false, Arriba: false, Abajo: false, Bloqueante: true},
-	SinCamino7: { Type: "excavacion", Izquierda: false, Derecha: false, Arriba: true, Abajo: true, Bloqueante: true},
-	SinCamino8: { Type: "excavacion", Izquierda: true, Derecha: true, Arriba: true, Abajo: false, Bloqueante: true},
-	SinCamino9: { Type: "excavacion", Izquierda: true, Derecha: true, Arriba: false, Abajo: false, Bloqueante: true},
+	Camino6: { Type: "excavacion", Izquierda: false, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
+	Camino7: { Type: "excavacion", Izquierda: true, Derecha: false, Arriba: true, Abajo: true, Bloqueante: false},
+	SinCamino1: { Type: "excavacion", Izquierda: false, Derecha: true, Arriba: false, Abajo: true, Bloqueante: true},
+	SinCamino2: { Type: "excavacion", Izquierda: true, Derecha: false, Arriba: false, Abajo: true, Bloqueante: true},
+	SinCamino3: { Type: "excavacion", Izquierda: false, Derecha: false, Arriba: true, Abajo: true, Bloqueante: true},
+	SinCamino4: { Type: "excavacion", Izquierda: false, Derecha: true, Arriba: false, Abajo: false, Bloqueante: true},
+	SinCamino5: { Type: "excavacion", Izquierda: false, Derecha: false, Arriba: true, Abajo: false, Bloqueante: true},
+	SinCamino6: { Type: "excavacion", Izquierda: false, Derecha: true, Arriba: true, Abajo: true, Bloqueante: true},
+	SinCamino7: { Type: "excavacion", Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: true},
+	SinCamino8: { Type: "excavacion", Izquierda: true, Derecha: true, Arriba: false, Abajo: false, Bloqueante: true},
+	SinCamino9: { Type: "excavacion", Izquierda: true, Derecha: true, Arriba: true, Abajo: false, Bloqueante: true},
 	//Tipo Inicio
 	ComienzoEscalera: { Type: "camino", Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false},
 	//Tipo Destino
-	DestinoNada1: { Type: "camino", Izquierda: true, Derecha: false, Arriba: false, Abajo: true, Bloqueante: false},
-	DestinoNada2: { Type: "camino", Izquierda: true, Derecha: false, Arriba: true, Abajo: false, Bloqueante: false},
-	DestinoPepita: { Type: "camino", Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false},
+	DestinoNada1: { Type: "camino", Izquierda: true, Derecha: false, Arriba: false, Abajo: true, Bloqueante: false,name: "DestinoNada1"},
+	DestinoNada2: { Type: "camino", Izquierda: true, Derecha: false, Arriba: true, Abajo: false, Bloqueante: false,name: "DestinoNada2"},
+	DestinoPepita: { Type: "camino", Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false,name: "DestinoPepita"},
 	//Tipo Roll
 	Saboteador: {Type: "roll", Roll: "Sabotear"},
 	Buscador: {Type: "roll", Roll: "Buscar"},
@@ -149,18 +157,18 @@ girarCarta = function(carta){
 };
 
 
-ponerCamino = function(partidaId,jugadorId,carta,row,col,girada){
-	var carta = tiposCartas[carta];
+ponerCamino = function(partidaId,jugadorId,carta){
+	var tipoCarta = tiposCartas[carta.sprite];
 	var t = Partidas.findOne({_id: partidaId}).tablero;
 	var c = Caracteristicas.findOne({partidaId: partidaId, jugadorId: jugadorId});
 	if(!c.farolillo || !c.pico || !c.vagoneta){
 		return false;
 	}
-    if (t.posiblesCells.indexOf(row.toString() + "," + col.toString()) != -1 && !t.list[row][col].ocupada){
-		if(girada){
-			carta = girarCarta(carta);
+    if (t.posiblesCells.indexOf(carta.fila.toString() + "," + carta.columna.toString()) != -1 && !t.list[carta.fila][carta.columna].ocupada){
+		if(carta.girada){
+			tipoCarta = girarCarta(tipoCarta);
 		}
-        return comprobarCelda(partidaId,t,carta,row,col);
+        return comprobarCelda(partidaId,t,tipoCarta,carta.fila,carta.columna);
     }
 
     return false;
@@ -169,31 +177,47 @@ ponerCamino = function(partidaId,jugadorId,carta,row,col,girada){
 
 var comprobarCelda = function(partidaId,tablero,c,row,col){
 	// [izq,der,arr,abj]
-	var aux = [false,false,false,false];
-	var caux = [c.Izquierda,c.Derecha,c.Arriba,c.Abajo];
+	var aux = [null,null,null,null];
+	var caux = [c.Derecha,c.Izquierda,c.Arriba,c.Abajo];
 	
 	// CHECKING
 
-   	if(tablero.list[row][col-1].ocupada && tablero.list[row][col-1].carta.Derecha){
-   		aux[0] = true;
+   	if(tablero.list[row][col+1].ocupada){
+   		if(tablero.list[row][col+1].carta.Izquierda){
+   			aux[0] = true;
+   		}else{
+   			aux[0] = false;
+   		}
+   	}
+///
+   	if(tablero.list[row][col-1].ocupada){
+   		if(tablero.list[row][col-1].carta.Derecha){
+   			aux[1] = true;
+   		}else{
+   			aux[1] = false;
+   		}
    	}
 
-   	if(tablero.list[row][col+1].ocupada && tablero.list[row][col+1].carta.Izquierda){
-   		aux[1] = true;	
-   	}
-
-  	if(tablero.list[row-1][col].ocupada && tablero.list[row-1][col].carta.Abajo){
-	 	aux[2] = true;
+  	if(tablero.list[row-1][col].ocupada){
+   		if(tablero.list[row-1][col].carta.Abajo){
+   			aux[2] = true;
+   		}else{
+   			aux[2] = false;
+   		}
    	}
 
 	
-   	if(tablero.list[row+1][col].ocupada && tablero.list[row+1][col].carta.Arriba){
-   		aux[3] = true;	
+   	if(tablero.list[row+1][col].ocupada){
+   		if(tablero.list[row+1][col].carta.Arriba){
+   			aux[3] = true;
+   		}else{
+   			aux[3] = false;
+   		}
    	}
 
    	// Comprobar con aux
    	for (i = 0; i < 4; i++) {
-   		if(aux[i] && !caux[i]){
+   		if(aux[i] != null && aux[i] != caux[i]){
    			return false;
    		}
    	};
@@ -237,8 +261,9 @@ var nMaxCartas = function(numJugadores){
 	return n;
 };
 
-var crearMazo = function(array){
+var crearMazo = function(data){
 	var mazo = [];
+	var array = data.slice();
 	var aux = array.length;
 	for (i = 0; i < aux; i++) {
 		random = Math.floor(Math.random()*(array.length));
@@ -250,6 +275,9 @@ var crearMazo = function(array){
 
 
 var prepararRolles = function(numJugadores){
+	if(numJugadores == 2){
+		return ["Buscador","Saboteador"];
+	}
 	var numSaboteadores = Math.round(numJugadores/2)-1;
 	var numBuscadores = numJugadores - numSaboteadores;
 
@@ -310,6 +338,8 @@ var Tablero = function(){
 
 
 configurarPartida = function(partidaId){
+	//PRIMERO QUITA TODAS LAS ACCIONES DE POSIBLES RONDAS ANTERIORES
+	Acciones.remove({partidaId: partidaId});
 	//Variables Importantes
 	var p = Partidas.findOne({_id: partidaId});
 	var numJugadores = p.listaJugadores.length;
@@ -329,85 +359,47 @@ configurarPartida = function(partidaId){
 		};
 	};
 
-	//Crear Caracteristicas de Jugadores
-	for (i = 0; i < numJugadores; i++) {
-		Caracteristicas.insert({
-              partidaId: partidaId,
-              jugadorId: Meteor.users.findOne({username: p.listaJugadores[i]})._id,
-              mano: mano[i],
-              farolillo: true,
-              pico: true,
-              vagoneta: true,
-              roll: rolls[i],
-              puntuacion: 0,
-    	});
-	};
-
 	//Crear Tablero
 	var tablero = new Tablero();
 	//Poner Ronda
-	var ronda = 1;
-	//Poner Turno
-	var turno = Meteor.users.findOne({username: p.listaJugadores[0]})._id;
+	var ronda;
+	var puntuacion = [];
+	if(p.ronda){
+		ronda = p.ronda + 1;
+		var caracs = Caracteristicas.find({partidaId: partidaId}).fetch();
+	    for (i = 0; i < caracs.length; i++) {
+	    	puntuacion[i] = caracs[i].puntuacion;
+	    };
+		Caracteristicas.remove({partidaId: partidaId}); 
+	}else{
+		ronda = 1;
+		for (i = 0; i < numJugadores; i++) {
+			puntuacion[i] = 0;
+		};
+	}
+
+	//Crear Caracteristicas de Jugadores
+	for (i = 0; i < numJugadores; i++) {
+		Caracteristicas.insert({
+	        partidaId: partidaId,
+	        jugadorId: Meteor.users.findOne({username: p.listaJugadores[i]})._id,
+	        mano: mano[i],
+	        farolillo: true,
+	        pico: true,
+	        vagoneta: true,
+	        roll: rolls[i],
+	        puntuacion: puntuacion[i],
+	   	});
+	};
+	
 
 	Partidas.update({_id: partidaId}, {$set:{
 						mazoGeneral: mazo,
 						ronda: ronda,
 						tablero: tablero,
-						jugadorActivo: turno,
-						empezada: true
+						jugadorActivo: p.listaJugadores[0],
+						empezada: true,
 					}});
 };
 
-RepartirPuntos = function(Buscadores,Saboteadores){
-	NumeroJugadores = comprobarNum();
-	var Puntos;
-	if(Buscadores){
-		Puntos = 4;
-		for (i=0; i<NumeroJugadores; i++) {
-			Roll = Caracteristicas.findOne({turno: i}).Roll;
-			if (Roll === "Buscador"){
-				Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
-				Puntos = Puntuacion + Puntos;
-				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
-			}
-		}
-	}
-	if(Saboteadores){
-		//Como sé el número de jugadores,mirando la función PrepararRoles se puede saber el numero de sabotadores que hay.
-		if((NumeroJugadores === 3) || (NumeroJugadores === 4)){ //Para 1 saboteador
-			Puntos = 4;
-		}
-		if ((NumeroJugadores >= 5) && (NumeroJugadores <= 9)) { //Para 2 o 3 saboteadores.
-			Puntos = 3;
-		}
-		if (NumeroJugadores === 10) { // Para 4 saboteadores
-			Puntos = 2;
-		}
-		for (i=0; i<NumeroJugadores; i++) {
-			Roll = Caracteristicas.findOne({turno: i}).Roll;
-			if (Roll === "Saboteador"){
-			    Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
-				Puntos = Puntuacion + Puntos;
-				Caracteristicas.update({turno: i},{$set: {Puntuacion: Puntos}});
-			}
-		}
-	}
 
-};
-
-ComprobarPuntuacion = function(){
-	NumeroJugadores = comprobarNum();
-	Puntos = 0;
-	for (i=0; i<NumeroJugadores; i++) {
-
-		Puntuacion = Caracteristicas.findOne({turno: i}).Puntuacion;
-		if(Puntuacion > Puntos){
-			Puntos = Puntuacion;
-		}
-	}
-	idenJugador = Caracteristicas.findOne({Puntuacion: Puntos}).JugadorId;
-	nombreGanador = Jugadores.findOne({_id: idenJugador}).name;
-
-	return nombreGanador;
-};
