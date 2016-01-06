@@ -112,7 +112,7 @@ var setGanadores = function(partidaId){
     return ganadores;
 };
 
-var isFinish = function(partida){
+/*var isFinish = function(partida){
     var bool = false;
     var tipoGanador = null;
     var ganadores = [];
@@ -123,7 +123,86 @@ var isFinish = function(partida){
     }
 
     return [bool,tipoGanador];
+};*/
+
+
+var isFinish = function(partida){
+    var terminada = false;
+    var tipoGanador = null;
+    var mano = [];
+    var caracs = Caracteristicas.find({partidaId: partida._id}).fetch();
+    this.list = partida.tablero.list;
+
+    if(partida.mazoGeneral.length == 0){
+        for (i = 0; i < caracs.length; i++) {
+	    	mano[i] = caracs[i].mano.length;
+            if(mano[i] == 0){
+                terminada = true;
+                tipoGanador = "Saboteador";
+            }
+        };
+    }
+    
+    if(this.list[14][11].carta.name == "DestinoPepita"){
+        if((this.list[14][10].ocupada == true) && (this.list[14][10].carta.Derecha == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+        else if((this.list[13][11].ocupada == true) && (this.list[13][11].carta.Abajo == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+        else if((this.list[14][12].ocupada == true) && (this.list[14][12].carta.Izquierda == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+        else if((this.list[15][11].ocupada == true) && (this.list[15][11].carta.Arriba == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+    }
+
+    if(this.list[12][11].carta.name == "DestinoPepita"){
+        if((this.list[12][10].ocupada == true) && (this.list[12][10].carta.Derecha == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+        else if((this.list[11][11].ocupada == true) && (this.list[11][11].carta.Abajo == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+        else if((this.list[12][12].ocupada == true) && (this.list[12][12].carta.Izquierda == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+        else if((this.list[13][11].ocupada == true) && (this.list[13][11].carta.Arriba == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+    }
+
+    if(this.list[16][11].carta.name == "DestinoPepita"){
+        if((this.list[16][10].ocupada == true) && (this.list[16][10].carta.Derecha == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+        else if((this.list[15][11].ocupada == true) && (this.list[15][11].carta.Abajo == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+        else if((this.list[16][12].ocupada == true) && (this.list[16][12].carta.Izquierda == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+        else if((this.list[17][11].ocupada == true) && (this.list[17][11].carta.Arriba == true)){
+            terminada = true;
+            tipoGanador = "Buscador";   
+        }
+    }
+
+    return [terminada,tipoGanador];
 };
+
 
 //PARA FINALIZAR TENGO QUE ELIMINAR LAS ACCIONES Y AÑADIR LA DE "FINALRONDA"
 var finalRonda = function(partidaId){
