@@ -130,17 +130,13 @@ var isFinish = function(partida){
     var terminada = false;
     var tipoGanador = null;
     var mano = [];
-    var caracs = Caracteristicas.find({partidaId: partida._id}).fetch();
+    var caracs = Caracteristicas.find({partidaId: partida._id}).fetch(); 
     this.list = partida.tablero.list;
+    this.usadas = partida.cartasUsadas;
 
-    if(partida.mazoGeneral.length == 0){
-        for (i = 0; i < caracs.length; i++) {
-	    	mano[i] = caracs[i].mano.length;
-            if(mano[i] == 0){
-                terminada = true;
-                tipoGanador = "Saboteador";
-            }
-        };
+    if((partida.mazoGeneral.length == 0) && (this.usadas == 67)){
+        terminada = true;
+        tipoGanador = "Saboteador";
     }
     
     if(this.list[14][11].carta.name == "DestinoPepita"){
@@ -198,6 +194,11 @@ var isFinish = function(partida){
             terminada = true;
             tipoGanador = "Buscador";   
         }
+    }
+
+    if(terminada){
+        this.usadas = 0;
+        Partidas.update({_id: partida._id},{$set:{cartasUsadas: usadas}});    
     }
 
     return [terminada,tipoGanador];
@@ -272,7 +273,8 @@ Meteor.startup(function () {
                   titulo: titulo,
                   numJugadores: numJugadores,
                   listaJugadores: [username],
-                  empezada: false
+                  empezada: false,
+                  cartasUsadas: 0
                 });
             }
         },
@@ -308,7 +310,10 @@ Meteor.startup(function () {
                 if(Partidas.findOne({_id: partidaId}).mazoGeneral.length > 0){
                     nuevaCarta = robarCarta(partidaId);
                     Caracteristicas.update({partidaId: partidaId,jugadorId: jugadorId},{$push: {mano: nuevaCarta}});
-                }   
+                }
+                usadas = Partidas.findOne({_id: partidaId}).cartasUsadas;
+                usadas++;
+                Partidas.update({_id: partidaId},{$set:{cartasUsadas: usadas}});   
                 actualizarTurno(partidaId);
             }
 
