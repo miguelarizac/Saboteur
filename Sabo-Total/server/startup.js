@@ -294,6 +294,7 @@ Meteor.startup(function () {
 
         jugarCarta: function(partidaId,accion,carta,nameObjetivo){
             var jugadorId = Meteor.userId();
+            var usadas = Partidas.findOne({_id: partidaId}).cartasUsadas;
             //Comprobamos credenciales: es el turno de JugadorId y tiene la carta en la Mano.
             if (!comprobarCredenciales(partidaId,jugadorId,carta)){
               return false;
@@ -311,7 +312,6 @@ Meteor.startup(function () {
                     nuevaCarta = robarCarta(partidaId);
                     Caracteristicas.update({partidaId: partidaId,jugadorId: jugadorId},{$push: {mano: nuevaCarta}});
                 }
-                usadas = Partidas.findOne({_id: partidaId}).cartasUsadas;
                 usadas++;
                 Partidas.update({_id: partidaId},{$set:{cartasUsadas: usadas}});   
                 actualizarTurno(partidaId);
