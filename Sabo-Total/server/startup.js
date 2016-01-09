@@ -235,7 +235,7 @@ var finalRonda = function(partidaId){
         //REPARTO LOS PUNTOS(AHORA MISMO SIEMPRE GANAN BUSCADORES)
         repartirPuntos(partidaId,aux[1]);
         //POR ULTIMO CONFIGURO LA PARTIDA PARA SIGUIENTE RONDA
-        if(p.ronda == 1){
+        if(p.ronda == 3){
             var ganadores = setGanadores(partidaId);
             Acciones.insert({
                 partidaId: partidaId,
