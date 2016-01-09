@@ -42,36 +42,37 @@ var actualizarTurno = function(partidaId){
 
 
 var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
+    var aux = carta;
     //FUNCION DE LA CARTA
     var objeto;
-    if(carta.sprite == "ArreglarFaro_Vagon"){
+    if(aux.sprite == "ArreglarFaro_Vagon"){
         objeto = "farolillo";
-    }else if(carta.sprite == "ArreglarFaro_Pico"){
+    }else if(aux.sprite == "ArreglarFaro_Pico"){
         objeto = "pico";
-    }else if(carta.sprite == "ArreglarVagon_Pico"){    
+    }else if(aux.sprite == "ArreglarVagon_Pico"){    
         objeto = "vagoneta";
     }else{
-        if(carta.sprite.charAt(0) == 'A'){
-            objeto = carta.sprite.toLowerCase().split("arreglar");
+        if(aux.sprite.charAt(0) == 'A'){
+            objeto = aux.sprite.toLowerCase().split("arreglar");
         }else{
-            objeto = carta.sprite.toLowerCase().split("romper");
+            objeto = aux.sprite.toLowerCase().split("romper");
         }
     }
             
     //
     var r;
-    var selectedCard = tiposCartas[carta.sprite];
+    var selectedCard = tiposCartas[aux.sprite];
     switch(selectedCard.Type) {
         case "excavacion":
-            r = ponerCamino(partidaId,jugadorId,carta);
+            r = ponerCamino(partidaId,jugadorId,aux);
             break;
         case "accionT":
-            r = selectedCard.Funcion(partidaId,carta);
+            r = selectedCard.Funcion(partidaId,aux);
             break;
         case "accionP":
             r = selectedCard.Funcion(partidaId,selectedCard,nameObjetivo,objeto);
             if(r != true && r != false && r.charAt(0) == 'A'){
-                carta.sprite = r;
+                aux.sprite = r;
                 r = true;
             }
             break;
@@ -83,7 +84,7 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
         Acciones.insert({
             partidaId: partidaId,
             tipo: selectedCard.Type,
-            carta: carta,
+            carta: aux,
             targetName: nameObjetivo,
             objeto: objeto,
             datetime: new Date().getTime(),
