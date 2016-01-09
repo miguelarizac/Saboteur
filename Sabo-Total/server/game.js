@@ -17,11 +17,12 @@ var destruir = function(partidaId,carta,nameObjetivo,objeto){
 	return true;
 };
 
-/*var arreglar = function(partidaId,carta,nameObjetivo,objeto){
+var arreglar = function(partidaId,carta,nameObjetivo,objeto){
+	var r = false;
 	var index = 0;
 	if(carta.Objeto.length > 1){
 		if(objeto != "default" && carta.Objeto.indexOf(objeto) == -1){
-			return false;
+			return r;
 		} else {
 			index = carta.Objeto.indexOf(objeto);
 		}
@@ -30,63 +31,21 @@ var destruir = function(partidaId,carta,nameObjetivo,objeto){
 	var c = Caracteristicas.findOne({partidaId: partidaId,jugadorId: idObjetivo});
 
 	if(c[carta.Objeto[index]]){
-		return false;
+		return r;
 	}
 
 	if(carta.Objeto[index] == "pico"){
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {pico: true}});
+		r = "ArreglarPico";
 	} else if(carta.Objeto[index] == "vagoneta"){
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {vagoneta: true}});
+		r = "ArreglarVagoneta";
 	}else{
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {farolillo: true}});
+		r = "ArreglarFarolillo";
 	}
 
-	return true;
-};*/
-
-var arreglar = function(partidaId,carta,nameObjetivo,objeto){
-	var index = 0;
-	if(carta.Objeto.length == 2){
-		if(objeto == "default" && carta.Objeto.indexOf(objeto) == -1){
-			return false;
-		} else {
-			index = carta.Objeto.indexOf(objeto);
-		}
-	}
-	var idObjetivo = Meteor.users.findOne({username: nameObjetivo})._id;
-	var c = Caracteristicas.findOne({partidaId: partidaId,jugadorId: idObjetivo});
-
-	if(c[carta.Objeto[index]]){
-		return false;
-	}
-
-	if((carta.Objeto[0] == "farolillo") && (carta.Objeto[1] == "pico")){
-        if(carta.Objeto[index] == "farolillo"){
-    		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {farolillo: true}});
-        }else{
-            Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {pico: true}});
-        }
-	}else if((carta.Objeto[0] == "farolillo") && (carta.Objeto[1] == "vagoneta") ){
-        if(carta.Objeto[index] == "farolillo"){        
-    		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {farolillo: true}});
-        }else{
-            Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {vagoneta: true}});
-        }
-	}else if((carta.Objeto[0] == "vagoneta") && (carta.Objeto[1] == "pico") ){
-        if(carta.Objeto[index] == "vagoneta"){
-    		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {vagoneta: true}});
-        }else{
-            Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {pico: true}});
-        }
-	}else if(carta.Objeto[index] == "pico"){
-		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {pico: true}});
-	}else if(carta.Objeto[index] == "vagoneta"){
-		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {vagoneta: true}});
-	}else if(carta.Objeto[index] == "farolillo"){
-		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {farolillo: true}});
-	}
-
-	return true;
+	return r;
 };
 
 var destapaCartaDestino = function(partidaId,carta){

@@ -44,10 +44,18 @@ var actualizarTurno = function(partidaId){
 var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
     //FUNCION DE LA CARTA
     var objeto;
-    if(carta.sprite.charAt(0) == 'A'){
-        objeto = carta.sprite.toLowerCase().split("arreglar");
+    if(carta.sprite == "ArreglarFaro_Vagon"){
+        objeto = "farolillo";
+    }else if(carta.sprite == "ArreglarFaro_Pico"){
+        objeto = "pico";
+    }else if(carta.sprite == "ArreglarVagon_Pico"){    
+        objeto = "vagoneta";
     }else{
-        objeto = carta.sprite.toLowerCase().split("romper");
+        if(carta.sprite.charAt(0) == 'A'){
+            objeto = carta.sprite.toLowerCase().split("arreglar");
+        }else{
+            objeto = carta.sprite.toLowerCase().split("romper");
+        }
     }
             
     //
@@ -62,6 +70,10 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
             break;
         case "accionP":
             r = selectedCard.Funcion(partidaId,selectedCard,nameObjetivo,objeto);
+            if(r != true && r != false && r.charAt(0) == 'A'){
+                carta.sprite = r;
+                r = true;
+            }
             break;
     }
 
@@ -223,7 +235,7 @@ var finalRonda = function(partidaId){
         //REPARTO LOS PUNTOS(AHORA MISMO SIEMPRE GANAN BUSCADORES)
         repartirPuntos(partidaId,aux[1]);
         //POR ULTIMO CONFIGURO LA PARTIDA PARA SIGUIENTE RONDA
-        if(p.ronda == 3){
+        if(p.ronda == 1){
             var ganadores = setGanadores(partidaId);
             Acciones.insert({
                 partidaId: partidaId,
