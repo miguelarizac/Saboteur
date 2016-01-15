@@ -581,11 +581,16 @@ var Game = function(partidaId) {
 				that.gameboard.setGanadores(accion.ganadores);
 				break;
 			case "doble":
-			  that.gameboard.board.list[accion.primera.carta.fila][accion.primera.carta.columna].setSprite(accion.primera.carta.sprite);
-			  that.gameboard.board.list[accion.primera.carta.fila][accion.primera.carta.columna].girada = accion.primera.carta.girada;
-
+				console.log("DOBLE");
+				//la primera es la carta
+			  	that.gameboard.board.list[accion.primera.carta.fila][accion.primera.carta.columna].setSprite(accion.primera.carta.sprite);
+			  	that.gameboard.board.list[accion.primera.carta.fila][accion.primera.carta.columna].girada = accion.primera.carta.girada;
+			  	console.log("Primera");
+			  	//la segunda la de destino
 				that.gameboard.board.list[accion.segunda.carta.fila][accion.segunda.carta.columna].setSprite(accion.segunda.carta.sprite);
-			  that.gameboard.board.list[accion.segunda.carta.fila][accion.segunda.carta.columna].girada = accion.segunda.carta.girada;
+			  	that.gameboard.board.list[accion.segunda.carta.fila][accion.segunda.carta.columna].girada = accion.segunda.carta.girada;
+			  	console.log("Segunda");
+			  	console.log(accion);
 				break
 
 		}

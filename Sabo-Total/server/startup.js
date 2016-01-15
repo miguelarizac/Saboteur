@@ -40,6 +40,78 @@ var actualizarTurno = function(partidaId){
     Partidas.update({_id: partidaId}, {$set:{jugadorActivo: p.listaJugadores[index]}});
 };
 
+var llegaDestino = function(partidaId, carta){
+    var tablero = Partidas.findOne({_id: partidaId}).tablero;
+    var propCarta = tiposCartas[carta.sprite];
+    var c;
+    //console.log("llegadestino");
+    //console.log("propcarta:");
+    //console.log(propCarta);
+    //console.log("cartasDestino:");
+    //console.log(cartasDestino);
+    //console.log("tipocarta");
+    console.log("abajo"+tablero.list[carta.fila+1][carta.columna].carta.name);
+    console.log("arriba"+tablero.list[carta.fila-1][carta.columna].carta.name);
+    console.log("derecha"+tablero.list[carta.fila][carta.columna+1].carta.name);
+    console.log("izquierda"+tablero.list[carta.fila][carta.columna-1].carta.name);
+    //console.log((tablero.list[carta.fila+1][carta.columna].carta.Type));
+    //console.log(carta);
+    if(propCarta.Arriba==true){
+        console.log("propcarta arr");
+        if(cartasDestino.indexOf(tablero.list[carta.fila-1][carta.columna].carta.name)!= -1){
+            console.log("entrraaaaa");
+
+            c.sprite = tablero.list[carta.fila-1][carta.columna].carta.name;
+            console.log("entrraaaaa1");
+            c.fila = carta.fila-1;
+            console.log("entrraaaaa2");
+            c.columna =carta.columna;
+            console.log(c);
+            return c;
+        }   
+    }
+    if(propCarta.Abajo==true){
+        console.log("propcarta abb");
+        if(cartasDestino.indexOf(tablero.list[carta.fila+1][carta.columna].carta.name)!= -1){
+            console.log("entrraaaaa");
+            c.sprite = tablero.list[carta.fila+1][carta.columna].carta.name;
+            console.log("entrraaaaa1");
+            c.fila = carta.fila+1;
+            console.log("entrraaaaa2");
+            c.columna =carta.columna;
+            console.log(c);
+            return c;
+        } 
+    }
+    if(propCarta.Izquierda==true){
+        console.log("propcarta izz");
+        if(cartasDestino.indexOf(tablero.list[carta.fila][carta.columna-1].carta.name)!= -1){
+            console.log("entrraaaaa");
+            c.sprite = tablero.list[carta.fila][carta.columna-1].carta.name;
+            console.log("entrraaaaa1");
+            c.fila = carta.fila;
+            console.log("entrraaaaa2");
+            c.columna =carta.columna-1;
+            console.log(c);
+            return c;
+        } 
+    }
+    if(propCarta.Derecha==true){
+        console.log("propcarta dech");
+        if(cartasDestino.indexOf(tablero.list[carta.fila][carta.columna+1].carta.name)!= -1){
+            console.log("entrraaaaa");
+            c.sprite = tablero.list[carta.fila][carta.columna+1].carta.name;
+            console.log("entrraaaaa1");
+            c.fila = carta.fila;
+            console.log("entrraaaaa2");
+            c.columna =carta.columna+1;
+            console.log(c);
+            return c;
+        } 
+    }
+
+    return c;
+};
 
 var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
     var aux = carta;
@@ -73,16 +145,31 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
     }
 
 
+
     //INSERTAR EN ACCIONES
-    if(r == true){
-        Acciones.insert({
-            partidaId: partidaId,
-            tipo: selectedCard.Type,
-            carta: aux,
-            targetName: nameObjetivo,
-            objeto: objeto,
-            datetime: new Date().getTime(),
-        });
+    if(r == true ){
+        var cartaDestino = llegaDestino(partidaId,carta);
+
+        if(cartaDestino != null){
+            console.log("doblesita");
+            Acciones.insert({
+                partidaId: partidaId,
+                tipo: "doble",
+                primera: carta,
+                segunda: cartaDestino,
+                datetime: new Date().getTime(),
+            });
+        }else{
+            console.log("simple");
+            Acciones.insert({
+                partidaId: partidaId,
+                tipo: selectedCard.Type,
+                carta: aux,
+                targetName: nameObjetivo,
+                objeto: objeto,
+                datetime: new Date().getTime(),
+            });
+        }
     }
 
     return r;
