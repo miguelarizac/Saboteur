@@ -579,7 +579,15 @@ var Game = function(partidaId) {
 				that.isMyTurn = true;
 				that.gameboard = new canvasFinal(accion.tipoGanador);
 				that.gameboard.setGanadores(accion.ganadores);
-				break;		
+				break;
+			case "doble":
+			  that.gameboard.board.list[accion.primera.carta.fila][accion.primera.carta.columna].setSprite(accion.primera.carta.sprite);
+			  that.gameboard.board.list[accion.primera.carta.fila][accion.primera.carta.columna].girada = accion.primera.carta.girada;
+
+				that.gameboard.board.list[accion.segunda.carta.fila][accion.segunda.carta.columna].setSprite(accion.segunda.carta.sprite);
+			  that.gameboard.board.list[accion.segunda.carta.fila][accion.segunda.carta.columna].girada = accion.segunda.carta.girada;
+				break
+
 		}
 	};
 

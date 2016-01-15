@@ -150,6 +150,7 @@ var isFinish = function(partida){
         if((this.list[14][10].ocupada == true) && (this.list[14][10].carta.Derecha == true)){
             terminada = true;
             tipoGanador = "Buscador";
+
         }
         else if((this.list[13][11].ocupada == true) && (this.list[13][11].carta.Abajo == true)){
             terminada = true;
