@@ -45,14 +45,14 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
     var aux = carta;
     //FUNCION DE LA CARTA
     var objeto;
-    
+
     if(aux.sprite.charAt(0) == 'A'){
         objeto = aux.sprite.toLowerCase().split("arreglar");
     }else{
         objeto = aux.sprite.toLowerCase().split("romper");
     }
-    
-            
+
+
     //
     var r;
     var selectedCard = tiposCartas[aux.sprite];
@@ -137,7 +137,7 @@ var isFinish = function(partida){
     var terminada = false;
     var tipoGanador = null;
     var mano = [];
-    var caracs = Caracteristicas.find({partidaId: partida._id}).fetch(); 
+    var caracs = Caracteristicas.find({partidaId: partida._id}).fetch();
     this.list = partida.tablero.list;
     this.usadas = partida.cartasUsadas;
 
@@ -145,67 +145,84 @@ var isFinish = function(partida){
         terminada = true;
         tipoGanador = "Saboteador";
     }
-    
+
     if(this.list[14][11].carta.name == "DestinoPepita"){
         if((this.list[14][10].ocupada == true) && (this.list[14][10].carta.Derecha == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
         else if((this.list[13][11].ocupada == true) && (this.list[13][11].carta.Abajo == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
         else if((this.list[14][12].ocupada == true) && (this.list[14][12].carta.Izquierda == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
         else if((this.list[15][11].ocupada == true) && (this.list[15][11].carta.Arriba == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
     }
 
     if(this.list[12][11].carta.name == "DestinoPepita"){
         if((this.list[12][10].ocupada == true) && (this.list[12][10].carta.Derecha == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
         else if((this.list[11][11].ocupada == true) && (this.list[11][11].carta.Abajo == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
         else if((this.list[12][12].ocupada == true) && (this.list[12][12].carta.Izquierda == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
         else if((this.list[13][11].ocupada == true) && (this.list[13][11].carta.Arriba == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
     }
 
     if(this.list[16][11].carta.name == "DestinoPepita"){
         if((this.list[16][10].ocupada == true) && (this.list[16][10].carta.Derecha == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
         else if((this.list[15][11].ocupada == true) && (this.list[15][11].carta.Abajo == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
         else if((this.list[16][12].ocupada == true) && (this.list[16][12].carta.Izquierda == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
         else if((this.list[17][11].ocupada == true) && (this.list[17][11].carta.Arriba == true)){
             terminada = true;
-            tipoGanador = "Buscador";   
+            tipoGanador = "Buscador";
         }
     }
+    /*if(this.list[16][11].carta.name == "DestinoNada1"){
+      if((this.list[16][10].ocupada == true) && (this.list[16][10].carta.Derecha == true)){
+          //
+      }
+      else if((this.list[15][11].ocupada == true) && (this.list[15][11].carta.Abajo == true)){
+          terminada = true;
+          tipoGanador = "Buscador";
+      }
+      else if((this.list[16][12].ocupada == true) && (this.list[16][12].carta.Izquierda == true)){
+          terminada = true;
+          tipoGanador = "Buscador";
+      }
+      else if((this.list[17][11].ocupada == true) && (this.list[17][11].carta.Arriba == true)){
+          terminada = true;
+          tipoGanador = "Buscador";
+      }
+    }*/
 
     if(terminada){
         this.usadas = 0;
-        Partidas.update({_id: partida._id},{$set:{cartasUsadas: usadas}});    
+        Partidas.update({_id: partida._id},{$set:{cartasUsadas: usadas}});
     }
 
     return [terminada,tipoGanador];
@@ -249,7 +266,7 @@ var finalRonda = function(partidaId){
 Meteor.startup(function () {
     // code to run on server at startup
     Meteor.publish("partidas", function () {
-        return Partidas.find();
+        return Partidas.find({},{fields:{mazoGeneral:0}});
     });
 
     Meteor.publish("acciones", function () {
@@ -312,7 +329,7 @@ Meteor.startup(function () {
                 r = ponerCarta(partidaId,jugadorId,carta,nameObjetivo);
             }
 
-            
+
             if(r != false){
                 descartarCarta(partidaId,jugadorId,carta);
                 if(Partidas.findOne({_id: partidaId}).mazoGeneral.length > 0){
@@ -320,7 +337,7 @@ Meteor.startup(function () {
                     Caracteristicas.update({partidaId: partidaId,jugadorId: jugadorId},{$push: {mano: nuevaCarta}});
                 }
                 usadas++;
-                Partidas.update({_id: partidaId},{$set:{cartasUsadas: usadas}});   
+                Partidas.update({_id: partidaId},{$set:{cartasUsadas: usadas}});
                 actualizarTurno(partidaId);
             }
 

@@ -100,8 +100,8 @@ tiposCartas = {
 	//Tipo Inicio
 	ComienzoEscalera: { Type: "camino", Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false},
 	//Tipo Destino
-	DestinoNada1: { Type: "camino", Izquierda: true, Derecha: false, Arriba: false, Abajo: true, Bloqueante: false,name: "DestinoNada1"},
-	DestinoNada2: { Type: "camino", Izquierda: true, Derecha: false, Arriba: true, Abajo: false, Bloqueante: false,name: "DestinoNada2"},
+	DestinoNada1: { Type: "camino", Izquierda: false, Derecha: true, Arriba: false, Abajo: true, Bloqueante: false,name: "DestinoNada1"},
+	DestinoNada2: { Type: "camino", Izquierda: true, Derecha: false, Arriba: false, Abajo: true, Bloqueante: false,name: "DestinoNada2"},
 	DestinoPepita: { Type: "camino", Izquierda: true, Derecha: true, Arriba: true, Abajo: true, Bloqueante: false,name: "DestinoPepita"},
 	//Tipo Roll
 	Saboteador: {Type: "roll", Roll: "Sabotear"},
@@ -179,7 +179,7 @@ var comprobarCelda = function(partidaId,tablero,c,row,col){
 	// [izq,der,arr,abj]
 	var aux = [null,null,null,null];
 	var caux = [c.Derecha,c.Izquierda,c.Arriba,c.Abajo];
-	
+
 	// CHECKING
 
    	if(tablero.list[row][col+1].ocupada){
@@ -206,7 +206,7 @@ var comprobarCelda = function(partidaId,tablero,c,row,col){
    		}
    	}
 
-	
+
    	if(tablero.list[row+1][col].ocupada){
    		if(tablero.list[row+1][col].carta.Arriba){
    			aux[3] = true;
@@ -370,7 +370,7 @@ configurarPartida = function(partidaId){
 	    for (i = 0; i < caracs.length; i++) {
 	    	puntuacion[i] = caracs[i].puntuacion;
 	    };
-		Caracteristicas.remove({partidaId: partidaId}); 
+		Caracteristicas.remove({partidaId: partidaId});
 	}else{
 		ronda = 1;
 		for (i = 0; i < numJugadores; i++) {
@@ -391,7 +391,7 @@ configurarPartida = function(partidaId){
 	        puntuacion: puntuacion[i],
 	   	});
 	};
-	
+
 
 	Partidas.update({_id: partidaId}, {$set:{
 						mazoGeneral: mazo,
@@ -401,5 +401,3 @@ configurarPartida = function(partidaId){
 						empezada: true,
 					}});
 };
-
-
