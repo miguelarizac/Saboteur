@@ -117,9 +117,6 @@ tiposCartas = {
 	ArreglarVagoneta: {Type: "accionP", Funcion: arreglar, Objeto:["vagoneta"]},
 	ArreglarFarolillo: {Type: "accionP", Funcion: arreglar, Objeto:["farolillo"]},
 	ArreglarPico: {Type: "accionP", Funcion: arreglar, Objeto:["pico"]},
-	ArreglarFaro_Pico: {Type: "accionP", Funcion: arreglar, Objeto:["farolillo","pico"]},
-	ArreglarFaro_Vagon: {Type: "accionP", Funcion: arreglar, Objeto: ["farolillo","vagoneta"]},
-	ArreglarVagon_Pico: {Type: "accionP", Funcion: arreglar, Objeto: ["vagoneta","pico"]},
 	Mapa: {Type: "accionT", Funcion: destapaCartaDestino},
 	Derrumbamiento: {Type: "accionT", Funcion: derrumbamiento}
 };
@@ -145,8 +142,7 @@ cartasPepitas = ['Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas1','Pepitas
 cartasAccion = ['Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarVagoneta','ArreglarVagoneta','ArreglarPico',
 					'ArreglarPico','ArreglarFarolillo','ArreglarFarolillo','RomperVagoneta','RomperVagoneta','RomperVagoneta',
 					'RomperFarolillo','RomperFarolillo','RomperFarolillo','RomperPico','RomperPico','RomperPico',
-					'ArreglarFaro_Pico','ArreglarFaro_Vagon','ArreglarVagon_Pico','Derrumbamiento','Derrumbamiento',
-					'Derrumbamiento'
+					'Derrumbamiento','Derrumbamiento','Derrumbamiento'
 ];
 
 girarCarta = function(carta){

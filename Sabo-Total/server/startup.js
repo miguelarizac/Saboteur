@@ -45,19 +45,13 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
     var aux = carta;
     //FUNCION DE LA CARTA
     var objeto;
-    if(aux.sprite == "ArreglarFaro_Vagon"){
-        objeto = "farolillo";
-    }else if(aux.sprite == "ArreglarFaro_Pico"){
-        objeto = "pico";
-    }else if(aux.sprite == "ArreglarVagon_Pico"){    
-        objeto = "vagoneta";
+    
+    if(aux.sprite.charAt(0) == 'A'){
+        objeto = aux.sprite.toLowerCase().split("arreglar");
     }else{
-        if(aux.sprite.charAt(0) == 'A'){
-            objeto = aux.sprite.toLowerCase().split("arreglar");
-        }else{
-            objeto = aux.sprite.toLowerCase().split("romper");
-        }
+        objeto = aux.sprite.toLowerCase().split("romper");
     }
+    
             
     //
     var r;
@@ -147,7 +141,7 @@ var isFinish = function(partida){
     this.list = partida.tablero.list;
     this.usadas = partida.cartasUsadas;
 
-    if((partida.mazoGeneral.length == 0) && (this.usadas == 67)){
+    if((partida.mazoGeneral.length == 0) && (this.usadas == 64)){
         terminada = true;
         tipoGanador = "Saboteador";
     }
