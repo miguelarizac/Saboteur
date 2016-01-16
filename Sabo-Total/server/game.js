@@ -216,18 +216,20 @@ var comprobarCelda = function(partidaId,tablero,c,row,col){
    	tablero.list[row][col].carta = c;
    	tablero.list[row][col].ocupada = true;
 
-   	if(c.Izquierda && !tablero.list[row][col-1].ocupada){
-		tablero.posiblesCells.push(row.toString() + "," + (col-1).toString());
-	}
-	if (c.Derecha && !tablero.list[row][col+1].ocupada) {
-		tablero.posiblesCells.push(row.toString() + "," + (col+1).toString());
-	}
-	if (c.Arriba && !tablero.list[row-1][col].ocupada) {
-		tablero.posiblesCells.push((row-1).toString() + "," + col.toString());
-	}
-	if (c.Abajo && !tablero.list[row+1][col].ocupada) {
-		tablero.posiblesCells.push((row+1).toString() + "," + col.toString());
-	}
+   	if(!c.Bloqueante){
+	   	if(c.Izquierda && !tablero.list[row][col-1].ocupada){
+			tablero.posiblesCells.push(row.toString() + "," + (col-1).toString());
+		}
+		if (c.Derecha && !tablero.list[row][col+1].ocupada) {
+			tablero.posiblesCells.push(row.toString() + "," + (col+1).toString());
+		}
+		if (c.Arriba && !tablero.list[row-1][col].ocupada) {
+			tablero.posiblesCells.push((row-1).toString() + "," + col.toString());
+		}
+		if (c.Abajo && !tablero.list[row+1][col].ocupada) {
+			tablero.posiblesCells.push((row+1).toString() + "," + col.toString());
+		}
+	}	
 
 
    	Partidas.update({_id: partidaId}, {$set: {tablero: tablero}});
