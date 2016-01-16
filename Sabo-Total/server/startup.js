@@ -40,107 +40,123 @@ var actualizarTurno = function(partidaId){
     Partidas.update({_id: partidaId}, {$set:{jugadorActivo: p.listaJugadores[index]}});
 };
 
+
+var actualizarTablero = function(partidaId,fila,columna,girada){
+    var tablero = Partidas.findOne({_id: partidaId}).tablero;
+    var aux = tablero.list[fila][columna].carta;
+    if(girada){
+        aux = girarCarta(aux);
+    }
+    if(tablero.list[fila][columna].carta.name != "DestinoPepita"){
+        aux.name = "Ocupada";
+    }    
+    aux.Type = tablero.list[fila][columna].carta.Type;
+
+    tablero.list[fila][columna].carta = aux;
+    tablero.list[fila][columna].ocupada = true;
+
+    //ABAJO
+    if(tablero.list[fila][columna].carta.Abajo && !tablero.list[fila+1][columna].ocupada){
+        tablero.posiblesCells.push((fila+1).toString() + "," + columna.toString());
+    }
+
+    //ARRIBA
+    if(tablero.list[fila][columna].carta.Arriba && !tablero.list[fila-1][columna].ocupada){
+        tablero.posiblesCells.push((fila-1).toString() + "," + columna.toString());
+    }
+
+    //DERECHA
+    if(tablero.list[fila][columna].carta.Derecha && !tablero.list[fila][columna+1].ocupada){
+        tablero.posiblesCells.push(fila.toString() + "," + (columna+1).toString());
+    }
+
+    //IZQUIERDA
+    if(tablero.list[fila][columna].carta.Izquierda && !tablero.list[fila][columna-1].ocupada){
+        tablero.posiblesCells.push(fila.toString() + "," + (columna-1).toString());
+    } 
+
+    Partidas.update({_id: partidaId}, {$set: {tablero: tablero}});
+};
+
+
 var llegaDestino = function(partidaId, carta){
     var tablero = Partidas.findOne({_id: partidaId}).tablero;
     var propCarta = tiposCartas[carta.sprite];
-    var c;
-    //console.log("llegadestino");
-    //console.log("propcarta:");
-    //console.log(propCarta);
-    //console.log("cartasDestino:");
-    //console.log(cartasDestino);
-    //console.log("tipocarta");
-    console.log("abajo"+tablero.list[carta.fila+1][carta.columna].carta.name);
-    console.log("arriba"+tablero.list[carta.fila-1][carta.columna].carta.name);
-    console.log("derecha"+tablero.list[carta.fila][carta.columna+1].carta.name);
-    console.log("izquierda"+tablero.list[carta.fila][carta.columna-1].carta.name);
-    //console.log((tablero.list[carta.fila+1][carta.columna].carta.Type));
-    //console.log(carta);
-    if(propCarta.Arriba==true){
-        console.log("propcarta arr");
-        if(cartasDestino.indexOf(tablero.list[carta.fila-1][carta.columna].carta.name)!= -1){
-            console.log("entrraaaaa");
+    var c = {sprite: "", fila: -1, columna:-1,girada: false};
+    var girada = false;
 
+    if(propCarta.Arriba==true){
+        if(cartasDestino.indexOf(tablero.list[carta.fila-1][carta.columna].carta.name)!= -1){
             c.sprite = tablero.list[carta.fila-1][carta.columna].carta.name;
-            console.log("entrraaaaa1");
             c.fila = carta.fila-1;
-            console.log("entrraaaaa2");
             c.columna =carta.columna;
-            console.log(c);
+            if(!tablero.list[carta.fila-1][carta.columna].carta.Abajo){
+                c.girada = true;
+                girada = true;
+            }
+            tablero.list[carta.fila-1][carta.columna].carta.ocupada = true;
+            actualizarTablero(partidaId,carta.fila-1,carta.columna,girada);
             return c;
         }   
     }
     if(propCarta.Abajo==true){
-        console.log("propcarta abb");
         if(cartasDestino.indexOf(tablero.list[carta.fila+1][carta.columna].carta.name)!= -1){
-            console.log("entrraaaaa");
             c.sprite = tablero.list[carta.fila+1][carta.columna].carta.name;
-            console.log("entrraaaaa1");
             c.fila = carta.fila+1;
-            console.log("entrraaaaa2");
-            c.columna =carta.columna;
-            console.log(c);
+            c.columna =carta.columna; 
+            if(!tablero.list[carta.fila+1][carta.columna].carta.Arriba){
+                c.girada = true;
+                girada = true;
+            }
+            tablero.list[carta.fila+1][carta.columna].carta.ocupada = true;
+            actualizarTablero(partidaId,carta.fila+1,carta.columna,girada);
             return c;
         } 
     }
     if(propCarta.Izquierda==true){
-        console.log("propcarta izz");
         if(cartasDestino.indexOf(tablero.list[carta.fila][carta.columna-1].carta.name)!= -1){
-            console.log("entrraaaaa");
             c.sprite = tablero.list[carta.fila][carta.columna-1].carta.name;
-            console.log("entrraaaaa1");
             c.fila = carta.fila;
-            console.log("entrraaaaa2");
             c.columna =carta.columna-1;
-            console.log(c);
+            if(!tablero.list[carta.fila][carta.columna-1].carta.Derecha){
+                c.girada = true;
+                girada = true;
+            }
+            tablero.list[carta.fila][carta.columna-1].carta.ocupada = true;
+            actualizarTablero(partidaId,carta.fila,carta.columna-1,girada);
             return c;
         } 
     }
     if(propCarta.Derecha==true){
-        console.log("propcarta dech");
         if(cartasDestino.indexOf(tablero.list[carta.fila][carta.columna+1].carta.name)!= -1){
-            console.log("entrraaaaa");
             c.sprite = tablero.list[carta.fila][carta.columna+1].carta.name;
-            console.log("entrraaaaa1");
             c.fila = carta.fila;
-            console.log("entrraaaaa2");
             c.columna =carta.columna+1;
-            console.log(c);
+            if(!tablero.list[carta.fila][carta.columna+1].carta.Izquierda){
+                c.girada = true;
+                girada = true;
+            }
+            tablero.list[carta.fila][carta.columna+1].carta.ocupada = true;
+            actualizarTablero(partidaId,carta.fila,carta.columna+1,girada);
             return c;
         } 
     }
 
-    return c;
+    return null;
 };
 
 var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
-    var aux = carta;
-    //FUNCION DE LA CARTA
-    var objeto;
-
-    if(aux.sprite.charAt(0) == 'A'){
-        objeto = aux.sprite.toLowerCase().split("arreglar");
-    }else{
-        objeto = aux.sprite.toLowerCase().split("romper");
-    }
-
-
-    //
-    var r;
-    var selectedCard = tiposCartas[aux.sprite];
+    var r = false;
+    var selectedCard = tiposCartas[carta.sprite];
     switch(selectedCard.Type) {
         case "excavacion":
-            r = ponerCamino(partidaId,jugadorId,aux);
+            r = ponerCamino(partidaId,jugadorId,carta);
             break;
         case "accionT":
-            r = selectedCard.Funcion(partidaId,aux);
+            r = selectedCard.Funcion(partidaId,carta);
             break;
         case "accionP":
-            r = selectedCard.Funcion(partidaId,selectedCard,nameObjetivo,objeto);
-            if(r != true && r != false && r.charAt(0) == 'A'){
-                aux.sprite = r;
-                r = true;
-            }
+            r = selectedCard.Funcion(partidaId,selectedCard,nameObjetivo);
             break;
     }
 
@@ -151,7 +167,6 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
         var cartaDestino = llegaDestino(partidaId,carta);
 
         if(cartaDestino != null){
-            console.log("doblesita");
             Acciones.insert({
                 partidaId: partidaId,
                 tipo: "doble",
@@ -160,13 +175,11 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
                 datetime: new Date().getTime(),
             });
         }else{
-            console.log("simple");
             Acciones.insert({
                 partidaId: partidaId,
                 tipo: selectedCard.Type,
-                carta: aux,
+                carta: carta,
                 targetName: nameObjetivo,
-                objeto: objeto,
                 datetime: new Date().getTime(),
             });
         }

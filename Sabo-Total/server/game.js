@@ -1,14 +1,14 @@
-var destruir = function(partidaId,carta,nameObjetivo,objeto){
+var destruir = function(partidaId,carta,nameObjetivo){
 	var idObjetivo = Meteor.users.findOne({username: nameObjetivo})._id;
 	var c = Caracteristicas.findOne({partidaId: partidaId,jugadorId: idObjetivo});
 
-	if(!c[carta.Objeto[0]]){
+	if(!c[carta.Objeto]){
 		return false;
 	}
 
-	if(carta.Objeto[0] == "pico"){
+	if(carta.Objeto == "pico"){
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {pico: false}});
-	} else if(carta.Objeto[0] == "vagoneta"){
+	} else if(carta.Objeto == "vagoneta"){
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {vagoneta: false}});
 	}else{
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {farolillo: false}});
@@ -17,35 +17,23 @@ var destruir = function(partidaId,carta,nameObjetivo,objeto){
 	return true;
 };
 
-var arreglar = function(partidaId,carta,nameObjetivo,objeto){
-	var r = false;
-	var index = 0;
-	if(carta.Objeto.length > 1){
-		if(objeto != "default" && carta.Objeto.indexOf(objeto) == -1){
-			return r;
-		} else {
-			index = carta.Objeto.indexOf(objeto);
-		}
-	}
+var arreglar = function(partidaId,carta,nameObjetivo){
 	var idObjetivo = Meteor.users.findOne({username: nameObjetivo})._id;
 	var c = Caracteristicas.findOne({partidaId: partidaId,jugadorId: idObjetivo});
 
-	if(c[carta.Objeto[index]]){
-		return r;
+	if(c[carta.Objeto]){
+		return false;
 	}
 
-	if(carta.Objeto[index] == "pico"){
+	if(carta.Objeto == "pico"){
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {pico: true}});
-		r = "ArreglarPico";
-	} else if(carta.Objeto[index] == "vagoneta"){
+	}else if(carta.Objeto == "vagoneta"){
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {vagoneta: true}});
-		r = "ArreglarVagoneta";
 	}else{
 		Caracteristicas.update({partidaId: partidaId,jugadorId: idObjetivo},{$set: {farolillo: true}});
-		r = "ArreglarFarolillo";
 	}
 
-	return r;
+	return true;
 };
 
 var destapaCartaDestino = function(partidaId,carta){
@@ -111,12 +99,12 @@ tiposCartas = {
 	Pepitas2: {Type: "gold", nPepitas: 2},
 	Pepitas3: {Type: "gold", nPepitas: 3},
 	//Tipo Accion
-	RomperVagoneta: {Type: "accionP", Funcion: destruir, Objeto: ["vagoneta"]},
-	RomperFarolillo: {Type: "accionP", Funcion: destruir, Objeto: ["farolillo"]},
-	RomperPico: {Type: "accionP", Funcion: destruir, Objeto: ["pico"]},
-	ArreglarVagoneta: {Type: "accionP", Funcion: arreglar, Objeto:["vagoneta"]},
-	ArreglarFarolillo: {Type: "accionP", Funcion: arreglar, Objeto:["farolillo"]},
-	ArreglarPico: {Type: "accionP", Funcion: arreglar, Objeto:["pico"]},
+	RomperVagoneta: {Type: "accionP", Funcion: destruir, Objeto: "vagoneta"},
+	RomperFarolillo: {Type: "accionP", Funcion: destruir, Objeto: "farolillo"},
+	RomperPico: {Type: "accionP", Funcion: destruir, Objeto: "pico"},
+	ArreglarVagoneta: {Type: "accionP", Funcion: arreglar, Objeto:"vagoneta"},
+	ArreglarFarolillo: {Type: "accionP", Funcion: arreglar, Objeto:"farolillo"},
+	ArreglarPico: {Type: "accionP", Funcion: arreglar, Objeto:"pico"},
 	Mapa: {Type: "accionT", Funcion: destapaCartaDestino},
 	Derrumbamiento: {Type: "accionT", Funcion: derrumbamiento}
 };
@@ -145,6 +133,7 @@ cartasAccion = ['Mapa','Mapa','Mapa','Mapa','Mapa','Mapa','ArreglarVagoneta','Ar
 					'Derrumbamiento','Derrumbamiento','Derrumbamiento'
 ];
 
+
 girarCarta = function(carta){
 	aux = tiposCartas.Standard;
 	aux.Abajo = carta.Arriba;
@@ -168,6 +157,7 @@ ponerCamino = function(partidaId,jugadorId,carta){
 		if(carta.girada){
 			tipoCarta = girarCarta(tipoCarta);
 		}
+		
         return comprobarCelda(partidaId,t,tipoCarta,carta.fila,carta.columna);
     }
 
@@ -327,13 +317,13 @@ var Tablero = function(){
    	this.list[14][3].ocupada = true;
 
    	this.list[12][11].carta = arrayDestinos[0];
-   	this.list[12][11].ocupada = true;
+   	this.list[12][11].ocupada = false;
 
    	this.list[14][11].carta = arrayDestinos[1];
-   	this.list[14][11].ocupada = true;
+   	this.list[14][11].ocupada = false;
 
    	this.list[16][11].carta = arrayDestinos[2];
-   	this.list[16][11].ocupada = true;
+   	this.list[16][11].ocupada = false;
 };
 
 
