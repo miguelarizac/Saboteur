@@ -49,7 +49,7 @@ var actualizarTablero = function(partidaId,fila,columna,girada){
     }
     if(tablero.list[fila][columna].carta.name != "DestinoPepita"){
         aux.name = "Ocupada";
-    }    
+    }
     aux.Type = tablero.list[fila][columna].carta.Type;
 
     tablero.list[fila][columna].carta = aux;
@@ -73,7 +73,7 @@ var actualizarTablero = function(partidaId,fila,columna,girada){
     //IZQUIERDA
     if(tablero.list[fila][columna].carta.Izquierda && !tablero.list[fila][columna-1].ocupada){
         tablero.posiblesCells.push(fila.toString() + "," + (columna-1).toString());
-    } 
+    }
 
     Partidas.update({_id: partidaId}, {$set: {tablero: tablero}});
 };
@@ -85,8 +85,11 @@ var llegaDestino = function(partidaId, carta){
     var c = {sprite: "", fila: -1, columna:-1,girada: false};
     var girada = false;
 
+    var selectedCard = tiposCartas[carta.sprite];
+
     if(propCarta.Arriba==true){
         if(cartasDestino.indexOf(tablero.list[carta.fila-1][carta.columna].carta.name)!= -1){
+          if ( !selectedCard.Bloqueante ) {
             c.sprite = tablero.list[carta.fila-1][carta.columna].carta.name;
             c.fila = carta.fila-1;
             c.columna =carta.columna;
@@ -97,13 +100,15 @@ var llegaDestino = function(partidaId, carta){
             tablero.list[carta.fila-1][carta.columna].carta.ocupada = true;
             actualizarTablero(partidaId,carta.fila-1,carta.columna,girada);
             return c;
-        }   
+          }
+        }
     }
     if(propCarta.Abajo==true){
         if(cartasDestino.indexOf(tablero.list[carta.fila+1][carta.columna].carta.name)!= -1){
+          if ( !selectedCard.Bloqueante ) {
             c.sprite = tablero.list[carta.fila+1][carta.columna].carta.name;
             c.fila = carta.fila+1;
-            c.columna =carta.columna; 
+            c.columna =carta.columna;
             if(!tablero.list[carta.fila+1][carta.columna].carta.Arriba){
                 c.girada = true;
                 girada = true;
@@ -111,10 +116,12 @@ var llegaDestino = function(partidaId, carta){
             tablero.list[carta.fila+1][carta.columna].carta.ocupada = true;
             actualizarTablero(partidaId,carta.fila+1,carta.columna,girada);
             return c;
-        } 
+          }
+        }
     }
     if(propCarta.Izquierda==true){
         if(cartasDestino.indexOf(tablero.list[carta.fila][carta.columna-1].carta.name)!= -1){
+          if ( !selectedCard.Bloqueante ) {
             c.sprite = tablero.list[carta.fila][carta.columna-1].carta.name;
             c.fila = carta.fila;
             c.columna =carta.columna-1;
@@ -125,10 +132,12 @@ var llegaDestino = function(partidaId, carta){
             tablero.list[carta.fila][carta.columna-1].carta.ocupada = true;
             actualizarTablero(partidaId,carta.fila,carta.columna-1,girada);
             return c;
-        } 
+          }
+        }
     }
     if(propCarta.Derecha==true){
         if(cartasDestino.indexOf(tablero.list[carta.fila][carta.columna+1].carta.name)!= -1){
+          if ( !selectedCard.Bloqueante ) {
             c.sprite = tablero.list[carta.fila][carta.columna+1].carta.name;
             c.fila = carta.fila;
             c.columna =carta.columna+1;
@@ -139,7 +148,8 @@ var llegaDestino = function(partidaId, carta){
             tablero.list[carta.fila][carta.columna+1].carta.ocupada = true;
             actualizarTablero(partidaId,carta.fila,carta.columna+1,girada);
             return c;
-        } 
+          }
+        }
     }
 
     return null;
@@ -148,10 +158,23 @@ var llegaDestino = function(partidaId, carta){
 var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
     var r = false;
     var selectedCard = tiposCartas[carta.sprite];
+
+    var cartaDestino = llegaDestino(partidaId,carta);
+
     switch(selectedCard.Type) {
         case "excavacion":
-            r = ponerCamino(partidaId,jugadorId,carta);
-            break;
+            if(cartaDestino != null){
+              if ( selectedCard.Bloqueante ) {
+                console.log("return false")
+                return false;
+              }else {
+                r = ponerCamino(partidaId,jugadorId,carta);
+                break;
+              }
+            }else{
+              r = ponerCamino(partidaId,jugadorId,carta);
+              break;
+            }
         case "accionT":
             r = selectedCard.Funcion(partidaId,carta);
             break;
@@ -161,12 +184,10 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
     }
 
 
-
     //INSERTAR EN ACCIONES
     if(r == true ){
-        var cartaDestino = llegaDestino(partidaId,carta);
-
         if(cartaDestino != null){
+            console.log(selectedCard.Bloqueante);
             Acciones.insert({
                 partidaId: partidaId,
                 tipo: "doble",
