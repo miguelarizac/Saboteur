@@ -164,20 +164,29 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
     switch(selectedCard.Type) {
         case "excavacion":
             if(cartaDestino != null){
+              console.log("hay destino alrededor");
               if ( selectedCard.Bloqueante ) {
+                console.log("bloquente");
                 return false;
-              }else {
-                r = ponerCamino(partidaId,jugadorId,carta);
-                break;
+              } else {
+                if (cartaDestino.sprite == "DestinoPepita"){
+                  r = ponerCamino(partidaId,jugadorId,carta);
+                  if(r == true){
+                    finalRonda(partidaId,"Buscador");
+                  }
+                  break;
+                }else{
+                  r = ponerCamino(partidaId,jugadorId,carta);
+                  break;
+                }
               }
             }else{
-              if (cartaDestino.name == "DestinoPepita"){
-                finalRonda(partidaId,"Buscador");
-              }else{
-                r = ponerCamino(partidaId,jugadorId,carta);
-                break;
-              }
+              console.log("no hay carta destino alrededor");
+              r = ponerCamino(partidaId,jugadorId,carta);
+              console.log("puesta: " + r);
+              break;
             }
+
         case "accionT":
             r = selectedCard.Funcion(partidaId,carta);
             break;
@@ -352,7 +361,7 @@ var finalRonda = function(partidaId, ganador){
     });
 
     //REPARTO LOS PUNTOS(AHORA MISMO SIEMPRE GANAN BUSCADORES)
-    repartirPuntos(partidaId,aux[1]);
+    repartirPuntos(partidaId,ganador);
     //POR ULTIMO CONFIGURO LA PARTIDA PARA SIGUIENTE RONDA
     if(p.ronda == 3){
         var ganadores = setGanadores(partidaId);
