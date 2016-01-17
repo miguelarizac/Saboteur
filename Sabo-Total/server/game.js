@@ -157,7 +157,6 @@ ponerCamino = function(partidaId,jugadorId,carta){
 				if(carta.girada){
 					tipoCarta = girarCarta(tipoCarta);
 				}
-				console.log("comprobando celda: " + comprobarCelda(partidaId,t,tipoCarta,carta.fila,carta.columna));
         return comprobarCelda(partidaId,t,tipoCarta,carta.fila,carta.columna);
 
     }

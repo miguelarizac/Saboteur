@@ -78,6 +78,47 @@ var actualizarTablero = function(partidaId,fila,columna,girada){
     Partidas.update({_id: partidaId}, {$set: {tablero: tablero}});
 };
 
+var comprobarDestinoPepita = function(tablero,carta){
+    var propCarta = tiposCartas[carta.sprite];
+    var c = {sprite: "", fila: -1, columna:-1,girada: false};
+
+    if(propCarta.Arriba==true){
+        if(tablero.list[carta.fila-1][carta.columna].carta.name == "DestinoPepita"){
+            c.sprite = "DestinoPepita";
+            c.fila = carta.fila-1;;
+            c.columna = carta.columna;
+            return c;
+        }
+    }
+
+    if(propCarta.Abajo==true){
+        if(tablero.list[carta.fila+1][carta.columna].carta.name == "DestinoPepita"){
+            c.sprite = "DestinoPepita";
+            c.fila = carta.fila+1;
+            c.columna = carta.columna;
+            return c;
+        }
+    }
+    if(propCarta.Izquierda==true){
+        if(tablero.list[carta.fila][carta.columna-1].carta.name == "DestinoPepita"){
+            c.sprite = "DestinoPepita";
+            c.fila = carta.fila;
+            c.columna = carta.columna-1;
+            return c;
+        }
+    }
+    if(propCarta.Derecha==true){
+        if(tablero.list[carta.fila][carta.columna+1].carta.name == "DestinoPepita"){
+            c.sprite = "DestinoPepita";
+            c.fila = carta.fila;
+            c.columna = carta.columna+1;
+            return c;
+        }
+    }
+
+    return null;
+};
+
 
 var llegaDestino = function(partidaId, carta){
     var tablero = Partidas.findOne({_id: partidaId}).tablero;
@@ -87,6 +128,14 @@ var llegaDestino = function(partidaId, carta){
 
     var selectedCard = tiposCartas[carta.sprite];
 
+    if ( !selectedCard.Bloqueante ) {
+        var aux = comprobarDestinoPepita(tablero,carta);
+        if(aux !=  null){
+            c = aux;
+            return c;
+        }
+    }
+        
     if(propCarta.Arriba==true){
         if(cartasDestino.indexOf(tablero.list[carta.fila-1][carta.columna].carta.name)!= -1){
           if ( !selectedCard.Bloqueante ) {
@@ -164,29 +213,23 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
     switch(selectedCard.Type) {
         case "excavacion":
             if(cartaDestino != null){
-              console.log("hay destino alrededor");
-              if ( selectedCard.Bloqueante ) {
-                console.log("bloquente");
-                return false;
-              } else {
-                if (cartaDestino.sprite == "DestinoPepita"){
-                  r = ponerCamino(partidaId,jugadorId,carta);
-                  if(r == true){
-                    finalRonda(partidaId,"Buscador");
-                  }
-                  break;
+                if ( selectedCard.Bloqueante ) {
+                    return false;
                 }else{
-                  r = ponerCamino(partidaId,jugadorId,carta);
-                  break;
+                    if (cartaDestino.sprite == "DestinoPepita"){
+                        r = ponerCamino(partidaId,jugadorId,carta);
+                        if(r == true){
+                            finalRonda(partidaId,"Buscador");
+                            return true;
+                        }
+                    }else{
+                      r = ponerCamino(partidaId,jugadorId,carta);
+                    }
                 }
-              }
             }else{
-              console.log("no hay carta destino alrededor");
-              r = ponerCamino(partidaId,jugadorId,carta);
-              console.log("puesta: " + r);
-              break;
+                r = ponerCamino(partidaId,jugadorId,carta);
             }
-
+            break;
         case "accionT":
             r = selectedCard.Funcion(partidaId,carta);
             break;
@@ -199,7 +242,6 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
     //INSERTAR EN ACCIONES
     if(r == true ){
         if(cartaDestino != null){
-            console.log(selectedCard.Bloqueante);
             Acciones.insert({
                 partidaId: partidaId,
                 tipo: "doble",
