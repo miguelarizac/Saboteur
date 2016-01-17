@@ -165,15 +165,18 @@ var ponerCarta = function(partidaId,jugadorId,carta,nameObjetivo){
         case "excavacion":
             if(cartaDestino != null){
               if ( selectedCard.Bloqueante ) {
-                console.log("return false")
                 return false;
               }else {
                 r = ponerCamino(partidaId,jugadorId,carta);
                 break;
               }
             }else{
-              r = ponerCamino(partidaId,jugadorId,carta);
-              break;
+              if (cartaDestino.name == "DestinoPepita"){
+                finalRonda(partidaId,"Buscador");
+              }else{
+                r = ponerCamino(partidaId,jugadorId,carta);
+                break;
+              }
             }
         case "accionT":
             r = selectedCard.Funcion(partidaId,carta);
@@ -251,7 +254,7 @@ var setGanadores = function(partidaId){
     }
 
     return [bool,tipoGanador];
-};*/
+};
 
 
 var isFinish = function(partida){
@@ -324,23 +327,6 @@ var isFinish = function(partida){
             tipoGanador = "Buscador";
         }
     }
-    /*if(this.list[16][11].carta.name == "DestinoNada1"){
-      if((this.list[16][10].ocupada == true) && (this.list[16][10].carta.Derecha == true)){
-          //
-      }
-      else if((this.list[15][11].ocupada == true) && (this.list[15][11].carta.Abajo == true)){
-          terminada = true;
-          tipoGanador = "Buscador";
-      }
-      else if((this.list[16][12].ocupada == true) && (this.list[16][12].carta.Izquierda == true)){
-          terminada = true;
-          tipoGanador = "Buscador";
-      }
-      else if((this.list[17][11].ocupada == true) && (this.list[17][11].carta.Arriba == true)){
-          terminada = true;
-          tipoGanador = "Buscador";
-      }
-    }*/
 
     if(terminada){
         this.usadas = 0;
@@ -349,38 +335,36 @@ var isFinish = function(partida){
 
     return [terminada,tipoGanador];
 };
-
+*/
 
 //PARA FINALIZAR TENGO QUE ELIMINAR LAS ACCIONES Y AÑADIR LA DE "FINALRONDA"
-var finalRonda = function(partidaId){
+var finalRonda = function(partidaId, ganador){
     var p = Partidas.findOne({_id: partidaId});
-    var aux = isFinish(p);
-    if(aux[0]){
-        //PRIMERO HAGO UN REMOVE DE TODAS LAS ACCIONES
-        Acciones.remove({partidaId: partidaId});
-        //AÑADO LA ACCION DE FINALIZAR RONDA
+
+    //PRIMERO HAGO UN REMOVE DE TODAS LAS ACCIONES
+    Acciones.remove({partidaId: partidaId});
+    //AÑADO LA ACCION DE FINALIZAR RONDA
+    Acciones.insert({
+        partidaId: partidaId,
+        tipo: "finalRonda",
+        tipoGanador: ganador,
+        datetime: new Date().getTime(),
+    });
+
+    //REPARTO LOS PUNTOS(AHORA MISMO SIEMPRE GANAN BUSCADORES)
+    repartirPuntos(partidaId,aux[1]);
+    //POR ULTIMO CONFIGURO LA PARTIDA PARA SIGUIENTE RONDA
+    if(p.ronda == 3){
+        var ganadores = setGanadores(partidaId);
         Acciones.insert({
             partidaId: partidaId,
-            tipo: "finalRonda",
-            tipoGanador: aux[1],
+            tipo: "finalPartida",
+            ganadores: ganadores,
+            tipoGanador: ganador,
             datetime: new Date().getTime(),
         });
-
-        //REPARTO LOS PUNTOS(AHORA MISMO SIEMPRE GANAN BUSCADORES)
-        repartirPuntos(partidaId,aux[1]);
-        //POR ULTIMO CONFIGURO LA PARTIDA PARA SIGUIENTE RONDA
-        if(p.ronda == 3){
-            var ganadores = setGanadores(partidaId);
-            Acciones.insert({
-                partidaId: partidaId,
-                tipo: "finalPartida",
-                ganadores: ganadores,
-                tipoGanador: aux[1],
-                datetime: new Date().getTime(),
-            });
-        }else{
-            Meteor.setTimeout(function(){configurarPartida(partidaId);}, 1000);
-        }
+    }else{
+        Meteor.setTimeout(function(){configurarPartida(partidaId);}, 1000);
     }
 
 };
@@ -463,8 +447,11 @@ Meteor.startup(function () {
                 actualizarTurno(partidaId);
             }
 
+            if(usadas == 64){
+                finalRonda(partidaId, "Saboteador");
+            }
             //COMPROBAR SI SE HA TERMINADO LA RONDA O PARTIDA
-            finalRonda(partidaId);
+            //finalRonda(partidaId);
 
             return r;
         },
