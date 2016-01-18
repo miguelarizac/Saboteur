@@ -135,7 +135,7 @@ var llegaDestino = function(partidaId, carta){
             return c;
         }
     }
-        
+
     if(propCarta.Arriba==true){
         if(cartasDestino.indexOf(tablero.list[carta.fila-1][carta.columna].carta.name)!= -1){
           if ( !selectedCard.Bloqueante ) {
@@ -361,7 +361,7 @@ Meteor.startup(function () {
                   numJugadores: numJugadores,
                   listaJugadores: [username],
                   empezada: false,
-                  cartasUsadas: 0
+                  
                 });
             }
         },

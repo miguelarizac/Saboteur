@@ -391,5 +391,6 @@ configurarPartida = function(partidaId){
 						tablero: tablero,
 						jugadorActivo: p.listaJugadores[0],
 						empezada: true,
+						cartasUsadas: 0,
 					}});
 };
