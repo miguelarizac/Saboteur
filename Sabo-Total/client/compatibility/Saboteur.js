@@ -122,22 +122,6 @@ var offListener = function(game){
 	});
 };
 
-//LISTENER SCROLLING BOARD
-var scrollFunction = function(e,game){
-	if(e.keyCode == '38'){
-		e.preventDefault();
-		game.gameboard.board.up();
-	}
-
-	if(e.keyCode == '40'){
-		e.preventDefault();
-		game.gameboard.board.down();
-	}
-};
-
-var scrollListener = function(game){
-	window.addEventListener('keydown',scrollFunction(e,game));
-};
 
 //TRACKER PARA ACTUALIZAR EL TURNO Y PROCESAR ACCIONES NUEVAS
 var runTracker = function(partidaId,game){

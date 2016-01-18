@@ -330,7 +330,7 @@ var finalRonda = function(partidaId, ganador){
 Meteor.startup(function () {
     // code to run on server at startup
     Meteor.publish("partidas", function () {
-        return Partidas.find({},{fields:{mazoGeneral:0}});
+        return Partidas.find({},{fields:{mazoGeneral:0,tablero: 0}});
     });
 
     Meteor.publish("acciones", function () {
