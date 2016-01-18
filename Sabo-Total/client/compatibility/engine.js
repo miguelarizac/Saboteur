@@ -114,7 +114,7 @@ var Board = function() {
 		this.list[i] = new Array(15);
 		for (j = 0; j < 15; j++) {
 			this.list[i][j] = new Card(j*60,i*90);
-			this.list[i][j].setText(i.toString() + "," + j.toString());
+			//this.list[i][j].setText(i.toString() + "," + j.toString());
 		};
 	};
 
@@ -122,6 +122,20 @@ var Board = function() {
 	this.list[12][11].setSprite("DestinoAtras");
 	this.list[14][11].setSprite("DestinoAtras");
 	this.list[16][11].setSprite("DestinoAtras");
+
+
+	this.up = function(){
+		if(this.scroll > 0){
+			this.scroll--;
+		}
+	};
+
+	this.down = function(){
+		if(this.scroll < 24){
+			this.scroll++;
+		}
+	};
+
 };
 
 Board.prototype = new BaseClass();
@@ -463,10 +477,31 @@ var Game = function(partidaId) {
     	}
 	};
 
+	//LISTENER SCROLLING BOARD
+	this.scrollFunction = function(e){
+		if(e.keyCode == '38'){
+			e.preventDefault();
+			that.gameboard.board.up();
+		}
+
+		if(e.keyCode == '40'){
+			e.preventDefault();
+			that.gameboard.board.down();
+		}
+	};
+
+	this.scrollListener = function(game){
+		window.addEventListener('keydown',this.scrollFunction);
+	};
+
+	this.stopScroll = function(){
+		window.removeEventListener('keydown',this.scrollFunction);
+	};
 
 	//INICIALIZAR EL GAME
 	this.initialize = function(spriteData,src,namesPlayers,cardsHand,roll) {
 		this.gameboard = new GameBoard(namesPlayers,cardsHand,roll);
+		this.scrollListener();
 		this.updateAcciones();
 		SpriteSheet.load(spriteData,src,this.loop);
 	};
@@ -474,6 +509,7 @@ var Game = function(partidaId) {
 	//SI SE HACE CLICK FUERA DEL CANVAS DE PARA TODOS LOS LISTENER Y EL GAME
 	this.stopGame = function(){
 		this.stop = true;
+		this.stopScroll();
 		stopAll(this.accionTracker,this.turnoTracker);
 	};
 
