@@ -78,40 +78,39 @@ var actualizarTablero = function(partidaId,fila,columna,girada){
     Partidas.update({_id: partidaId}, {$set: {tablero: tablero}});
 };
 
-var comprobarDestinoPepita = function(tablero,carta){
-    var propCarta = tiposCartas[carta.sprite];
+var comprobarDestinoPepita = function(tablero,propCarta,fila,columna){
     var c = {sprite: "", fila: -1, columna:-1,girada: false};
 
     if(propCarta.Arriba==true){
-        if(tablero.list[carta.fila-1][carta.columna].carta.name == "DestinoPepita"){
+        if(tablero.list[fila-1][columna].carta.name == "DestinoPepita"){
             c.sprite = "DestinoPepita";
-            c.fila = carta.fila-1;;
-            c.columna = carta.columna;
+            c.fila = fila-1;;
+            c.columna = columna;
             return c;
         }
     }
 
     if(propCarta.Abajo==true){
-        if(tablero.list[carta.fila+1][carta.columna].carta.name == "DestinoPepita"){
+        if(tablero.list[fila+1][columna].carta.name == "DestinoPepita"){
             c.sprite = "DestinoPepita";
-            c.fila = carta.fila+1;
-            c.columna = carta.columna;
+            c.fila = fila+1;
+            c.columna = columna;
             return c;
         }
     }
     if(propCarta.Izquierda==true){
-        if(tablero.list[carta.fila][carta.columna-1].carta.name == "DestinoPepita"){
+        if(tablero.list[fila][columna-1].carta.name == "DestinoPepita"){
             c.sprite = "DestinoPepita";
-            c.fila = carta.fila;
-            c.columna = carta.columna-1;
+            c.fila = fila;
+            c.columna = columna-1;
             return c;
         }
     }
     if(propCarta.Derecha==true){
-        if(tablero.list[carta.fila][carta.columna+1].carta.name == "DestinoPepita"){
+        if(tablero.list[fila][columna+1].carta.name == "DestinoPepita"){
             c.sprite = "DestinoPepita";
-            c.fila = carta.fila;
-            c.columna = carta.columna+1;
+            c.fila = fila;
+            c.columna = columna+1;
             return c;
         }
     }
@@ -123,13 +122,15 @@ var comprobarDestinoPepita = function(tablero,carta){
 var llegaDestino = function(partidaId, carta){
     var tablero = Partidas.findOne({_id: partidaId}).tablero;
     var propCarta = tiposCartas[carta.sprite];
+    if(carta.girada){
+        propCarta = girarCarta(propCarta);
+    }
     var c = {sprite: "", fila: -1, columna:-1,girada: false};
     var girada = false;
 
-    var selectedCard = tiposCartas[carta.sprite];
 
-    if ( !selectedCard.Bloqueante ) {
-        var aux = comprobarDestinoPepita(tablero,carta);
+    if ( !propCarta.Bloqueante ) {
+        var aux = comprobarDestinoPepita(tablero,propCarta,carta.fila,carta.columna);
         if(aux !=  null){
             c = aux;
             return c;
@@ -138,7 +139,7 @@ var llegaDestino = function(partidaId, carta){
         
     if(propCarta.Arriba==true){
         if(cartasDestino.indexOf(tablero.list[carta.fila-1][carta.columna].carta.name)!= -1){
-          if ( !selectedCard.Bloqueante ) {
+          if ( !propCarta.Bloqueante ) {
             c.sprite = tablero.list[carta.fila-1][carta.columna].carta.name;
             c.fila = carta.fila-1;
             c.columna =carta.columna;
@@ -154,7 +155,7 @@ var llegaDestino = function(partidaId, carta){
     }
     if(propCarta.Abajo==true){
         if(cartasDestino.indexOf(tablero.list[carta.fila+1][carta.columna].carta.name)!= -1){
-          if ( !selectedCard.Bloqueante ) {
+          if ( !propCarta.Bloqueante ) {
             c.sprite = tablero.list[carta.fila+1][carta.columna].carta.name;
             c.fila = carta.fila+1;
             c.columna =carta.columna;
@@ -170,7 +171,7 @@ var llegaDestino = function(partidaId, carta){
     }
     if(propCarta.Izquierda==true){
         if(cartasDestino.indexOf(tablero.list[carta.fila][carta.columna-1].carta.name)!= -1){
-          if ( !selectedCard.Bloqueante ) {
+          if ( !propCarta.Bloqueante ) {
             c.sprite = tablero.list[carta.fila][carta.columna-1].carta.name;
             c.fila = carta.fila;
             c.columna =carta.columna-1;
@@ -186,7 +187,7 @@ var llegaDestino = function(partidaId, carta){
     }
     if(propCarta.Derecha==true){
         if(cartasDestino.indexOf(tablero.list[carta.fila][carta.columna+1].carta.name)!= -1){
-          if ( !selectedCard.Bloqueante ) {
+          if ( !propCarta.Bloqueante ) {
             c.sprite = tablero.list[carta.fila][carta.columna+1].carta.name;
             c.fila = carta.fila;
             c.columna =carta.columna+1;
