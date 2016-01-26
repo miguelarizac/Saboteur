@@ -597,6 +597,7 @@ var Game = function(partidaId) {
 				that.gameboard.board.list[accion.carta.fila][accion.carta.columna].girada = accion.carta.girada;
 				break;
 			case "accionP":
+				console.log(accion);
 				if(accion.carta.sprite.charAt(0) == 'A'){
 					var objeto = accion.carta.sprite.toLowerCase().split("arreglar");
 				}else{
@@ -634,7 +635,7 @@ var Game = function(partidaId) {
 		that.gameboard.draw();
 
 		if(!that.stop){
-			setTimeout(that.loop, 60);
+			setTimeout(that.loop, 30);
 		}
 	};
 };
