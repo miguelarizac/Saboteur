@@ -314,6 +314,7 @@ var finalRonda = function(partidaId, ganador){
     //POR ULTIMO CONFIGURO LA PARTIDA PARA SIGUIENTE RONDA
     if(p.ronda == 3){
         var ganadores = setGanadores(partidaId);
+        Partidas.update({_id: partidaId},{$set:{terminada: true}});
         Acciones.insert({
             partidaId: partidaId,
             tipo: "finalPartida",
@@ -362,6 +363,7 @@ Meteor.startup(function () {
                   numJugadores: numJugadores,
                   listaJugadores: [username],
                   empezada: false,
+                  terminada: false,
                   
                 });
             }
